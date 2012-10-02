@@ -15,18 +15,13 @@ using System.Windows.Shapes;
 namespace VDash
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MenuControl.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MenuControl : UserControl
     {
-        public MainWindow()
+        public MenuControl()
         {
             InitializeComponent();
-        }
-
-        private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)
-        {
-            Close();
         }
     }
 }
