@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="VDash.VehicleStateControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="195" d:DesignWidth="300" Background="#FFE4DF95" Padding="5" BorderBrush="Black" BorderThickness="1">
+    <Grid HorizontalAlignment="Center" Height="207">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="29*" />
+            <RowDefinition Height="171*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Label Content="Vehicle State" Grid.Row="1" Height="28" HorizontalAlignment="Center" Margin="0,0,1,0" Padding="100,0,0,0" Name="lblVehState" VerticalAlignment="Top" Width="299" FontSize="16" BorderBrush="#FFA39600" BorderThickness="1" />
+        <Label Content="Move Forward:" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="15,17,0,0" Name="lblForward" VerticalAlignment="Top" Width="115" Padding="17,0,0,0" />
+        <Label Content="Move Backwards:" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="15,49,0,0" Name="lblReverse" VerticalAlignment="Top" Width="115" />
+        <Label Content="Turn Left:" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="15,85,0,0" Name="lblLeft" VerticalAlignment="Top" Width="115"  Padding="46,0,0,0" />
+        <Label Content="Turn Right:" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="15,119,0,0" Name="lblRight" VerticalAlignment="Top" Width="115"  Padding="40,0,0,0" />
+        <TextBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="226,9,0,0" Name="tbForwardAmt" VerticalAlignment="Top" Width="42" />
+        <Slider Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="120,11,0,0" Name="slideForward" VerticalAlignment="Top" Width="100" TickPlacement="BottomRight"
+        Ticks="5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100" 
+        IsSelectionRangeEnabled="true"
+        SelectionStart="0" SelectionEnd="100" />
+        <Slider Grid.Row="2" Height="23" HorizontalAlignment="Left" IsSelectionRangeEnabled="true" Margin="120,48,0,0" Name="slideBack" SelectionEnd="100" SelectionStart="0" TickPlacement="BottomRight" Ticks="5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100" VerticalAlignment="Top" Width="100" />
+        <Slider Grid.Row="2" Height="23" HorizontalAlignment="Left" IsSelectionRangeEnabled="true" Margin="120,82,0,0" Name="slideLeft" SelectionEnd="100" SelectionStart="0" TickPlacement="BottomRight" Ticks="5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100" VerticalAlignment="Top" Width="100" />
+        <Slider Grid.Row="2" Height="23" HorizontalAlignment="Left" IsSelectionRangeEnabled="true" Margin="120,116,0,0" Name="slideRight" SelectionEnd="100" SelectionStart="0" TickPlacement="BottomRight" Ticks="5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100" VerticalAlignment="Top" Width="100" />
+        <TextBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="226,44,0,0" Name="tbBackAmt" VerticalAlignment="Top" Width="42" />
+        <TextBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="226,77,0,0" Name="tbLeftAmt" VerticalAlignment="Top" Width="42" />
+        <TextBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="226,114,0,0" Name="tbRightAmt" VerticalAlignment="Top" Width="42" />
+        <Label Content="%" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="266,7,0,0" Name="label1" VerticalAlignment="Top" Width="28" />
+        <Label Content="%" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="266,43,0,0" Name="label2" VerticalAlignment="Top" Width="28" />
+        <Label Content="%" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="266,77,0,0" Name="label3" VerticalAlignment="Top" Width="28" />
+        <Label Content="%" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="266,113,0,0" Name="label4" VerticalAlignment="Top" Width="28" />
+    </Grid>
+</UserControl>
