@@ -55,12 +55,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="LogControl.xaml.cs">
+      <DependentUpon>LogControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VehicleStateControl.xaml.cs">
       <DependentUpon>VehicleStateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="VehicleVideo.xaml.cs">
       <DependentUpon>VehicleVideo.xaml</DependentUpon>
     </Compile>
+    <Page Include="LogControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
