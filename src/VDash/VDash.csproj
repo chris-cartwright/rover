@@ -58,6 +58,9 @@
     <Compile Include="LogControl.xaml.cs">
       <DependentUpon>LogControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VehicleAvailability.xaml.cs">
+      <DependentUpon>VehicleAvailability.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VehicleStateControl.xaml.cs">
       <DependentUpon>VehicleStateControl.xaml</DependentUpon>
     </Compile>
@@ -81,6 +84,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MenuControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VehicleAvailability.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

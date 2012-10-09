@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="VDash.VehicleVideo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="198" d:DesignWidth="287"  BorderBrush="Black" BorderThickness="1" Background="#FFE4DF95">
+    <Grid Height="190" Width="274" Background="#FFE4DF95">
+        <Label Content="Vehicle Availability" Height="33" HorizontalAlignment="Left" Margin="57,0,0,0" Name="lblVehVideo" VerticalAlignment="Top" Width="152" FontSize="16" />
+        <ListBox Height="114" HorizontalAlignment="Left" Margin="4,40,0,0" Name="listBox1" VerticalAlignment="Top" Width="266">
+            <ListBoxItem Content="Rover" />
+            <ListBoxItem Content="Submarine" />
+        </ListBox>
+        <Button Content="Connect" Height="24" HorizontalAlignment="Left" Margin="6,162,0,0" Name="buttonConnect" VerticalAlignment="Top" Width="97" />
+        <Button Content="Find Connections" Height="23" HorizontalAlignment="Left" Margin="164,163,0,0" Name="buttonFindConnect" VerticalAlignment="Top" Width="106" />
+    </Grid>
+</UserControl>
