@@ -17,9 +17,9 @@ namespace VDash
     /// <summary>
     /// Interaction logic for VehicleVideo.xaml
     /// </summary>
-    public partial class VehicleVideo : UserControl
+    public partial class VehicleVideoControl : UserControl
     {
-        public VehicleVideo()
+		public VehicleVideoControl()
         {
             InitializeComponent();
         }

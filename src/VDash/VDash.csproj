@@ -36,6 +36,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AvalonDock">
+      <HintPath>..\packages\AvalonDock.2.0.1433\lib\net40\AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="AvalonDock.Themes.Aero">
+      <HintPath>..\packages\AvalonDock.2.0.1433\lib\net40\AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="AvalonDock.Themes.VS2010">
+      <HintPath>..\packages\AvalonDock.2.0.1433\lib\net40\AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -58,14 +67,14 @@
     <Compile Include="LogControl.xaml.cs">
       <DependentUpon>LogControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VehicleAvailability.xaml.cs">
-      <DependentUpon>VehicleAvailability.xaml</DependentUpon>
+    <Compile Include="VehicleAvailabilityControl.xaml.cs">
+      <DependentUpon>VehicleAvailabilityControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="VehicleStateControl.xaml.cs">
       <DependentUpon>VehicleStateControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VehicleVideo.xaml.cs">
-      <DependentUpon>VehicleVideo.xaml</DependentUpon>
+    <Compile Include="VehicleVideoControl.xaml.cs">
+      <DependentUpon>VehicleVideoControl.xaml</DependentUpon>
     </Compile>
     <Page Include="LogControl.xaml">
       <SubType>Designer</SubType>
@@ -87,7 +96,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VehicleAvailability.xaml">
+    <Page Include="VehicleAvailabilityControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -95,7 +104,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VehicleVideo.xaml">
+    <Page Include="VehicleVideoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -121,6 +130,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

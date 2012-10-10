@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             Background="#FFE4DF95" Padding="5" BorderBrush="Black" BorderThickness="1">
+             d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <Style TargetType="ToggleButton">
             <Setter Property="Padding" Value="5" />
@@ -25,19 +24,21 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <DockPanel Height="40" VerticalAlignment="Top">
-            <ToggleButton Content="All" HorizontalAlignment="Left" IsChecked="True" />
-            <ToggleButton Content="Error" HorizontalAlignment="Left" />
-            <ToggleButton Content="Warning" HorizontalAlignment="Left" />
-            <ToggleButton Content="Info" HorizontalAlignment="Left" />
-            <ToggleButton Content="Debug" HorizontalAlignment="Left" />
-            <ToggleButton Content="Clear" HorizontalAlignment="Right" Margin="0,0,0,0" />
+        <DockPanel>
+            <DockPanel Height="35" DockPanel.Dock="Top">
+                <ToggleButton Content="All" HorizontalAlignment="Left" IsChecked="True" />
+                <ToggleButton Content="Error" HorizontalAlignment="Left" />
+                <ToggleButton Content="Warning" HorizontalAlignment="Left" />
+                <ToggleButton Content="Info" HorizontalAlignment="Left" />
+                <ToggleButton Content="Debug" HorizontalAlignment="Left" />
+                <ToggleButton Content="Clear" HorizontalAlignment="Right" Margin="0,0,0,0" />
+            </DockPanel>
+            <ListView Name="listViewLogs" Margin="0,5,0,0" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListViewItem Content="Error" Style="{StaticResource Error}" />
+                <ListViewItem Content="Warning" Style="{StaticResource Warning}" />
+                <ListViewItem Content="Info" Style="{StaticResource Info}" />
+                <ListViewItem Content="Debug" Style="{StaticResource Debug}" />
+            </ListView>
         </DockPanel>
-        <ListView Name="listViewLogs" Margin="0,45,0,0" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <ListViewItem Content="Error" Style="{StaticResource Error}" />
-            <ListViewItem Content="Warning" Style="{StaticResource Warning}" />
-            <ListViewItem Content="Info" Style="{StaticResource Info}" />
-            <ListViewItem Content="Debug" Style="{StaticResource Debug}" />
-        </ListView>
     </Grid>
 </UserControl>
