@@ -5,7 +5,8 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Json;
+//using System.Runtime.Serialization.Json;
+using Newtonsoft.Json;
 
 
 
@@ -72,7 +73,10 @@ namespace VehicleLib
 		{
 			try
 			{
-				string s = o.ToJson();
+				JsonSerializer js = new JsonSerializer();
+				JsonWriter jw = null;
+				js.Serialize(jw,o);
+				string s = jw.ToString();
 				Encoding ASCII = Encoding.ASCII;
 				Byte[] ByteGet = ASCII.GetBytes(s);
 				_socket.Send(ByteGet, ByteGet.Length, 0);
@@ -153,37 +157,37 @@ namespace VehicleLib
 
 	// Extension methods for JSON serialization/deserialization - should move to a generic include?
 	// http://www.jarloo.com/serialize-to-json/
-	public static class Extensions
-	{
-		public static string ToJson<T>(this T obj)
-		{
-			MemoryStream stream = new MemoryStream();
-			try
-			{
-				DataContractJsonSerializer jsSerializer = new DataContractJsonSerializer(typeof(T));
-				jsSerializer.WriteObject(stream, obj);
-				return Encoding.UTF8.GetString(stream.ToArray());
-			}
-			finally
-			{
-				stream.Close(); stream.Dispose();
-			}
-		}
+	//public static class Extensions
+	//{
+	//    public static string ToJson<T>(this T obj)
+	//    {
+	//        MemoryStream stream = new MemoryStream();
+	//        try
+	//        {
+	//            DataContractJsonSerializer jsSerializer = new DataContractJsonSerializer(typeof(T));
+	//            jsSerializer.WriteObject(stream, obj);
+	//            return Encoding.UTF8.GetString(stream.ToArray());
+	//        }
+	//        finally
+	//        {
+	//            stream.Close(); stream.Dispose();
+	//        }
+	//    }
 
-		public static T FromJson<T>(this string input)
-		{
-			MemoryStream stream = new MemoryStream();
-			try
-			{
-				DataContractJsonSerializer jsSerializer = new DataContractJsonSerializer(typeof(T));
-				stream = new MemoryStream(Encoding.UTF8.GetBytes(input));
-				T obj = (T)jsSerializer.ReadObject(stream);
-				return obj;
-			}
-			finally
-			{
-				stream.Close(); stream.Dispose();
-			}
-		}
-	}
+	//    public static T FromJson<T>(this string input)
+	//    {
+	//        MemoryStream stream = new MemoryStream();
+	//        try
+	//        {
+	//            DataContractJsonSerializer jsSerializer = new DataContractJsonSerializer(typeof(T));
+	//            stream = new MemoryStream(Encoding.UTF8.GetBytes(input));
+	//            T obj = (T)jsSerializer.ReadObject(stream);
+	//            return obj;
+	//        }
+	//        finally
+	//        {
+	//            stream.Close(); stream.Dispose();
+	//        }
+	//    }
+	//}
 } // end namespace
