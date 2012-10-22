@@ -11,17 +11,15 @@ using System.Runtime.Serialization.Json;
 
 namespace VehicleLib
 {
-	class VehiclePipe
+	public class VehiclePipe
 	{
 		// private members
 		private Socket _socket;
-		private bool _connected;
 		private string _password;
 
 		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
 		public void Connect(string ip, ushort port)
 		{
-			_connected = false;
 			if (_socket != null)
 			{
 				throw new ConnectionException("Device already controlled/connected to a client.");
@@ -30,9 +28,6 @@ namespace VehicleLib
 			IPEndPoint hostEndPoint;
 			IPAddress hostAddress = null;
 			Encoding ASCII = Encoding.ASCII;
-			string Get = "GET / HTTP/1.1\r\nHost: " + server +
-						 "\r\nConnection: Close\r\n\r\n";
-			Byte[] ByteGet = ASCII.GetBytes(Get);
 			Byte[] RecvBytes = new Byte[256];
 
 
@@ -48,7 +43,7 @@ namespace VehicleLib
 				hostEndPoint = new IPEndPoint(hostAddress, port);
 
 				// Creates the Socket to send data over a TCP connection.
-				_socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+				_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 				// Connect to the host using its IPEndPoint.
 				_socket.Connect(hostEndPoint);
@@ -59,10 +54,7 @@ namespace VehicleLib
 					_socket = null;
 					continue;
 				}
-
-				// Sent the GET request to the host.
-				_socket.Send(ByteGet, ByteGet.Length, 0);
-				_connected = true;
+				return;
 			} // End of the for loop. 
 
 			// ?? failed to connect
@@ -74,7 +66,6 @@ namespace VehicleLib
 		{
 			_socket.Close();
 			_socket = null;
-			_connected = false;
 		}
 
 		private void Send(Object o)
@@ -89,14 +80,12 @@ namespace VehicleLib
 			catch (TimeoutException)
 			{
 				// Log error and rethrow
-				_connected = false;
 				_socket = null;
 				throw new ConnectionException("Connection timed out.");
 			}
 			catch (Exception ex)
 			{
 				// Log error and rethrow
-				_connected = false;
 				_socket = null;
 				throw new ConnectionException("Something went wrong in VehiclePipe.Send(Object o) | " + ex.Message, ex);
 			}
@@ -133,20 +122,18 @@ namespace VehicleLib
 			catch (TimeoutException)
 			{
 				// Log error and rethrow
-				_connected = false;
 				_socket = null;
 				throw new ConnectionException("Connection timed out.");
 			}
 			catch (Exception ex)
 			{
 				// Log error and rethrow
-				_connected = false;
 				_socket = null;
 				throw new ConnectionException("Something went wrong in VehiclePipe.Recv(string s) | " + ex.Message, ex);
 			}
 		}
 
-		public void setPassword(string password)
+		public void SetPassword(string password)
 		{
 			_password = password;
 		}
@@ -159,7 +146,7 @@ namespace VehicleLib
 
 		public bool Connected
 		{
-			get { return _connected; }
+			get { return _socket.Connected; }
 		}
 	} // end class VehiclePipe
 

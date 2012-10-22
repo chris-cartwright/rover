@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="BroadcastListener.cs" />
     <Compile Include="ConnectionException.cs" />
     <Compile Include="LowVoltageException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

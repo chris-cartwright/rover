@@ -5,7 +5,8 @@ using System.Text;
 
 namespace VehicleLib
 {
-	class ConnectionException : VehicleException
+	[Serializable]
+	public class ConnectionException : VehicleException
 	{
 		public ConnectionException() { }
 

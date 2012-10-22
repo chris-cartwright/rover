@@ -5,7 +5,8 @@ using System.Text;
 
 namespace VehicleLib
 {
-	class LowVoltageException : VehicleException
+	[Serializable]
+	public class LowVoltageException : VehicleException
 	{
 		// private members
 		private float _voltage;

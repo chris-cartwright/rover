@@ -5,7 +5,7 @@ using System.Text;
 
 namespace VehicleLib
 {
-	class Query
+	public class Query
 	{
 	}
 }

@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VehicleLib;
 
 namespace VDash
 {
@@ -21,6 +22,10 @@ namespace VDash
     {
         public MainWindow()
         {
+			VehiclePipe vp;
+			
+
+			// need a deletegate to update available vehicles.
             InitializeComponent();
         }
 

@@ -5,7 +5,8 @@ using System.Text;
 
 namespace VehicleLib
 {
-	class SensorException : VehicleException
+	[Serializable]
+	public class SensorException : VehicleException
 	{
 		// private members
 		private uint _id;
@@ -24,7 +25,7 @@ namespace VehicleLib
 		}
 
 		// Properties - getters only
-		public float getID()
+		public float GetID()
 		{
 			return _id;
 		}

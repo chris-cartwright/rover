@@ -6,7 +6,7 @@ using System.Text;
 namespace VehicleLib
 {
 	[Serializable]
-	class VehicleException : System.Exception
+	public class VehicleException : System.Exception
 	{
 		public VehicleException () { }
 
