@@ -34,7 +34,7 @@ namespace VehicleLib
 						 "\r\nConnection: Close\r\n\r\n";
 			Byte[] ByteGet = ASCII.GetBytes(Get);
 			Byte[] RecvBytes = new Byte[256];
-			int conPort = 54321;
+
 
 			// Get DNS host information.
 			IPHostEntry hostInfo = Dns.GetHostEntry(server);
@@ -45,7 +45,7 @@ namespace VehicleLib
 			for (int index = 0; index < IPaddresses.Length; index++)
 			{
 				hostAddress = IPaddresses[index];
-				hostEndPoint = new IPEndPoint(hostAddress, conPort);
+				hostEndPoint = new IPEndPoint(hostAddress, port);
 
 				// Creates the Socket to send data over a TCP connection.
 				_socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
@@ -74,15 +74,32 @@ namespace VehicleLib
 		{
 			_socket.Close();
 			_socket = null;
-			_connected = true;
+			_connected = false;
 		}
 
 		private void Send(Object o)
 		{
-			string s = o.ToJson();
-			Encoding ASCII = Encoding.ASCII;
-			Byte[] ByteGet = ASCII.GetBytes(s);
-			_socket.Send(ByteGet, ByteGet.Length, 0);
+			try
+			{
+				string s = o.ToJson();
+				Encoding ASCII = Encoding.ASCII;
+				Byte[] ByteGet = ASCII.GetBytes(s);
+				_socket.Send(ByteGet, ByteGet.Length, 0);
+			}
+			catch (TimeoutException)
+			{
+				// Log error and rethrow
+				_connected = false;
+				_socket = null;
+				throw new ConnectionException("Connection timed out.");
+			}
+			catch (Exception ex)
+			{
+				// Log error and rethrow
+				_connected = false;
+				_socket = null;
+				throw new ConnectionException("Something went wrong in VehiclePipe.Send(Object o) | " + ex.Message, ex);
+			}
 		}
 
 		public void Send (Query q)
@@ -97,18 +114,35 @@ namespace VehicleLib
 
 		private void Recv(string s)
 		{
-			// Receive the host home page content and loop until all the data is received.
-			Byte[] RecvBytes = new Byte[256];
-			string strRetPage = "";
-			Encoding ASCII = Encoding.ASCII;
-			Int32 bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
-			
-			strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
-
-			while (bytes > 0)
+			try
 			{
-				bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
+				// Receive the host home page content and loop until all the data is received.
+				Byte[] RecvBytes = new Byte[256];
+				string strRetPage = "";
+				Encoding ASCII = Encoding.ASCII;
+				Int32 bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
+
 				strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
+
+				while (bytes > 0)
+				{
+					bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
+					strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
+				}
+			}
+			catch (TimeoutException)
+			{
+				// Log error and rethrow
+				_connected = false;
+				_socket = null;
+				throw new ConnectionException("Connection timed out.");
+			}
+			catch (Exception ex)
+			{
+				// Log error and rethrow
+				_connected = false;
+				_socket = null;
+				throw new ConnectionException("Something went wrong in VehiclePipe.Recv(string s) | " + ex.Message, ex);
 			}
 		}
 
@@ -117,13 +151,11 @@ namespace VehicleLib
 			_password = password;
 		}
 
-
 		// Properties - getters only
 		public Socket Socket
 		{
 			get { return _socket; }
 		}
-
 
 		public bool Connected
 		{
