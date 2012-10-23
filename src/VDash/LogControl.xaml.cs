@@ -11,42 +11,165 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace VDash
 {
 	/// <summary>
-	/// Interaction logic for LogControl.xaml
+	/// Hosts all log output. Static functions are available to insert logs into the control.
+	/// Any log submitted will be posted to every instance of LogControl.
 	/// </summary>
 	public partial class LogControl : UserControl
 	{
+		/// <summary>
+		/// Log level of the message.
+		/// </summary>
+		private enum MessageType { All, Error, Warning, Info, Debug };
+
+		/// <summary>
+		/// Represents each item in the ListBox.
+		/// </summary>
+		private class LogItem
+		{
+			public MessageType Type { get; set; }
+			public string Message { get; set; }
+			public DateTime Time { get; private set; }
+
+			public LogItem()
+			{
+				Time = DateTime.Now;
+			}
+
+			public override string ToString()
+			{
+				return Message;
+			}
+		}
+
+		/// <summary>
+		/// DataContext for this Window.
+		/// </summary>
+		private class DataSource : INotifyPropertyChanged
+		{
+			public event PropertyChangedEventHandler PropertyChanged;
+
+			private ObservableCollection<LogItem> _logs;
+			public ObservableCollection<LogItem> Logs
+			{
+				get { return _logs; }
+				set { _logs = value; Notify("Logs"); }
+			}
+
+			private MessageType _type = MessageType.All;
+			public MessageType Type
+			{
+				get { return _type; }
+				set { _type = value; Notify("Type"); }
+			}
+
+			public DataSource()
+			{
+				Logs = new ObservableCollection<LogItem>();
+			}
+
+			private void Notify(string name)
+			{
+				if (PropertyChanged == null)
+					return;
+
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+			}
+		}
+
+		/// <summary>
+		/// Only used to specify whether or not a ListBoxItem should be shown.
+		/// Would be private if it could be.
+		/// </summary>
+		internal class LogVisibleConverter : IMultiValueConverter
+		{
+			public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				if (values.Length != 2)
+					return DependencyProperty.UnsetValue;
+
+				int setting = (int)values[0];
+				int self = (int)values[1];
+
+				return (setting == (int)MessageType.All || setting == self ? Visibility.Visible : Visibility.Collapsed);
+			}
+
+			public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Used by each instance of LogControl to display the newly submitted log.
+		/// </summary>
+		private static event Action<MessageType, string> OnLogReceived;
+
+		private static void SendOnLogReceived(MessageType type, string message)
+		{
+			if (OnLogReceived == null)
+				return;
+
+			OnLogReceived(type, message);
+		}
+
 		public static void Error(string msg)
 		{
-			//
+			SendOnLogReceived(MessageType.Error, msg);
 		}
 
 		public static void Error(Exception ex)
 		{
-			//
+			Error(ex.Message);
 		}
 
 		public static void Warning(string msg)
 		{
-			//
+			SendOnLogReceived(MessageType.Error, msg);
 		}
 
 		public static void Info(string msg)
 		{
-			//
+			SendOnLogReceived(MessageType.Info, msg);
 		}
 
 		public static void Debug(string msg)
 		{
-			//
+			SendOnLogReceived(MessageType.Debug, msg);
 		}
+
+		private DataSource ds;
 
 		public LogControl()
 		{
+			ds = new DataSource();
+			this.DataContext = ds;
+
 			InitializeComponent();
+
+			OnLogReceived += LogReceived;
+
+#if DEBUG
+			ds.Logs.Add(new LogItem() { Message = "Error", Type = MessageType.Error });
+			ds.Logs.Add(new LogItem() { Message = "Warning", Type = MessageType.Warning });
+			ds.Logs.Add(new LogItem() { Message = "Info", Type = MessageType.Info });
+			ds.Logs.Add(new LogItem() { Message = "Debug", Type = MessageType.Debug });
+#endif
+		}
+
+		private void Clear_Click(object sender, RoutedEventArgs e)
+		{
+			ds.Logs.Clear();
+		}
+
+		private void LogReceived(MessageType type, string message)
+		{
+			ds.Logs.Add(new LogItem() { Type = type, Message = message });
 		}
 	}
 }

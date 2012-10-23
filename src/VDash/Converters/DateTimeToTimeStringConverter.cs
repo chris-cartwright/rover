@@ -6,6 +6,9 @@ using System.Windows.Data;
 
 namespace VDash.Converters
 {
+	/// <summary>
+	/// Converts a DateTime object to a time string with the format: [hh:mm:ss]
+	/// </summary>
 	[ValueConversion(typeof(DateTime), typeof(string))]
 	public class DateTimeToTimeStringConverter : IValueConverter
 	{

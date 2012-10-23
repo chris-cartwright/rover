@@ -67,6 +67,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\DateTimeToTimeStringConverter.cs" />
+    <Compile Include="Converters\EnumRadioButtonConverter.cs" />
+    <Compile Include="Converters\ProxyMultiConverter.cs" />
     <Compile Include="LogControl.xaml.cs">
       <DependentUpon>LogControl.xaml</DependentUpon>
     </Compile>
