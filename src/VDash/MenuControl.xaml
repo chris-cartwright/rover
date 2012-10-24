@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Menu >
         <MenuItem Header="_File">
-            <MenuItem Command="ApplicationCommands.Close"/>
+            <MenuItem Header="_Key Bindings" Click="KeyBindings_Click" />
+            <MenuItem Command="ApplicationCommands.Close" />
         </MenuItem>
         <MenuItem Header="_Window" />
         <MenuItem Header="_Help" />

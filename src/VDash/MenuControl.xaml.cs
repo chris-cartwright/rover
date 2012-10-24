@@ -23,5 +23,12 @@ namespace VDash
         {
             InitializeComponent();
         }
+
+		private void KeyBindings_Click(object sender, RoutedEventArgs e)
+		{
+			KeyBindingsWindow kbw = new KeyBindingsWindow();
+			kbw.Owner = Window.GetWindow(this);
+			kbw.Show();
+		}
     }
 }
