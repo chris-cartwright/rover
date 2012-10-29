@@ -62,6 +62,7 @@
     <Compile Include="ConnectionException.cs" />
     <Compile Include="Forward.cs" />
     <Compile Include="Left.cs" />
+    <Compile Include="LightSensor.cs" />
     <Compile Include="LightState.cs" />
     <Compile Include="LowVoltageException.cs" />
     <Compile Include="MoveState.cs" />
@@ -69,7 +70,9 @@
     <Compile Include="Query.cs" />
     <Compile Include="Right.cs" />
     <Compile Include="SensorException.cs" />
+    <Compile Include="SensorInfo.cs" />
     <Compile Include="State.cs" />
+    <Compile Include="TempSensor.cs" />
     <Compile Include="TurnState.cs" />
     <Compile Include="VehicleException.cs" />
     <Compile Include="VehiclePipe.cs" />
