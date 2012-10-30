@@ -8,10 +8,15 @@ namespace VehicleLib
     [Serializable]
 	public class Query
 	{
+		// public members
+		public delegate void CallbackHandler(SensorInfo si);  //Note from Dave: not sure how this is supposed to work yet
+
         // private members
         private uint _id;
         private uint _sensor;
-        private delegate void callBack();  //Note from Dave: not sure how this is supposed to work yet
+
+		public CallbackHandler Callback;
+
 
         // constructors
 		public Query() { }

@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-//using System.Runtime.Serialization.Json;
+using System.Reflection;
 using Newtonsoft.Json;
 
 
@@ -15,11 +15,17 @@ namespace VehicleLib
 	public class VehiclePipe
 	{
 		// private members
+		public delegate void ExceptionHandler(Exception ex);
 		private Socket _socket;
-		private string _password;
+	//	private string _password;
+		private Dictionary<uint, Query.CallbackHandler> _callbacks;
+		private uint _callbackCounter;
+		public event ExceptionHandler OnException;
+ 		public event System.Action OnDisconnect;
 
 		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
-		public void Connect(string ip, ushort port)
+		// TODO - send down the password
+		public void Connect(string ip, ushort port) // , string password
 		{
 			if (_socket != null)
 			{
@@ -30,7 +36,6 @@ namespace VehicleLib
 			IPAddress hostAddress = null;
 			Encoding ASCII = Encoding.ASCII;
 			Byte[] RecvBytes = new Byte[256];
-
 
 			// Get DNS host information.
 			IPHostEntry hostInfo = Dns.GetHostEntry(server);
@@ -55,6 +60,8 @@ namespace VehicleLib
 					_socket = null;
 					continue;
 				}
+				_callbackCounter = 0;
+				_callbacks.Clear();
 				return;
 			} // End of the for loop. 
 
@@ -65,44 +72,55 @@ namespace VehicleLib
 
 		public void Disconnect()
 		{
-			_socket.Close();
+			try
+			{
+				_socket.Close();
+
+			}
+			catch { }
 			_socket = null;
 		}
 
-		private void Send(Object o)
+		private void SendRaw(object o, uint? callbackID)
 		{
 			try
 			{
-				JsonSerializer js = new JsonSerializer();
-				JsonWriter jw = null;
-				js.Serialize(jw,o);
-				string s = jw.ToString();
+				dynamic packet = new { cmd = o.GetType().Name, data = o };
+
+				if (callbackID != null)
+				{
+					packet.id = callbackID;
+				}
+
+				string s = JsonConvert.SerializeObject(packet);
 				Encoding ASCII = Encoding.ASCII;
 				Byte[] ByteGet = ASCII.GetBytes(s);
 				_socket.Send(ByteGet, ByteGet.Length, 0);
 			}
-			catch (TimeoutException)
-			{
-				// Log error and rethrow
-				_socket = null;
-				throw new ConnectionException("Connection timed out.");
-			}
 			catch (Exception ex)
 			{
-				// Log error and rethrow
-				_socket = null;
-				throw new ConnectionException("Something went wrong in VehiclePipe.Send(Object o) | " + ex.Message, ex);
+				if (!_socket.Connected)
+				{
+					_socket = null;
+				}
+				throw new ConnectionException("Failed to send data.", ex);
 			}
 		}
 
-		public void Send (Query q)
+		public void Send(Query q)
 		{
-			Send((Object)q);
+			if (_callbackCounter == uint.MaxValue)
+			{
+				_callbackCounter = 0;
+			}
+			++_callbackCounter;
+			_callbacks.Add(_callbackCounter, q.Callback);
+			SendRaw(q, _callbackCounter);
 		}
 
 		public void Send(Action a) // might have to be careful here. There is a System.Action 
 		{
-			Send((Object)a);
+			SendRaw(a, null);
 		}
 
 		private void Recv(string s)
@@ -122,6 +140,23 @@ namespace VehicleLib
 					bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
 					strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
 				}
+				dynamic packet = JsonConvert.DeserializeObject(strRetPage);
+
+				object receivedOject = Convert.ChangeType(packet.data, Type.GetType("VDash." + packet.cmd));
+				if (packet.id != null)
+				{
+					_callbacks[Convert.ToUInt32(packet.id)](receivedOject);
+					return;
+				}
+
+				if (packet.cmd.toString().Contains("Exception"))
+				{
+					if (OnException == null)
+					{
+						return;
+					}
+					OnException((VehicleException)receivedOject);
+				}				
 			}
 			catch (TimeoutException)
 			{
@@ -137,11 +172,6 @@ namespace VehicleLib
 			}
 		}
 
-		public void SetPassword(string password)
-		{
-			_password = password;
-		}
-
 		// Properties - getters only
 		public Socket Socket
 		{
@@ -153,41 +183,4 @@ namespace VehicleLib
 			get { return _socket.Connected; }
 		}
 	} // end class VehiclePipe
-
-
-	// Extension methods for JSON serialization/deserialization - should move to a generic include?
-	// http://www.jarloo.com/serialize-to-json/
-	//public static class Extensions
-	//{
-	//    public static string ToJson<T>(this T obj)
-	//    {
-	//        MemoryStream stream = new MemoryStream();
-	//        try
-	//        {
-	//            DataContractJsonSerializer jsSerializer = new DataContractJsonSerializer(typeof(T));
-	//            jsSerializer.WriteObject(stream, obj);
-	//            return Encoding.UTF8.GetString(stream.ToArray());
-	//        }
-	//        finally
-	//        {
-	//            stream.Close(); stream.Dispose();
-	//        }
-	//    }
-
-	//    public static T FromJson<T>(this string input)
-	//    {
-	//        MemoryStream stream = new MemoryStream();
-	//        try
-	//        {
-	//            DataContractJsonSerializer jsSerializer = new DataContractJsonSerializer(typeof(T));
-	//            stream = new MemoryStream(Encoding.UTF8.GetBytes(input));
-	//            T obj = (T)jsSerializer.ReadObject(stream);
-	//            return obj;
-	//        }
-	//        finally
-	//        {
-	//            stream.Close(); stream.Dispose();
-	//        }
-	//    }
-	//}
 } // end namespace
