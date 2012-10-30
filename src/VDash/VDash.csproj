@@ -78,6 +78,9 @@
     <Compile Include="VehicleAvailabilityControl.xaml.cs">
       <DependentUpon>VehicleAvailabilityControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VehicleKeyState.xaml.cs">
+      <DependentUpon>VehicleKeyState.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VehicleStateControl.xaml.cs">
       <DependentUpon>VehicleStateControl.xaml</DependentUpon>
     </Compile>
@@ -109,6 +112,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="VehicleAvailabilityControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VehicleKeyState.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

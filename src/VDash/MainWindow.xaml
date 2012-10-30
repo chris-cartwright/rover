@@ -27,6 +27,11 @@
                                 <local:VehicleStateControl x:Name="_state" />
                             </avalonDock:LayoutDocument>
                         </avalonDock:LayoutDocumentPane>
+                        <avalonDock:LayoutDocumentPane>
+                            <avalonDock:LayoutDocument Title="Vehicle Key State">
+                                <local:VehicleKeyState x:Name="_keyState" />
+                            </avalonDock:LayoutDocument>
+                        </avalonDock:LayoutDocumentPane>
                     </avalonDock:LayoutDocumentPaneGroup>
                     <avalonDock:LayoutAnchorablePaneGroup DockHeight="300">
                         <avalonDock:LayoutAnchorablePane>
