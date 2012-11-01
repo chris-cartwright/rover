@@ -1,0 +1,10 @@
+﻿{
+  "name": "rover",
+  "version": "0.0.1",
+  "description": "Manages a remotely controlled rover.",
+  "main": "main.js",
+  "license": "GPL",
+  "dependencies": {
+	"json-line-protocol": "0.0.3"
+  }
+}
