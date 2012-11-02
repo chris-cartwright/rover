@@ -14,5 +14,11 @@
     <Setting Name="KeyRight" Type="System.Char" Scope="User">
       <Value Profile="(Default)">d</Value>
     </Setting>
+    <Setting Name="LISTEN_PORT" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">9001</Value>
+    </Setting>
+	<Setting Name="CONNECTION_PORT" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">9000</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
