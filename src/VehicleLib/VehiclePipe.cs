@@ -35,20 +35,65 @@ namespace VehicleLib
 		/// </summary>
 		/// <param name="ip">IPv4 address of the vehicle</param>
 		/// <param name="port">Port for connection to the vehicle</param>
-		public void Connect(string ip, ushort port) // , string password
+		//public void Connect(string ip, ushort port) // , string password
+		//{
+		//    if (_socket != null)
+		//    {
+		//        throw new ConnectionException("Device already controlled/connected to a client.");
+		//    }
+		//    const string server = "localhost";
+		//    IPEndPoint hostEndPoint;
+		//    IPAddress hostAddress = null;
+		//    Encoding ASCII = Encoding.ASCII;
+		//    Byte[] RecvBytes = new Byte[256];
+
+		//    // Get DNS host information.
+		//    IPHostEntry hostInfo = Dns.GetHostEntry(server);
+		//    // Get the DNS IP addresses associated with the host.
+		//    IPAddress[] IPaddresses = hostInfo.AddressList;
+
+		//    // Evaluate the socket and receiving host IPAddress and IPEndPoint.  
+		//    for (int index = 0; index < IPaddresses.Length; index++)
+		//    {
+		//        hostAddress = IPaddresses[index];
+		//        hostEndPoint = new IPEndPoint(hostAddress, port);
+
+		//        // Creates the Socket to send data over a TCP connection.
+		//        _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+		//        // Connect to the host using its IPEndPoint.
+		//        _socket.Connect(hostEndPoint);
+
+		//        if (!_socket.Connected)
+		//        {
+		//            // Connection failed, try next IPaddress.
+		//            _socket = null;
+		//            continue;
+		//        }
+		//        _callbackCounter = 0;
+		//        _callbacks.Clear();
+		//        return;
+		//    } // End of the for loop. 
+
+		//    // ?? failed to connect
+		//    throw new ConnectionException("Failed to connect.");
+
+		//} // public void Connect()
+
+		public void Connect(IPEndPoint vehicleIPEndPoint, string password)
 		{
 			if (_socket != null)
 			{
 				throw new ConnectionException("Device already controlled/connected to a client.");
 			}
-			const string server = "localhost";
+			//const string server = "localhost";
 			IPEndPoint hostEndPoint;
 			IPAddress hostAddress = null;
 			Encoding ASCII = Encoding.ASCII;
 			Byte[] RecvBytes = new Byte[256];
 
 			// Get DNS host information.
-			IPHostEntry hostInfo = Dns.GetHostEntry(server);
+			IPHostEntry hostInfo = Dns.GetHostEntry(vehicleIPEndPoint.Address);
 			// Get the DNS IP addresses associated with the host.
 			IPAddress[] IPaddresses = hostInfo.AddressList;
 
@@ -56,13 +101,13 @@ namespace VehicleLib
 			for (int index = 0; index < IPaddresses.Length; index++)
 			{
 				hostAddress = IPaddresses[index];
-				hostEndPoint = new IPEndPoint(hostAddress, port);
+				hostEndPoint = new IPEndPoint(hostAddress, vehicleIPEndPoint.Port);
 
 				// Creates the Socket to send data over a TCP connection.
 				_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 				// Connect to the host using its IPEndPoint.
-				_socket.Connect(hostEndPoint);
+				_socket.Connect(hostEndPoint);				
 
 				if (!_socket.Connected)
 				{
@@ -70,15 +115,14 @@ namespace VehicleLib
 					_socket = null;
 					continue;
 				}
+
+				Byte[] ByteGet = ASCII.GetBytes(password);
+				_socket.Send(ByteGet, ByteGet.Length, 0); // should be sent as a Query object for password validation response from vehicle
 				_callbackCounter = 0;
 				_callbacks.Clear();
 				return;
-			} // End of the for loop. 
-
-			// ?? failed to connect
-			throw new ConnectionException("Failed to connect.");
-
-		} // public void Connect()
+			}
+		}
 
 		/// <summary>
 		/// void Diconnect()
