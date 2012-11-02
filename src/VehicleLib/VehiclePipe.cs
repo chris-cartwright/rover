@@ -26,60 +26,14 @@ namespace VehicleLib
 		public event ExceptionHandler OnException;
  		public event System.Action OnDisconnect;
 
-		/// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
-		// TODO - send down the password
+		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
 		/// <summary>
-		/// void Connect(string ip, ushort port)
+		/// void Connect(IPEndPoint vehicleIPEndPoint, string password)
 		/// Connects to a vehicle on a supplied ip and port
 		/// Uses any avaible port on local machine
 		/// </summary>
-		/// <param name="ip">IPv4 address of the vehicle</param>
-		/// <param name="port">Port for connection to the vehicle</param>
-		//public void Connect(string ip, ushort port) // , string password
-		//{
-		//    if (_socket != null)
-		//    {
-		//        throw new ConnectionException("Device already controlled/connected to a client.");
-		//    }
-		//    const string server = "localhost";
-		//    IPEndPoint hostEndPoint;
-		//    IPAddress hostAddress = null;
-		//    Encoding ASCII = Encoding.ASCII;
-		//    Byte[] RecvBytes = new Byte[256];
-
-		//    // Get DNS host information.
-		//    IPHostEntry hostInfo = Dns.GetHostEntry(server);
-		//    // Get the DNS IP addresses associated with the host.
-		//    IPAddress[] IPaddresses = hostInfo.AddressList;
-
-		//    // Evaluate the socket and receiving host IPAddress and IPEndPoint.  
-		//    for (int index = 0; index < IPaddresses.Length; index++)
-		//    {
-		//        hostAddress = IPaddresses[index];
-		//        hostEndPoint = new IPEndPoint(hostAddress, port);
-
-		//        // Creates the Socket to send data over a TCP connection.
-		//        _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-		//        // Connect to the host using its IPEndPoint.
-		//        _socket.Connect(hostEndPoint);
-
-		//        if (!_socket.Connected)
-		//        {
-		//            // Connection failed, try next IPaddress.
-		//            _socket = null;
-		//            continue;
-		//        }
-		//        _callbackCounter = 0;
-		//        _callbacks.Clear();
-		//        return;
-		//    } // End of the for loop. 
-
-		//    // ?? failed to connect
-		//    throw new ConnectionException("Failed to connect.");
-
-		//} // public void Connect()
-
+		/// <param name="vehicleIPEndPoint">System.Net.IPEndPoint of the vehicle</param>
+		/// <param name="password">string</param>
 		public void Connect(IPEndPoint vehicleIPEndPoint, string password)
 		{
 			if (_socket != null)
