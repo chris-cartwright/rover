@@ -12,19 +12,29 @@ using Newtonsoft.Json;
 
 namespace VehicleLib
 {
+	/// <summary>
+	/// class VehiclePipe
+	/// Library to connect, send commands to and recieve signals from a vehicle.
+	/// </summary>
 	public class VehiclePipe
 	{
 		// private members
 		public delegate void ExceptionHandler(Exception ex);
 		private Socket _socket;
-	//	private string _password;
 		private Dictionary<uint, Query.CallbackHandler> _callbacks;
 		private uint _callbackCounter;
 		public event ExceptionHandler OnException;
  		public event System.Action OnDisconnect;
 
-		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
+		/// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
 		// TODO - send down the password
+		/// <summary>
+		/// void Connect(string ip, ushort port)
+		/// Connects to a vehicle on a supplied ip and port
+		/// Uses any avaible port on local machine
+		/// </summary>
+		/// <param name="ip">IPv4 address of the vehicle</param>
+		/// <param name="port">Port for connection to the vehicle</param>
 		public void Connect(string ip, ushort port) // , string password
 		{
 			if (_socket != null)
@@ -70,6 +80,10 @@ namespace VehicleLib
 
 		} // public void Connect()
 
+		/// <summary>
+		/// void Diconnect()
+		/// Disconnect from a vehicle.
+		/// </summary>
 		public void Disconnect()
 		{
 			try
@@ -81,6 +95,13 @@ namespace VehicleLib
 			_socket = null;
 		}
 
+		/// <summary>
+		/// void SendRaw(object o, uint? callbackID)
+		/// Send any Serializable oject to a vehicle.
+		/// Oject is serialized using JSON JsonConvert.SerializeObject.
+		/// </summary>
+		/// <param name="o">ojbect to send</param>
+		/// <param name="callbackID">Optional parameter, used when sending an object that expects an object to be returned from the vehicle.</param>
 		private void SendRaw(object o, uint? callbackID)
 		{
 			try
@@ -107,6 +128,14 @@ namespace VehicleLib
 			}
 		}
 
+		/// <summary>
+		/// void Send (Query q)
+		/// Sends a query to a vehicle requesting a sensor value.
+		/// Adds a callback to the callback Dictionary.
+		/// Non-blocking, the order the Queries are sent will not neccessarily be the order the Quiers are returned.
+		/// </summary>
+		/// <param name="q">Query object to send to Rover</param>
+		/// Exceptions are allowed to bubble
 		public void Send(Query q)
 		{
 			if (_callbackCounter == uint.MaxValue)
@@ -118,11 +147,25 @@ namespace VehicleLib
 			SendRaw(q, _callbackCounter);
 		}
 
+		/// <summary>
+		/// void Send (Action a)
+		/// Different actions have different functionality.
+		/// Some Actions may persist a device state until a new state is set, while others may cause a device to 
+		/// perform an "instance movement" where the device stops once a state is reaches... think of an arm instructed to extend. 
+		/// Exceptions are allowed to bubble
+		/// </summary>
+		/// <param name="q">Action object to send to Rover</param>	
 		public void Send(Action a) // might have to be careful here. There is a System.Action 
 		{
 			SendRaw(a, null);
 		}
 
+		/// <summary>
+		/// void Recv(string s)
+		/// Recieves a string from a vehicle expecting a JSON serialized oject.
+		/// Recieved string must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd] 
+		/// </summary>
+		/// <param name="s">String received from a vehicle.  Should be proper JSON notation.</param>
 		private void Recv(string s)
 		{
 			try
