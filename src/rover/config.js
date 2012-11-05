@@ -6,7 +6,9 @@ var config = {
 	},
 	bcast: {
 		interval: 5000
-	}
+	},
+	passwd: "pwd",
+	debug: true
 };
 
 module.exports = config;

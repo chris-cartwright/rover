@@ -47,8 +47,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.js" />
+    <Content Include="control_pipe.js" />
+    <Content Include="exceptions.js" />
+    <Content Include="logger.js" />
     <Content Include="main.js" />
     <Content Include="pins.js" />
+    <Content Include="queries.js" />
+    <Content Include="states.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="package.json" />
