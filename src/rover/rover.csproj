@@ -46,9 +46,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="config.js" />
     <Content Include="control_pipe.js" />
+    <None Include="config.js.base" />
     <Content Include="exceptions.js" />
+    <Content Include="broadcast_sender.js" />
     <Content Include="logger.js" />
     <Content Include="main.js" />
     <Content Include="pins.js" />

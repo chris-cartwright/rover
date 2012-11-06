@@ -5,7 +5,7 @@ var config = require("./config");
 var states = require("./states");
 var queries = require("./queries");
 var ex = require("./exceptions");
-var log = require("winston");
+var log = require("./logger");
 
 var ControlPipe = new function () {
 	var _self = this;
