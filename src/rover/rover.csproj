@@ -46,6 +46,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bone.js" />
     <Content Include="control_pipe.js" />
     <None Include="config.js.base" />
     <Content Include="exceptions.js" />
