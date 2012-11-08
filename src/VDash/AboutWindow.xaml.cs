@@ -31,42 +31,46 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Diagnostics;
-using path = System.IO.Path;
 
 namespace VDash
 {
-    /// <summary>
-    /// Interaction logic for MenuControl.xaml
-    /// </summary>
-    public partial class MenuControl : UserControl
-    {
-        public MenuControl()
-        {
-            InitializeComponent();
-        }
+	/// <summary>
+	/// Interaction logic for AboutWindow.xaml
+	/// </summary>
+	public partial class AboutWindow : Window
+	{
+		public string AboutText { get; set; }
 
-		private void KeyBindings_Click(object sender, RoutedEventArgs e)
+		public AboutWindow()
 		{
-			KeyBindingsWindow kbw = new KeyBindingsWindow();
-			kbw.Owner = Window.GetWindow(this);
-			kbw.Show();
+			AboutText = @"
+				Copyright (C) 2012 Christopher Cartwright
+				Copyright (C) 2012 Richard Payne
+				Copyright (C) 2012 Andrew Hill
+				Copyright (C) 2012 David Shirley
+    
+				This file is part of VDash.
+
+				VDash is free software: you can redistribute it and/or modify
+				it under the terms of the GNU General Public License as published by
+				the Free Software Foundation, either version 3 of the License, or
+				(at your option) any later version.
+
+				VDash is distributed in the hope that it will be useful,
+				but WITHOUT ANY WARRANTY; without even the implied warranty of
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+				GNU General Public License for more details.
+
+				You should have received a copy of the GNU General Public License
+				along with VDash.  If not, see <http://www.gnu.org/licenses/>.";
+
+			InitializeComponent();
 		}
 
-		private void About_Click(object sender, RoutedEventArgs e)
+		private void WindowClose(object sender, ExecutedRoutedEventArgs e)
 		{
-			AboutWindow aw = new AboutWindow();
-			aw.Owner = Window.GetWindow(this);
-			aw.Show();
+			Close();
 		}
-
-		private void Help_Click(object sender, RoutedEventArgs e)
-		{
-			HelpWindow hw = new HelpWindow();
-			hw.Owner = Window.GetWindow(this);
-			hw.Show();
-		}
-    }
+	}
 }
