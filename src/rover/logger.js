@@ -43,3 +43,28 @@ else
 	winston.remove(winston.transports.Console);
 
 module.exports = winston;
+
+module.exports.LabelledLogger = function (label) {
+	// Work with a new bare object
+	var ret = new Object();
+
+	ret.info = function () {
+		var args = arguments;
+		args[0] = "[" + label + "] " + args[0];
+		winston.info.apply(this, args);
+	};
+
+	ret.warn = function () {
+		var args = arguments;
+		args[0] = "[" + label + "] " + args[0];
+		winston.warn.apply(this, args);
+	};
+
+	ret.error = function () {
+		var args = arguments;
+		args[0] = "[" + label + "] " + args[0];
+		winston.error.apply(this, args);
+	};
+
+	return ret;
+};

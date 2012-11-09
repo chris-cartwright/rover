@@ -22,7 +22,7 @@ along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 
 var dgram = require("dgram");
 var config = require("./config");
-var log = require("./logger");
+var log = new require("./logger").LabelledLogger("bcast_sender");
 
 var BroadcastSender = new function () {
 	var _port = 0;

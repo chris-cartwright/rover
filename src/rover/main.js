@@ -21,7 +21,7 @@ along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 var config = require("./config");
-var log = require("./logger");
+var log = new require("./logger").LabelledLogger("main");
 
 log.info("Loading local libraries...");
 var ControlPipe = require("./control_pipe");

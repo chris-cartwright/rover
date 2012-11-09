@@ -25,7 +25,7 @@ Copyright (c) 2011 Jason Kridner <jdk@ti.com>
 */
 
 var net = require("net");
-var log = require("./logger");
+var log = new require("./logger").LabelledLogger("bone");
 
 var server = net.createServer();
 var clients = [];
