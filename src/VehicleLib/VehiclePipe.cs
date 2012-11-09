@@ -41,15 +41,12 @@ namespace VehicleLib
 		// private members
 		public delegate void ExceptionHandler(Exception ex);
 		public delegate void SensorInfoHandler(SensorInfo si);
-		public delegate void OnConnectionHandler();
 		private Socket _socket;
 		private Dictionary<uint, SensorInfoHandler> _callbacks;
-		private Dictionary<uint, OnConnectionHandler> _loginCallbacks;
 		private uint _callbackCounter;
 		public event ExceptionHandler OnException;
 		public event System.Action OnDisconnect;
 		public event SensorInfoHandler OnSensorEvent;
-		public event OnConnectionHandler OnConnect;
 
 		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
 		/// <summary>
@@ -59,7 +56,7 @@ namespace VehicleLib
 		/// </summary>
 		/// <param name="vehicleIPEndPoint">System.Net.IPEndPoint of the vehicle</param>
 		/// <param name="password">string</param>
-		public void Connect(IPEndPoint vehicleIPEndPoint, string password)
+		public void Connect(IPEndPoint vehicleIPEndPoint, Login login)
 		{
 			if (_socket != null)
 			{
@@ -97,8 +94,7 @@ namespace VehicleLib
 				_callbackCounter = 0;
 				_callbacks.Clear();
 
-				Login(password);
-				
+				Login(login);
 				return;
 			}
 		}
@@ -186,72 +182,39 @@ namespace VehicleLib
 		/// Registers a callback for the login
 		/// </summary>
 		/// <param name="password">Password to be sent to Vehicle</param>
-		private void Login(string password)
+		private void Login(Login login)
 		{
 			Encoding ASCII = Encoding.ASCII;
-
-			++_callbackCounter;
-			Login login = new Login(_callbackCounter, password);
-			_loginCallbacks.Add(_callbackCounter, login.Callback);
-
-			SendRaw(login, _callbackCounter); // should be sent as a Query object for password validation response from vehicle
+			SendRaw(login, null); // should be sent as a Query object for password validation response from vehicle
 		}
 
 		/// <summary>
 		/// Recieves a string from a vehicle expecting a JSON serialized oject.
-		/// Recieved string must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd] 
+		/// Recieved packet must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd]
+		/// Calls Command() on JSON deserialize string
 		/// </summary>
-		/// <param name="s">String received from a vehicle.  Should be proper JSON notation.</param>
-		private void Recv(string s)
+		/// <param name="packet">Packet received from a vehicle.  Must be proper JSON notation.</param>	
+		private void Recv()
 		{
+			// Receive the host home page content and loop until all the data is received.
+			Byte[] RecvBytes = new Byte[256];
+			string strRetPage = "";
+			Encoding ASCII = Encoding.ASCII;
+			Int32 bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
+
+			strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
+
+			while (bytes > 0)
+			{
+				bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
+				strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
+			}
+
+			dynamic packet = JsonConvert.DeserializeObject(strRetPage);
+
 			try
 			{
-				// Receive the host home page content and loop until all the data is received.
-				Byte[] RecvBytes = new Byte[256];
-				string strRetPage = "";
-				Encoding ASCII = Encoding.ASCII;
-				Int32 bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
-
-				strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
-
-				while (bytes > 0)
-				{
-					bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
-					strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
-				}
-				dynamic packet = JsonConvert.DeserializeObject(strRetPage);
-
-				object receivedOject = Convert.ChangeType(packet.data, Type.GetType("VDash." + packet.cmd));
-
-				if (packet.cmd.toString().Contains("Exception"))
-				{
-					if (OnException != null)
-					{
-						OnException((VehicleException)receivedOject);
-					}
-				}
-				if (packet.id != null)
-				{
-					UInt32 id = Convert.ToUInt32(packet.id);
-				//	_callbacks[id]((SensorInfo)receivedOject);
-					_callbacks[id].Invoke((SensorInfo)receivedOject);
-					_callbacks.Remove(id);
-				}				
-				else if (packet.loginId != null)
-				{
-					Login login = (Login)receivedOject;
-					UInt32 id = Convert.ToUInt32(packet.loginId);
-					_loginCallbacks[id].Invoke();
-					_loginCallbacks.Remove(id);
-				}
-				else
-				{
-					SensorInfo sens = (SensorInfo)receivedOject;
-					if (OnSensorEvent != null)
-					{
-						OnSensorEvent(sens);
-					}
-				}
+				Command(packet);
 			}
 			catch (TimeoutException)
 			{
@@ -263,7 +226,38 @@ namespace VehicleLib
 			{
 				// Log error and rethrow
 				_socket = null;
-				throw new ConnectionException("Something went wrong in VehiclePipe.Recv(string s) | " + ex.Message, ex);
+				throw new ConnectionException("Something went wrong in VehiclePipe.Recv() | " + ex.Message, ex);
+			}
+		}
+
+		/// <summary>
+		/// Accepts a dynamic packet. packet must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd] 
+		/// </summary>
+		/// <param name="packet">Packet containing a VehicleLib class object (either a SensorInfo or a VehicleException).  Must be proper JSON notation.</param>
+		private void Command(dynamic packet)
+		{
+			object receivedOject = Convert.ChangeType(packet.data, Type.GetType("VDash." + packet.cmd));
+
+			if (packet.cmd.toString().Contains("Exception"))
+			{
+				if (OnException != null)
+				{
+					OnException((VehicleException)receivedOject);
+				}
+			}
+			if (packet.id != null)
+			{
+				UInt32 id = Convert.ToUInt32(packet.id);
+				_callbacks[id]((SensorInfo)receivedOject);
+				_callbacks.Remove(id);
+			}
+			else
+			{
+				SensorInfo sens = (SensorInfo)receivedOject;
+				if (OnSensorEvent != null)
+				{
+					OnSensorEvent(sens);
+				}
 			}
 		}
 

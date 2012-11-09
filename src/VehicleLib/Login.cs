@@ -30,18 +30,14 @@ namespace VehicleLib
 {
 
 	[Serializable]
-	class Login
+	public class Login
 	{
-		private uint _loginId;
 		private string _password;
-
-		public VehiclePipe.OnConnectionHandler Callback;
 
 		public Login() { }
 
-		public Login(uint id, string password)
+		public Login(string password)
 		{
-			_loginId = id;
 			_password = password;
 		}
 	}
