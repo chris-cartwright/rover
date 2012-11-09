@@ -51,15 +51,7 @@ var ControlPipe = new function () {
 
 		if (_client != null) {
 			var e = new ex.ConcurrentConnection();
-
-			var name = e.name;
-			delete e.name;
-			var d = {
-				cmd: name,
-				data: e
-			};
-
-			socket.write(JSON.stringify(d), function () { socket.end(); });
+			_self.send(e, null, socket);
 			return;
 		}
 
@@ -77,7 +69,7 @@ var ControlPipe = new function () {
 		} catch (e) {
 			// This also catches error originating in onCommand
 			if (e.name == "SyntaxError")
-				_self.sendException(new ex.ParseFailed());
+				_self.send(new ex.ParseFailed());
 			else
 				throw e;
 		}
@@ -88,13 +80,13 @@ var ControlPipe = new function () {
 
 		if (!_validated) {
 			if (obj.cmd != "Login") {
-				_self.sendException(new ex.NoLogin());
+				_self.send(new ex.NoLogin());
 				return;
 			}
 
 			if (obj.data != config.passwd) {
 				_tries++;
-				_self.sendException(new ex.InvalidLogin(3 - _tries));
+				_self.send(new ex.InvalidLogin(3 - _tries));
 
 				if (_tries >= 3) {
 					_client.end();
@@ -112,18 +104,10 @@ var ControlPipe = new function () {
 			state[obj.cmd](obj.data);
 		else if (obj.cmd.indexOf("Query") != -1) {
 			var ret = queries[obj.cmd](obj.data.id);
-			var name = ret.name;
-			delete ret.name;
-			var d = {
-				cmd: name,
-				data: ret,
-				id: obj.id
-			};
-
-			_client.write(JSON.stringify(d));
+			_self.send({ cmd: name, data: ret }, obj.id);
 		}
 		else
-			_self.sendException(new ex.CommandNotFound(obj.cmd));
+			_self.send(new ex.CommandNotFound(obj.cmd));
 	};
 
 	function onDisconnect() {
@@ -161,29 +145,22 @@ var ControlPipe = new function () {
 		_server.listen(_port);
 	};
 
-	/**
-	* Handles one-off sensor information. Eg: a button press.
-	*/
-	this.sendSensorInfo = function (sensorInfo) {
-		var name = sensorInfo.name;
-		delete sensorInfo.name;
+	this.send = function (obj, id, socket) {
+		var name = obj.name;
+		delete obj.name;
 		var d = {
 			cmd: name,
-			data: sensorInfo
+			data: obj
 		};
 
-		_client.write(JSON.stringify(d));
-	};
+		if (typeof (id) != "undefined" && id != null)
+			d.id = id;
 
-	this.sendException = function (ex) {
-		var name = ex.name;
-		delete ex.name;
-		var d = {
-			cmd: name,
-			data: ex
-		};
-
-		_client.write(JSON.stringify(d));
+		var msg = JSON.stringify(d) + "\r\n";
+		if (typeof (socket) != "undefined")
+			socket.write(msg);
+		else
+			_client.write(msg);
 	};
 
 	this.isListening = function () {
