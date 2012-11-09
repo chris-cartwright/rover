@@ -33,6 +33,7 @@ namespace VehicleLib
         public DateTime Time;
 
         public SensorInfo() { }
+
         public SensorInfo(ushort _id, DateTime _time)
         {
             this.ID = _id;

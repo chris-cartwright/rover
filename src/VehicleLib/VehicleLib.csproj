@@ -64,6 +64,7 @@
     <Compile Include="Left.cs" />
     <Compile Include="LightSensor.cs" />
     <Compile Include="LightState.cs" />
+    <Compile Include="Login.cs" />
     <Compile Include="LowVoltageException.cs" />
     <Compile Include="MoveState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

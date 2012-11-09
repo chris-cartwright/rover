@@ -30,8 +30,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using Newtonsoft.Json;
 
-
-
 namespace VehicleLib
 {
 	/// <summary>
@@ -42,11 +40,16 @@ namespace VehicleLib
 	{
 		// private members
 		public delegate void ExceptionHandler(Exception ex);
+		public delegate void SensorInfoHandler(SensorInfo si);
+		public delegate void OnConnectionHandler();
 		private Socket _socket;
-		private Dictionary<uint, Query.CallbackHandler> _callbacks;
+		private Dictionary<uint, SensorInfoHandler> _callbacks;
+		private Dictionary<uint, OnConnectionHandler> _loginCallbacks;
 		private uint _callbackCounter;
 		public event ExceptionHandler OnException;
- 		public event System.Action OnDisconnect;
+		public event System.Action OnDisconnect;
+		public event SensorInfoHandler OnSensorEvent;
+		public event OnConnectionHandler OnConnect;
 
 		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
 		/// <summary>
@@ -65,7 +68,6 @@ namespace VehicleLib
 			//const string server = "localhost";
 			IPEndPoint hostEndPoint;
 			IPAddress hostAddress = null;
-			Encoding ASCII = Encoding.ASCII;
 			Byte[] RecvBytes = new Byte[256];
 
 			// Get DNS host information.
@@ -83,7 +85,7 @@ namespace VehicleLib
 				_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 				// Connect to the host using its IPEndPoint.
-				_socket.Connect(hostEndPoint);				
+				_socket.Connect(hostEndPoint);
 
 				if (!_socket.Connected)
 				{
@@ -92,17 +94,17 @@ namespace VehicleLib
 					continue;
 				}
 
-				Byte[] ByteGet = ASCII.GetBytes(password);
-				_socket.Send(ByteGet, ByteGet.Length, 0); // should be sent as a Query object for password validation response from vehicle
 				_callbackCounter = 0;
 				_callbacks.Clear();
+
+				Login(password);
+				
 				return;
 			}
 		}
 
 		/// <summary>
-		/// void Diconnect()
-		/// Disconnect from a vehicle.
+		/// Disconnects from a vehicle.
 		/// </summary>
 		public void Disconnect()
 		{
@@ -116,7 +118,36 @@ namespace VehicleLib
 		}
 
 		/// <summary>
-		/// void SendRaw(object o, uint? callbackID)
+		/// Sends a query to a vehicle requesting a sensor value.
+		/// Adds a callback to the callback Dictionary
+		/// Non-blocking, the order the Queries are sent will not neccessarily be the order the Quiers are returned.
+		/// </summary>
+		/// <param name="q">Query object to send to Rover</param>
+		/// Exceptions are allowed to bubble
+		public void Send(Query q)
+		{
+			if (_callbackCounter == uint.MaxValue)
+			{
+				_callbackCounter = 0;
+			}
+			++_callbackCounter;
+			_callbacks.Add(_callbackCounter, q.Callback);
+			SendRaw(q, _callbackCounter);
+		}
+
+		/// <summary>
+		/// Different actions have different functionality.
+		/// Some Actions may persist a device state until a new state is set, while others may cause a device to 
+		/// perform an "instance movement" where the device stops once a state is reaches... think of an arm instructed to extend. 
+		/// Exceptions are allowed to bubble
+		/// </summary>
+		/// <param name="q">Action object to send to Rover</param>	
+		public void Send(Action a) // might have to be careful here. There is a System.Action 
+		{
+			SendRaw(a, null);
+		}
+
+		/// <summary>
 		/// Send any Serializable oject to a vehicle.
 		/// Oject is serialized using JSON JsonConvert.SerializeObject.
 		/// </summary>
@@ -149,39 +180,24 @@ namespace VehicleLib
 		}
 
 		/// <summary>
-		/// void Send (Query q)
-		/// Sends a query to a vehicle requesting a sensor value.
-		/// Adds a callback to the callback Dictionary.
-		/// Non-blocking, the order the Queries are sent will not neccessarily be the order the Quiers are returned.
+		/// Single attempt login to a vehicle
+		/// Clears callback functions
+		/// Zeros out callback counter
+		/// Registers a callback for the login
 		/// </summary>
-		/// <param name="q">Query object to send to Rover</param>
-		/// Exceptions are allowed to bubble
-		public void Send(Query q)
+		/// <param name="password">Password to be sent to Vehicle</param>
+		private void Login(string password)
 		{
-			if (_callbackCounter == uint.MaxValue)
-			{
-				_callbackCounter = 0;
-			}
+			Encoding ASCII = Encoding.ASCII;
+
 			++_callbackCounter;
-			_callbacks.Add(_callbackCounter, q.Callback);
-			SendRaw(q, _callbackCounter);
+			Login login = new Login(_callbackCounter, password);
+			_loginCallbacks.Add(_callbackCounter, login.Callback);
+
+			SendRaw(login, _callbackCounter); // should be sent as a Query object for password validation response from vehicle
 		}
 
 		/// <summary>
-		/// void Send (Action a)
-		/// Different actions have different functionality.
-		/// Some Actions may persist a device state until a new state is set, while others may cause a device to 
-		/// perform an "instance movement" where the device stops once a state is reaches... think of an arm instructed to extend. 
-		/// Exceptions are allowed to bubble
-		/// </summary>
-		/// <param name="q">Action object to send to Rover</param>	
-		public void Send(Action a) // might have to be careful here. There is a System.Action 
-		{
-			SendRaw(a, null);
-		}
-
-		/// <summary>
-		/// void Recv(string s)
 		/// Recieves a string from a vehicle expecting a JSON serialized oject.
 		/// Recieved string must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd] 
 		/// </summary>
@@ -206,20 +222,36 @@ namespace VehicleLib
 				dynamic packet = JsonConvert.DeserializeObject(strRetPage);
 
 				object receivedOject = Convert.ChangeType(packet.data, Type.GetType("VDash." + packet.cmd));
-				if (packet.id != null)
-				{
-					_callbacks[Convert.ToUInt32(packet.id)](receivedOject);
-					return;
-				}
 
 				if (packet.cmd.toString().Contains("Exception"))
 				{
-					if (OnException == null)
+					if (OnException != null)
 					{
-						return;
+						OnException((VehicleException)receivedOject);
 					}
-					OnException((VehicleException)receivedOject);
+				}
+				if (packet.id != null)
+				{
+					UInt32 id = Convert.ToUInt32(packet.id);
+				//	_callbacks[id]((SensorInfo)receivedOject);
+					_callbacks[id].Invoke((SensorInfo)receivedOject);
+					_callbacks.Remove(id);
 				}				
+				else if (packet.loginId != null)
+				{
+					Login login = (Login)receivedOject;
+					UInt32 id = Convert.ToUInt32(packet.loginId);
+					_loginCallbacks[id].Invoke();
+					_loginCallbacks.Remove(id);
+				}
+				else
+				{
+					SensorInfo sens = (SensorInfo)receivedOject;
+					if (OnSensorEvent != null)
+					{
+						OnSensorEvent(sens);
+					}
+				}
 			}
 			catch (TimeoutException)
 			{

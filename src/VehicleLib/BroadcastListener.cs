@@ -22,8 +22,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using Newtonsoft.Json;
 
 namespace VehicleLib
 {
@@ -33,36 +38,40 @@ namespace VehicleLib
 		public delegate void VehicleBroadcastHandler(string name, IPEndPoint ipEndPoint);
 		public event VehicleBroadcastHandler VehicleBroadcastEvent;
 		
-		/// <summary>Listener
-		/// void Start(ushort listenPort)
-		/// Listens for UPD broadcasts on specified port using local machine network settings.
-		/// Raises on event on detection passing 
+		/// <summary>
+		/// Listens for Vehicle Broadcasts using UPD broadcasts on specified port using local machine network settings for broardcast IP.
+		/// Raises on event on vehicle broardcast received
 		/// </summary>
 		/// <param name="listenPort">Port to listen for vehicle broadcasts</param>
 		// http://msdn.microsoft.com/en-us/library/tst0kwb1.aspx
-		public void Start(ushort listenPort, ushort connectionPort)
+		public void Start(ushort listenPort)
 		{
 			//bool done = false;
 			UdpClient listener = new UdpClient(listenPort);
 			IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, listenPort);
-
+			Encoding ASCII = Encoding.ASCII;
 			try {
 				while (!_quit)
 				{
 					// Waiting for broadcast
 					byte[] bytes = listener.Receive(ref groupEP);
-					
-					//Console.WriteLine("Received broadcast from {0} :\n {1}\n",
-					//	groupEP.ToString(),
-					//	Encoding.ASCII.GetString(bytes, 0, bytes.Length));
-
-					// check if the broadcast came from a vehicle
 
 					// add to event
 					string name = "";
 					string ipString = "";
-					IPEndPoint vehicleIPEndPoint = new IPEndPoint(IPAddress.Parse(ipString), connectionPort);
-					VehicleBroadcastEvent(name, vehicleIPEndPoint);
+					ushort connectionPort;
+					try
+					{
+						// get string for ip
+						dynamic received = JsonConvert.DeserializeObject(bytes.ToString());
+						//dynamic received = JsonConvert.DeserializeObject(Encoding.ASCII.GetString(bytes, 0, bytes.Length));
+						name = received.name;
+						connectionPort = received.port;
+
+						IPEndPoint vehicleIPEndPoint = new IPEndPoint(IPAddress.Parse(ipString), connectionPort);
+						VehicleBroadcastEvent(name, vehicleIPEndPoint);
+					}
+					catch { } // caught a broad cast that is not formatted correctly (not from a vehicle)
 				}
 			}
 			catch (Exception ex)
