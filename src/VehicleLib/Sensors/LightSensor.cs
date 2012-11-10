@@ -25,16 +25,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib
+namespace VehicleLib.Sensors
 {
     public class LightSensor : SensorInfo
     {
         public byte Level;
 
         public LightSensor() { }
-        public LightSensor(byte _lvl)
+
+        public LightSensor(byte level)
         {
-            this.Level = _lvl;            
+            this.Level = level;            
         }
     }
 }

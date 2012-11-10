@@ -40,7 +40,7 @@ namespace VehicleLib
 	{
 		// private members
 		public delegate void ErrorHandler(VehicleLib.Errors.Error err);
-		public delegate void SensorInfoHandler(SensorInfo si);
+		public delegate void SensorInfoHandler(Sensors.SensorInfo si);
 		private Socket _socket;
 		private Dictionary<uint, SensorInfoHandler> _callbacks;
 		private uint _callbackCounter;
@@ -262,12 +262,12 @@ namespace VehicleLib
 			if (packet.id != null)
 			{
 				UInt32 id = Convert.ToUInt32(packet.id);
-				_callbacks[id]((SensorInfo)receivedOject);
+				_callbacks[id]((Sensors.SensorInfo)receivedOject);
 				_callbacks.Remove(id);
 			}
 			else
 			{
-				SensorInfo sens = (SensorInfo)receivedOject;
+				Sensors.SensorInfo sens = (Sensors.SensorInfo)receivedOject;
 				if (OnSensorEvent != null)
 				{
 					OnSensorEvent(sens);

@@ -25,19 +25,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib
+namespace VehicleLib.Sensors
 {
     public class SensorInfo
     {
-        public ushort ID;
+        public ushort Id;
         public DateTime Time;
 
         public SensorInfo() { }
 
-        public SensorInfo(ushort _id, DateTime _time)
+        public SensorInfo(ushort id, DateTime time)
         {
-            this.ID = _id;
-            this.Time = _time;
+            this.Id = id;
+            this.Time = time;
         }
             
     }
