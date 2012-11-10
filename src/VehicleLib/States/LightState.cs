@@ -25,15 +25,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib
+namespace VehicleLib.States
 {
     [Serializable]
-    public class Right: TurnState
-    {        
-        public Right() { }
-        public Right(short pcent)
+    public class LightState : State
+    {
+        public ushort Id;
+        public ushort Level;
+
+        public LightState() { }
+
+        public LightState(ushort id, ushort level)
         {
-            this.Percent = pcent;
+            this.Id = id;
+            this.Level = level;
         }
+
     }
 }

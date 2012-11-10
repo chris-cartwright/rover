@@ -56,31 +56,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
-    <Compile Include="Back.cs" />
+    <Compile Include="States\BackMoveState.cs" />
     <Compile Include="BroadcastListener.cs" />
-    <Compile Include="ColourLightState.cs" />
+    <Compile Include="States\ColourLightState.cs" />
     <Compile Include="Errors\CommandNotFoundError.cs" />
     <Compile Include="Errors\ConcurrentConnectionError.cs" />
     <Compile Include="Errors\Error.cs" />
     <Compile Include="VehicleException\ConnectionException.cs" />
-    <Compile Include="Forward.cs" />
+    <Compile Include="States\ForwardMoveState.cs" />
     <Compile Include="Errors\InvalidLoginError.cs" />
-    <Compile Include="Left.cs" />
+    <Compile Include="States\LeftTurnState.cs" />
     <Compile Include="LightSensor.cs" />
-    <Compile Include="LightState.cs" />
+    <Compile Include="States\LightState.cs" />
     <Compile Include="Login.cs" />
     <Compile Include="VehicleException\LowVoltageException.cs" />
-    <Compile Include="MoveState.cs" />
+    <Compile Include="States\MoveState.cs" />
     <Compile Include="Errors\NoLoginError.cs" />
     <Compile Include="Errors\ParseFailedError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query.cs" />
-    <Compile Include="Right.cs" />
+    <Compile Include="States\RightTurnState.cs" />
     <Compile Include="VehicleException\SensorException.cs" />
     <Compile Include="SensorInfo.cs" />
-    <Compile Include="State.cs" />
+    <Compile Include="States\State.cs" />
     <Compile Include="TempSensor.cs" />
-    <Compile Include="TurnState.cs" />
+    <Compile Include="States\TurnState.cs" />
     <Compile Include="VehicleException\VehicleException.cs" />
     <Compile Include="VehiclePipe.cs" />
   </ItemGroup>
@@ -90,7 +90,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="States\" />
+    <Folder Include="Sensors\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

@@ -25,17 +25,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib
+namespace VehicleLib.States
 {
     [Serializable]
-    public class TurnState : State
+    public class MoveState : State
     {
-        public short Percent;
+        public ushort Speed;
 
-        public TurnState() { }
-        public TurnState(short pcent)
+        public MoveState() { }
+
+        public MoveState(ushort speed)
         {
-            this.Percent = pcent;
+            this.Speed = speed;
         }
     }
 }

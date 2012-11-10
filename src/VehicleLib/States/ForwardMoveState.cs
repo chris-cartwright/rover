@@ -25,15 +25,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib
+namespace VehicleLib.States
 {
     [Serializable]
-    public class Forward : MoveState
+    public class ForwardMoveState : MoveState
     {
-        public Forward() { }  
-        public Forward(ushort spd)
+        public ForwardMoveState() { }
+
+		public ForwardMoveState(ushort speed)
         {
-            this.Speed = spd;
+            this.Speed = speed;
         }
     }
 }

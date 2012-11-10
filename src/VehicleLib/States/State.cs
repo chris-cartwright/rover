@@ -25,15 +25,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib
+namespace VehicleLib.States
 {
     [Serializable]
-    public class Back : MoveState
+    public class State
     {
-        public Back() { }
-        public Back(ushort spd)
+        private byte _pwm;
+        private bool _enabled;
+
+        public State() { }
+
+        public State(byte bytPwm, bool blnEnabled)
         {
-            this.Speed = spd;
+            this._pwm = bytPwm;
+            this._enabled = blnEnabled;
         }
     }
 }
