@@ -33,6 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Configuration;
 using VehicleLib;
 
 namespace VDash
@@ -42,11 +43,11 @@ namespace VDash
     /// </summary>
     public partial class MainWindow : Window
     {
+		private VehiclePipe _vp;
+		private BroadcastListener _bl;
         public MainWindow()
         {
-			VehiclePipe vp;
-			
-
+			//_bl.Start((ushort)Int16.Parse( System.Configuration.ConfigurationManager.AppSettings["LISTEN_PORT"]));
 			// need a deletegate to update available vehicles.
             InitializeComponent();
         }
