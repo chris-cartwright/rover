@@ -25,7 +25,7 @@ var net = require("net");
 var config = require("./config");
 var states = require("./states");
 var queries = require("./queries");
-var ex = require("./exceptions");
+var ex = require("./errors");
 var log = new require("./logger").LabelledLogger("control_pipe");
 
 var ControlPipe = new function () {

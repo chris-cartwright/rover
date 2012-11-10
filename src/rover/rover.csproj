@@ -49,7 +49,7 @@
     <Content Include="bone.js" />
     <Content Include="control_pipe.js" />
     <None Include="config.js.base" />
-    <Content Include="exceptions.js" />
+    <Content Include="errors.js" />
     <Content Include="broadcast_sender.js" />
     <Content Include="logger.js" />
     <Content Include="main.js" />
