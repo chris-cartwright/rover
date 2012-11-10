@@ -60,7 +60,7 @@ namespace VehicleLib
 		{
 			if (_socket != null)
 			{
-				throw new ConnectionException("Device already controlled/connected to a client.");
+				throw new VehicleException.ConnectionException("Device already controlled/connected to a client.");
 			}
 			//const string server = "localhost";
 			IPEndPoint hostEndPoint;
@@ -160,7 +160,7 @@ namespace VehicleLib
 					packet.id = callbackID;
 				}
 
-				string s = JsonConvert.SerializeObject(packet);
+				string s = JsonConvert.SerializeObject(packet) + "\r\n";
 				Encoding ASCII = Encoding.ASCII;
 				Byte[] ByteGet = ASCII.GetBytes(s);
 				_socket.Send(ByteGet, ByteGet.Length, 0);
@@ -171,7 +171,7 @@ namespace VehicleLib
 				{
 					_socket = null;
 				}
-				throw new ConnectionException("Failed to send data.", ex);
+				throw new VehicleException.ConnectionException("Failed to send data.", ex);
 			}
 		}
 
@@ -202,31 +202,38 @@ namespace VehicleLib
 			Encoding ASCII = Encoding.ASCII;
 			Int32 bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
 
-			strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
+			strRetPage += ASCII.GetString(RecvBytes, 0, bytes);
 
 			while (bytes > 0)
 			{
 				bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
-				strRetPage = strRetPage + ASCII.GetString(RecvBytes, 0, bytes);
+				strRetPage += ASCII.GetString(RecvBytes, 0, bytes);
 			}
 
-			dynamic packet = JsonConvert.DeserializeObject(strRetPage);
+			int index = strRetPage.IndexOf("\r\n");
+			if (index != -1)
+			{
+				string command = strRetPage.Substring(0, index);
+				strRetPage = strRetPage.Remove(0, index);
 
-			try
-			{
-				Command(packet);
-			}
-			catch (TimeoutException)
-			{
-				// Log error and rethrow
-				_socket = null;
-				throw new ConnectionException("Connection timed out.");
-			}
-			catch (Exception ex)
-			{
-				// Log error and rethrow
-				_socket = null;
-				throw new ConnectionException("Something went wrong in VehiclePipe.Recv() | " + ex.Message, ex);
+				dynamic packet = JsonConvert.DeserializeObject(command.Trim());
+
+				try
+				{
+					Command(packet);
+				}
+				catch (TimeoutException)
+				{
+					// Log error and rethrow
+					_socket = null;
+					throw new VehicleException.ConnectionException("Connection timed out.");
+				}
+				catch (Exception ex)
+				{
+					// Log error and rethrow
+					_socket = null;
+					throw new VehicleException.ConnectionException("Something went wrong in VehiclePipe.Recv() | " + ex.Message, ex);
+				}
 			}
 		}
 
@@ -242,7 +249,7 @@ namespace VehicleLib
 			{
 				if (OnException != null)
 				{
-					OnException((VehicleException)receivedOject);
+					OnException((VehicleException.VehicleException)receivedOject);
 				}
 			}
 			if (packet.id != null)

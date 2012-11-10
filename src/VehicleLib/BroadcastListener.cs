@@ -76,7 +76,7 @@ namespace VehicleLib
 			}
 			catch (Exception ex)
 			{
-				throw new ConnectionException("Failed to set up Vehicle Listener.", ex);
+				throw new VehicleException.ConnectionException("Failed to set up Vehicle Listener.", ex);
 			}
 			finally{
 				listener.Close();

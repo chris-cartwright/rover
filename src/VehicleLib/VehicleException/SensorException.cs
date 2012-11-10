@@ -25,15 +25,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib
+namespace VehicleLib.VehicleException
 {
 	[Serializable]
-	public class ConnectionException : VehicleException
+	public class SensorException : VehicleException
 	{
-		public ConnectionException() { }
+		// private members
+		private uint _id;
 
-		public ConnectionException(string message) : base(message) { }
+		// constructors
+		public SensorException() { }
 
-		public ConnectionException(string message, Exception innerException) : base(message, innerException) { }
+		public SensorException(uint id, string message) : base(message) 
+		{
+			_id = id;
+		}
+
+		public SensorException(uint id,string message, Exception innerException) : base(message, innerException) 
+		{
+			_id = id;
+		}
+
+		// Properties - getters only
+		public float GetID()
+		{
+			return _id;
+		}
 	}
 }
