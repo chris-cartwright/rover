@@ -20,8 +20,45 @@ You should have received a copy of the GNU General Public License
 along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var log = require("./logger");
+var log = new require("./logger").LabelledLogger("states");
+var config = require("./config");
+var pins = require("./pins");
 
-module.exports.MoveForwardState = function (data) {
-	log.info(data);
+if (config.simulator) {
+	var b = require("./bone");
+	b.listen();
+}
+else
+	require("bonescript");
+
+module.exports.ForwardMoveState = function (data) {
+	log.info("ForwardMoveState", data);
+
+	var motor = pins.motor.forward_reverse;
+	digitalWrite(bone[motor.dir], 1);
+	analogWrite(bone[motor.speed], data.Speed);
+};
+
+module.exports.BackwardMoveState = function (data) {
+	log.info("BackwardMoveState", data);
+
+	var motor = pins.motor.forward_reverse;
+	digitalWrite(bone[motor.dir], 0);
+	analogWrite(bone[motor.speed], data.Speed);
+};
+
+module.exports.LeftTurnState = function (data) {
+	log.info("LeftTurnState", data);
+
+	var motor = pins.motor.turn;
+	digitalWrite(bone[motor.dir], 0);
+	analogWrite(bone[motor.speed], 1.0);
+};
+
+module.exports.RightTurnState = function (data) {
+	log.info("RightTurnState", data);
+
+	var motor = pins.motor.turn;
+	digitalWrite(bone[motor.dir], 1);
+	analogWrite(bone[motor.speed], 1.0);
 };

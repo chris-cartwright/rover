@@ -23,12 +23,12 @@ along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 var pins = {
 	motor: {
 		forward_reverse: {
-			speed: P9_14,
-			dir: P9_25
+			speed: "P9_14",
+			dir: "P9_25"
 		},
 		turn: {
-			speed: P9_16,
-			dir: P9_27
+			speed: "P9_16",
+			dir: "P9_27"
 		}
 	}
 	/*

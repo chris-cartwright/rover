@@ -84,7 +84,7 @@ var ControlPipe = new function () {
 				return;
 			}
 
-			if (obj.data != config.passwd) {
+			if (obj.data.Password != config.passwd) {
 				_tries++;
 				_self.send(new ex.InvalidLogin(3 - _tries));
 
@@ -101,7 +101,7 @@ var ControlPipe = new function () {
 		}
 
 		if (obj.cmd.indexOf("State") != -1)
-			state[obj.cmd](obj.data);
+			states[obj.cmd](obj.data);
 		else if (obj.cmd.indexOf("Query") != -1) {
 			var ret = queries[obj.cmd](obj.data.id);
 			_self.send({ cmd: name, data: ret }, obj.id);

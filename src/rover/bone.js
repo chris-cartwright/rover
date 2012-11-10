@@ -26,6 +26,12 @@ Copyright (c) 2011 Jason Kridner <jdk@ti.com>
 
 var net = require("net");
 var log = new require("./logger").LabelledLogger("bone");
+var pins = require("./pins");
+
+OUTPUT = exports.OUTPUT = "out";
+INPUT = exports.INPUT = "in";
+HIGH = exports.HIGH = 1;
+LOW = exports.LOW = 0;
 
 var server = net.createServer();
 var clients = [];
@@ -51,6 +57,8 @@ server.on("connection", function (socket) {
 	socket.on("data", function (data) {
 		proto.feed(data);
 	});
+
+	client.write(JSON.stringify({ cmd: "pins", data: pins }) + "\r\n");
 });
 
 server.on("listening", function () {
@@ -60,6 +68,8 @@ server.on("listening", function () {
 function bcast(data) {
 	data = JSON.stringify(data);
 	log.info("Bcast: " + data);
+
+	data += "\r\n";
 
 	clients.forEach(function (client) {
 		client.write(data);
@@ -86,7 +96,7 @@ function validAnalog(value) {
 		log.error("Invalid analog: " + value);
 }
 
-bone = module.exports.bone = {
+bone = exports.bone = {
 	P8_1: { name: "P8_1", state: LOW },
 	P8_2: { name: "P8_2", state: LOW },
 	P8_3: { name: "P8_3", state: LOW },
@@ -182,37 +192,32 @@ bone = module.exports.bone = {
 	P9_46: { name: "P9_46", state: LOW }
 };
 
-OUTPUT = module.exports.OUTPUT = "out";
-INPUT = module.exports.INPUT = "in";
-HIGH = module.exports.HIGH = 1;
-LOW = module.exports.LOW = 0;
-
-module.exports.pinMode = function (pin, mode) {
+pinMode = exports.pinMode = function (pin, mode) {
 	validPin(pin);
 	validMode(mode);
 
-	bcast({ cmd: "pinMode", pin: pin, mode: mode });
+	bcast({ cmd: "pinMode", pin: pin.name, mode: mode });
 };
 
-module.exports.digitalWrite = function (pin, value) {
+digitalWrite = exports.digitalWrite = function (pin, value) {
 	validPin(pin);
 	validBool(value);
 
-	bcast({ cmd: "digitalWrite", pin: pin, value: value });
+	bcast({ cmd: "digitalWrite", pin: pin.name, value: value });
 };
 
-module.exports.digitalRead = function (pin) {
+digitalRead = exports.digitalRead = function (pin) {
 	validPin(pin);
 
-	bcast({ cmd: "digitalRead", pin: pin });
+	bcast({ cmd: "digitalRead", pin: pin.name });
 	return bone[pin].state;
 };
 
-module.exports.analogWrite = function (pin, value) {
+analogWrite = exports.analogWrite = function (pin.name, value) {
 	validPin(pin);
 	validAnalog(value);
 
-	bcast({ cmd: "analogWrite", pin: pin, value: value });
+	bcast({ cmd: "analogWrite", pin: pin.name, value: value });
 };
 
 module.exports.listen = function () {

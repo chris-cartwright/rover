@@ -31,7 +31,8 @@ var config = {
 	},
 	passwd: "pwd",
 	debug: true,
-	name: "Rover"
+	name: "Rover",
+	simulator: true
 };
 
 module.exports = config;
