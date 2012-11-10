@@ -45,7 +45,7 @@
                         </avalonDock:LayoutDocumentPane>
                         <avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocument Title="Vehicle State">
-                                <local:VehicleStateControl x:Name="_state" />
+                                <local:VehicleStateControl x:Name="_state" FlowDirection="LeftToRight" />
                             </avalonDock:LayoutDocument>
                         </avalonDock:LayoutDocumentPane>
                         <avalonDock:LayoutDocumentPane>

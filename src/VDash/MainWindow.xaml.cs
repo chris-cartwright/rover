@@ -38,23 +38,30 @@ using VehicleLib;
 
 namespace VDash
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-		private VehiclePipe _vp;
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
+	{
 		private BroadcastListener _bl;
-        public MainWindow()
+		public MainWindow()
         {
-			//_bl.Start((ushort)Int16.Parse( System.Configuration.ConfigurationManager.AppSettings["LISTEN_PORT"]));
-			// need a deletegate to update available vehicles.
+			try				
+			{
+				_bl = new BroadcastListener();
+				_bl.Start((ushort)Properties.Settings.Default.LISTEN_PORT);
+				// need a deletegate to update available vehicles.
+			}
+			catch (Exception ex)
+			{
+				string m = ex.Message;
+			}
             InitializeComponent();
         }
 
-        private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)
-        {
-            Close();
-        }
-    }
+		private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)
+		{
+			Close();
+		}
+	}
 }
