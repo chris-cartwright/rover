@@ -32,25 +32,25 @@ Each message should have a 'name' property.
 */
 
 module.exports.CommandNotFound = function (name) {
-	this.name = "CommandNotFoundException";
+	this.name = "CommandNotFoundError";
 	this.Command = name;
 }
 
 module.exports.ParseFailed = function () {
-	this.name = "ParseFailedException";
+	this.name = "ParseFailedError";
 }
 
 // Thrown when client needs to login.
 module.exports.NoLogin = function () {
-	this.name = "NoLoginException";
+	this.name = "NoLoginError";
 }
 
 // Thrown when invalid credentials have been given.
 module.exports.InvalidLogin = function (triesLeft) {
-	this.name = "InvalidLoginException";
+	this.name = "InvalidLoginError";
 	this.TriesLeft = triesLeft;
 }
 
 module.exports.ConcurrentConnection = function () {
-	this.name = "ConcurrentConnectionException";
+	this.name = "ConcurrentConnectionError";
 }

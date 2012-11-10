@@ -39,12 +39,12 @@ namespace VehicleLib
 	public class VehiclePipe
 	{
 		// private members
-		public delegate void ExceptionHandler(Exception ex);
+		public delegate void ErrorHandler(VehicleLib.Errors.Error err);
 		public delegate void SensorInfoHandler(SensorInfo si);
 		private Socket _socket;
 		private Dictionary<uint, SensorInfoHandler> _callbacks;
 		private uint _callbackCounter;
-		public event ExceptionHandler OnException;
+		public event ErrorHandler OnError;
 		public event System.Action OnDisconnect;
 		public event SensorInfoHandler OnSensorEvent;
 
@@ -53,6 +53,9 @@ namespace VehicleLib
 		/// void Connect(IPEndPoint vehicleIPEndPoint, string password)
 		/// Connects to a vehicle on a supplied ip and port
 		/// Uses any avaible port on local machine
+		/// Clears callback functions
+		/// Zeros out callback counter
+		/// Registers a callback for the login
 		/// </summary>
 		/// <param name="vehicleIPEndPoint">System.Net.IPEndPoint of the vehicle</param>
 		/// <param name="password">string</param>
@@ -91,6 +94,7 @@ namespace VehicleLib
 					continue;
 				}
 
+				_callbacks = new Dictionary<uint, SensorInfoHandler>();
 				_callbackCounter = 0;
 				_callbacks.Clear();
 
@@ -111,6 +115,7 @@ namespace VehicleLib
 			}
 			catch { }
 			_socket = null;
+			OnDisconnect();
 		}
 
 		/// <summary>
@@ -171,21 +176,21 @@ namespace VehicleLib
 				{
 					_socket = null;
 				}
+				OnDisconnect();
 				throw new VehicleException.ConnectionException("Failed to send data.", ex);
 			}
 		}
 
 		/// <summary>
 		/// Single attempt login to a vehicle
-		/// Clears callback functions
-		/// Zeros out callback counter
-		/// Registers a callback for the login
+		/// Sends special Login packet to vehicle using SendRaw
+		/// No callback created, assumed connected as TCP pipe used
 		/// </summary>
 		/// <param name="password">Password to be sent to Vehicle</param>
 		private void Login(Login login)
 		{
 			Encoding ASCII = Encoding.ASCII;
-			SendRaw(login, null); // should be sent as a Query object for password validation response from vehicle
+			SendRaw(login, null);
 		}
 
 		/// <summary>
@@ -226,12 +231,14 @@ namespace VehicleLib
 				{
 					// Log error and rethrow
 					_socket = null;
+					OnDisconnect();
 					throw new VehicleException.ConnectionException("Connection timed out.");
 				}
 				catch (Exception ex)
 				{
-					// Log error and rethrow
+					// Log error and rethrow				
 					_socket = null;
+					OnDisconnect();
 					throw new VehicleException.ConnectionException("Something went wrong in VehiclePipe.Recv() | " + ex.Message, ex);
 				}
 			}
@@ -245,11 +252,11 @@ namespace VehicleLib
 		{
 			object receivedOject = Convert.ChangeType(packet.data, Type.GetType("VDash." + packet.cmd));
 
-			if (packet.cmd.toString().Contains("Exception"))
+			if (packet.cmd.toString().Contains("Error"))
 			{
-				if (OnException != null)
+				if (OnError != null)
 				{
-					OnException((VehicleException.VehicleException)receivedOject);
+					OnError((Errors.Error)receivedOject);
 				}
 			}
 			if (packet.id != null)
