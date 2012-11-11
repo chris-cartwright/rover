@@ -29,6 +29,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using Newtonsoft.Json;
+using System.Threading;
+using Microsoft.CSharp.RuntimeBinder;
+using VehicleLib.Exceptions;
 
 namespace VehicleLib
 {
@@ -38,69 +41,70 @@ namespace VehicleLib
 	/// </summary>
 	public class VehiclePipe
 	{
-		// private members
 		public delegate void ErrorHandler(VehicleLib.Errors.Error err);
 		public delegate void SensorInfoHandler(Sensors.SensorInfo si);
-		private Socket _socket;
-		private Dictionary<uint, SensorInfoHandler> _callbacks;
-		private uint _callbackCounter;
+
 		public event ErrorHandler OnError;
+		public event System.Action OnConnect;
 		public event System.Action OnDisconnect;
 		public event SensorInfoHandler OnSensorEvent;
 
+		private Socket _socket;
+		private Dictionary<uint, SensorInfoHandler> _callbacks;
+		private uint _callbackCounter;
+		private Thread _thread;
+
+		public VehiclePipe()
+		{
+			_thread = new Thread(Recv);
+		}
+
 		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
 		/// <summary>
-		/// void Connect(IPEndPoint vehicleIPEndPoint, string password)
 		/// Connects to a vehicle on a supplied ip and port
-		/// Uses any avaible port on local machine
 		/// Clears callback functions
 		/// Zeros out callback counter
 		/// Registers a callback for the login
+		/// This starts a thread for received data.
 		/// </summary>
-		/// <param name="vehicleIPEndPoint">System.Net.IPEndPoint of the vehicle</param>
-		/// <param name="password">string</param>
+		/// <param name="vehicleIPEndPoint">Socket for vehicle</param>
+		/// <param name="password">Credentials used to authenticate connection</param>
 		public void Connect(IPEndPoint vehicleIPEndPoint, Login login)
 		{
 			if (_socket != null)
 			{
-				throw new VehicleException.ConnectionException("Device already controlled/connected to a client.");
+				throw new Exceptions.ConnectionException("Device already controlled/connected to a client.");
 			}
-			//const string server = "localhost";
-			IPEndPoint hostEndPoint;
-			IPAddress hostAddress = null;
-			Byte[] RecvBytes = new Byte[256];
 
-			// Get DNS host information.
-			IPHostEntry hostInfo = Dns.GetHostEntry(vehicleIPEndPoint.Address);
-			// Get the DNS IP addresses associated with the host.
-			IPAddress[] IPaddresses = hostInfo.AddressList;
+			_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-			// Evaluate the socket and receiving host IPAddress and IPEndPoint.  
-			for (int index = 0; index < IPaddresses.Length; index++)
+			try
 			{
-				hostAddress = IPaddresses[index];
-				hostEndPoint = new IPEndPoint(hostAddress, vehicleIPEndPoint.Port);
-
-				// Creates the Socket to send data over a TCP connection.
-				_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-				// Connect to the host using its IPEndPoint.
-				_socket.Connect(hostEndPoint);
-
-				if (!_socket.Connected)
-				{
-					// Connection failed, try next IPaddress.
-					_socket = null;
-					continue;
-				}
-
-				_callbacks = new Dictionary<uint, SensorInfoHandler>();
-				_callbackCounter = 0;
-				_callbacks.Clear();
-
-				Login(login);
-				return;
+				_socket.Connect(vehicleIPEndPoint);
 			}
+			catch (SocketException ex)
+			{
+				throw new ConnectionException("Could not connect to vehicle.", ex);
+			}
+
+			if (!_socket.Connected)
+			{
+				_socket = null;
+				throw new ConnectionException("Could not connect to vehicle.");
+			}
+
+			_callbacks = new Dictionary<uint, SensorInfoHandler>();
+			_callbackCounter = 0;
+			_callbacks.Clear();
+
+			if (OnConnect != null)
+			{
+				OnConnect();
+			}
+
+			_thread.Start();
+
+			Login(login);
 		}
 
 		/// <summary>
@@ -111,9 +115,9 @@ namespace VehicleLib
 			try
 			{
 				_socket.Close();
-
 			}
 			catch { }
+
 			_socket = null;
 			OnDisconnect();
 		}
@@ -177,7 +181,7 @@ namespace VehicleLib
 					_socket = null;
 				}
 				OnDisconnect();
-				throw new VehicleException.ConnectionException("Failed to send data.", ex);
+				throw new ConnectionException("Failed to send data.", ex);
 			}
 		}
 
@@ -186,60 +190,48 @@ namespace VehicleLib
 		/// Sends special Login packet to vehicle using SendRaw
 		/// No callback created, assumed connected as TCP pipe used
 		/// </summary>
-		/// <param name="password">Password to be sent to Vehicle</param>
+		/// <param name="login">Credentials used for authentication</param>
 		private void Login(Login login)
 		{
-			Encoding ASCII = Encoding.ASCII;
 			SendRaw(login, null);
 		}
 
 		/// <summary>
-		/// Recieves a string from a vehicle expecting a JSON serialized oject.
-		/// Recieved packet must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd]
-		/// Calls Command() on JSON deserialize string
+		/// Handles incoming data on the pipe.
+		/// Feeds the data into an instance of JsonLineProtocol.
+		/// Loops over any packets that were decoded and sends them to Command
 		/// </summary>
-		/// <param name="packet">Packet received from a vehicle.  Must be proper JSON notation.</param>	
 		private void Recv()
 		{
-			// Receive the host home page content and loop until all the data is received.
 			Byte[] RecvBytes = new Byte[256];
-			string strRetPage = "";
-			Encoding ASCII = Encoding.ASCII;
-			Int32 bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
+			JsonLineProtocol proto = new JsonLineProtocol();
+			_socket.Receive(RecvBytes);
+			
+			dynamic[] msgs = proto.Feed(Encoding.ASCII.GetString(RecvBytes));
 
-			strRetPage += ASCII.GetString(RecvBytes, 0, bytes);
-
-			while (bytes > 0)
+			foreach(dynamic packet in msgs)
 			{
-				bytes = _socket.Receive(RecvBytes, RecvBytes.Length, 0);
-				strRetPage += ASCII.GetString(RecvBytes, 0, bytes);
-			}
-
-			int index = strRetPage.IndexOf("\r\n");
-			if (index != -1)
-			{
-				string command = strRetPage.Substring(0, index);
-				strRetPage = strRetPage.Remove(0, index);
-
-				dynamic packet = JsonConvert.DeserializeObject(command.Trim());
-
 				try
 				{
 					Command(packet);
 				}
-				catch (TimeoutException)
+				catch (TimeoutException ex)
 				{
-					// Log error and rethrow
 					_socket = null;
-					OnDisconnect();
-					throw new VehicleException.ConnectionException("Connection timed out.");
+
+					if(OnDisconnect != null)
+						OnDisconnect();
+
+					throw ex;
 				}
 				catch (Exception ex)
 				{
-					// Log error and rethrow				
 					_socket = null;
-					OnDisconnect();
-					throw new VehicleException.ConnectionException("Something went wrong in VehiclePipe.Recv() | " + ex.Message, ex);
+
+					if(OnDisconnect != null)
+						OnDisconnect();
+
+					throw new ConnectionException("Connection is in an error state.", ex);
 				}
 			}
 		}
@@ -247,32 +239,52 @@ namespace VehicleLib
 		/// <summary>
 		/// Accepts a dynamic packet. packet must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd] 
 		/// </summary>
-		/// <param name="packet">Packet containing a VehicleLib class object (either a SensorInfo or a VehicleException).  Must be proper JSON notation.</param>
+		/// <param name="packet">An unknon object received from a vehicle.</param>
 		private void Command(dynamic packet)
 		{
-			object receivedOject = Convert.ChangeType(packet.data, Type.GetType("VDash." + packet.cmd));
+			object receivedObject;
+			try
+			{
+				receivedObject = Convert.ChangeType(packet.data, Type.GetType("VDash." + packet.cmd));
+			}
+			catch (RuntimeBinderException ex)
+			{
+				throw new MalformedMessageException() { Malformed = JsonConvert.SerializeObject(packet) };
+			}
 
 			if (packet.cmd.toString().Contains("Error"))
 			{
 				if (OnError != null)
 				{
-					OnError((Errors.Error)receivedOject);
+					OnError((Errors.Error)receivedObject);
 				}
 			}
 			if (packet.id != null)
 			{
 				UInt32 id = Convert.ToUInt32(packet.id);
-				_callbacks[id]((Sensors.SensorInfo)receivedOject);
+				_callbacks[id]((Sensors.SensorInfo)receivedObject);
 				_callbacks.Remove(id);
 			}
 			else
 			{
-				Sensors.SensorInfo sens = (Sensors.SensorInfo)receivedOject;
+				Sensors.SensorInfo sens = (Sensors.SensorInfo)receivedObject;
 				if (OnSensorEvent != null)
 				{
 					OnSensorEvent(sens);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Kills the underlying thread.
+		/// </summary>
+		public void Shutdown()
+		{
+			if(_socket != null && _socket.Connected)
+				_socket.Close();
+
+			if(_thread.ThreadState == ThreadState.Running)
+				_thread.Join();
 		}
 
 		// Properties - getters only
@@ -283,7 +295,7 @@ namespace VehicleLib
 
 		public bool Connected
 		{
-			get { return _socket.Connected; }
+			get { return _socket == null ? false : _socket.Connected; }
 		}
 	} // end class VehiclePipe
 } // end namespace

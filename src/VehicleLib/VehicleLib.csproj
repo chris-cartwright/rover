@@ -56,32 +56,34 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
-    <Compile Include="States\BackMoveState.cs" />
+    <Compile Include="Exceptions\MalformedMessageException.cs" />
+    <Compile Include="JsonLineProtocol.cs" />
+    <Compile Include="States\BackwardMoveState.cs" />
     <Compile Include="BroadcastListener.cs" />
     <Compile Include="States\ColourLightState.cs" />
     <Compile Include="Errors\CommandNotFoundError.cs" />
     <Compile Include="Errors\ConcurrentConnectionError.cs" />
     <Compile Include="Errors\Error.cs" />
-    <Compile Include="VehicleException\ConnectionException.cs" />
+    <Compile Include="Exceptions\ConnectionException.cs" />
     <Compile Include="States\ForwardMoveState.cs" />
     <Compile Include="Errors\InvalidLoginError.cs" />
     <Compile Include="States\LeftTurnState.cs" />
     <Compile Include="Sensors\LightSensor.cs" />
     <Compile Include="States\LightState.cs" />
     <Compile Include="Login.cs" />
-    <Compile Include="VehicleException\LowVoltageException.cs" />
+    <Compile Include="Errors\LowVoltageError.cs" />
     <Compile Include="States\MoveState.cs" />
     <Compile Include="Errors\NoLoginError.cs" />
     <Compile Include="Errors\ParseFailedError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="States\RightTurnState.cs" />
-    <Compile Include="VehicleException\SensorException.cs" />
+    <Compile Include="Exceptions\SensorException.cs" />
     <Compile Include="Sensors\SensorInfo.cs" />
     <Compile Include="States\State.cs" />
     <Compile Include="Sensors\TempSensor.cs" />
     <Compile Include="States\TurnState.cs" />
-    <Compile Include="VehicleException\VehicleException.cs" />
+    <Compile Include="Exceptions\VehicleException.cs" />
     <Compile Include="VehiclePipe.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -25,19 +25,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="190" d:DesignWidth="300">
+             d:DesignHeight="190" d:DesignWidth="250">
     <Grid>
         <Label Content="Speed" Height="24" HorizontalAlignment="Left" Margin="55,17,0,0" Name="lblMove" VerticalAlignment="Top" Width="60" Padding="17,0,0,0" />
         <Label Content="Direction" Height="24" HorizontalAlignment="Left" Margin="140,17,0,0" Name="lblTurn" VerticalAlignment="Top" Width="60" Padding="10,0,0,0" />
         <Label Content="Forwards" Height="24" HorizontalAlignment="Left" Margin="15,40,0,0" Name="lblForward" VerticalAlignment="Top" Width="80" />
         <Label Content="Backwards" Height="24" HorizontalAlignment="Left" Margin="15,130,0,0" Name="lblReverse" VerticalAlignment="Top" Width="80" />
-        <Label Content="Left" Height="24" HorizontalAlignment="Left" Margin="130,45,0,0" Name="lblLeft" VerticalAlignment="Top" Width="60"  Padding="0,0,0,0" />
-        <Label Content="Right" Height="24" HorizontalAlignment="Left" Margin="130,135,0,0" Name="lblRight" VerticalAlignment="Top" Width="60"  Padding="0,0,0,0" />
-        <Slider Height="100" Orientation="Vertical" HorizontalAlignment="Left" IsSelectionRangeEnabled="true" Margin="80,48,0,0" Name="slideBack" SelectionEnd="100" SelectionStart="0" TickPlacement="BottomRight" Ticks="5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100" VerticalAlignment="Top" Width="25" />
-        <Slider Height="100" Orientation="Vertical" HorizontalAlignment="Left" IsSelectionRangeEnabled="true" Margin="160,48,0,0" Name="slideLeft" SelectionEnd="100" SelectionStart="0" TickPlacement="BottomRight" Ticks="5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100" VerticalAlignment="Top" Width="25" />
+        <Label Content="Left" Height="19" HorizontalAlignment="Left" Margin="130,45,0,0" Name="lblLeft" VerticalAlignment="Top" Width="60"  Padding="0,0,0,0" />
+        <Label Content="Right" Height="24" HorizontalAlignment="Left" Margin="188,45,0,0" Name="lblRight" VerticalAlignment="Top" Width="39"  Padding="0,0,0,0" HorizontalContentAlignment="Right" />
+        <Slider Height="100" Orientation="Vertical" HorizontalAlignment="Left" IsSelectionRangeEnabled="true" Margin="80,48,0,0" Name="slideBack" SelectionEnd="100" SelectionStart="0" TickPlacement="BottomRight" VerticalAlignment="Top" Width="25" />
+        <Slider Height="21" Width="100" IsSelectionRangeEnabled="true" Name="slideLeft" SelectionEnd="2" SelectionStart="0" TickPlacement="BottomRight" VerticalAlignment="Top" SmallChange="1" Maximum="2" Margin="130,70,76,0" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="67,160,188,0" Name="tbForwarBackkAmt" VerticalAlignment="Top" Width="42" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="150,160,0,0" Name="tbLefRightAmt" VerticalAlignment="Top" Width="42" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="152,160,0,0" Name="tbLefRightAmt" VerticalAlignment="Top" Width="42" />
         <Label Content="%" Height="28" HorizontalAlignment="Left" Margin="105,160,162,0" Name="label1" VerticalAlignment="Top" Width="28" />
-        <Label Content="%" Height="28" HorizontalAlignment="Left" Margin="188,160,82,0" Name="label2" VerticalAlignment="Top" Width="28" />
+        <Label Content="%" Height="28" HorizontalAlignment="Left" Margin="190,160,0,0" Name="label2" VerticalAlignment="Top" Width="28" />
     </Grid>
 </UserControl>

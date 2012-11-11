@@ -31,17 +31,23 @@ var BroadcastSender = new function () {
 	var _setup = false;
 
 	function setup() {
-		_server.bind(_port);
+		log.info("setup");
+
+		_server.bind(0);
 		_server.setBroadcast(true);
 		_setup = true;
 	};
 
 	this.setPort = function (port) {
+		log.info("port: " + port);
+
 		_port = port;
-		_buffer = new Buffer(JSON.stringify({ name: config.name, port: config.port.pipe }));
+		_buffer = new Buffer(JSON.stringify({ name: config.name, port: config.port.pipe }) + "\r\n");
 	};
 
 	this.broadcast = function () {
+		log.info("bcast");
+
 		if (!_setup)
 			setup();
 

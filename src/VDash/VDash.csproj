@@ -82,17 +82,17 @@
     <Compile Include="LogControl.xaml.cs">
       <DependentUpon>LogControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VehicleAvailabilityControl.xaml.cs">
-      <DependentUpon>VehicleAvailabilityControl.xaml</DependentUpon>
+    <Compile Include="AvailabilityControl.xaml.cs">
+      <DependentUpon>AvailabilityControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VehicleKeyState.xaml.cs">
-      <DependentUpon>VehicleKeyState.xaml</DependentUpon>
+    <Compile Include="KeyStateControl.xaml.cs">
+      <DependentUpon>KeyStateControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VehicleStateControl.xaml.cs">
-      <DependentUpon>VehicleStateControl.xaml</DependentUpon>
+    <Compile Include="StateControl.xaml.cs">
+      <DependentUpon>StateControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VehicleVideoControl.xaml.cs">
-      <DependentUpon>VehicleVideoControl.xaml</DependentUpon>
+    <Compile Include="VideoControl.xaml.cs">
+      <DependentUpon>VideoControl.xaml</DependentUpon>
     </Compile>
     <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>
@@ -126,19 +126,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VehicleAvailabilityControl.xaml">
+    <Page Include="AvailabilityControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VehicleKeyState.xaml">
+    <Page Include="KeyStateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VehicleStateControl.xaml">
+    <Page Include="StateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VehicleVideoControl.xaml">
+    <Page Include="VideoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -35,6 +35,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Configuration;
 using VehicleLib;
+using System.Net;
+using System.ComponentModel;
 
 namespace VDash
 {
@@ -43,21 +45,42 @@ namespace VDash
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private BroadcastListener _bl;
+		internal static VehiclePipe Vehicle = new VehiclePipe();
+		internal static BroadcastListener Listener = new BroadcastListener();
+
 		public MainWindow()
         {
+			InitializeComponent();
+
+			Closed += new EventHandler(MainWindow_Closed);
 			try				
 			{
-				_bl = new BroadcastListener();
-				_bl.Start((ushort)Properties.Settings.Default.LISTEN_PORT);
-				// need a deletegate to update available vehicles.
+				Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
 			}
 			catch (Exception ex)
 			{
-				string m = ex.Message;
+				LogControl.Error(ex);
 			}
-            InitializeComponent();
+
+			AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+			{
+				LogControl.Error(e.ExceptionObject as Exception);
+			};
+
+#if _DEBUG
+			Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
+			{
+				if(!Vehicle.Connected)
+					Vehicle.Connect(ep, new Login("pwd"));
+			};
+#endif
         }
+
+		void MainWindow_Closed(object sender, EventArgs e)
+		{
+			Vehicle.Shutdown();
+			Listener.Shutdown();
+		}
 
 		private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)
 		{

@@ -213,7 +213,7 @@ digitalRead = exports.digitalRead = function (pin) {
 	return bone[pin].state;
 };
 
-analogWrite = exports.analogWrite = function (pin.name, value) {
+analogWrite = exports.analogWrite = function (pin, value) {
 	validPin(pin);
 	validAnalog(value);
 

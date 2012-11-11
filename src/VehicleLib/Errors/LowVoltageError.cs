@@ -25,31 +25,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib.VehicleException
+namespace VehicleLib.Errors
 {
 	[Serializable]
-	public class LowVoltageException : VehicleException
+	public class LowVoltageException : Error
 	{
-		// private members
-		private float _voltage;
+		public float Voltage { get; private set; }
 
 		// constructors
 		public LowVoltageException() { }
 
 		public LowVoltageException(float voltage, string message) : base(message) 
 		{
-			_voltage = voltage;
-		}
-
-		public LowVoltageException(float voltage, string message, Exception innerException) : base(message, innerException) 
-		{
-			_voltage = voltage;
-		}
-
-		// Properties - getters only
-		public float Voltage
-		{
-			get { return _voltage; }
+			Voltage = voltage;
 		}
 	}
 }

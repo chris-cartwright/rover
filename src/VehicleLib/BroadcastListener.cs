@@ -29,63 +29,95 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using Newtonsoft.Json;
+using System.Threading;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace VehicleLib
 {
 	public class BroadcastListener
 	{
-		private bool _quit = false;
 		public delegate void VehicleBroadcastHandler(string name, IPEndPoint ipEndPoint);
-		public event VehicleBroadcastHandler VehicleBroadcastEvent;
-		
+
+		public event VehicleBroadcastHandler OnBroadcastReceived;
+
+		private bool _quit = false;
+		private JsonLineProtocol _proto = new JsonLineProtocol();
+		private Thread _thread;
+		private UdpClient _listener;
+
+		public BroadcastListener()
+		{
+			_thread = new Thread(delegate(object o) { Run((ushort)o); });
+		}
+
+		/// <summary>
+		/// Wraps Run inside a thread.
+		/// </summary>
+		/// <param name="port">Port to listen for vehicles on</param>
+		public void Start(ushort port)
+		{
+			_thread.Start(port);
+		}
+
 		/// <summary>
 		/// Listens for Vehicle Broadcasts using UPD broadcasts on specified port using local machine network settings for broardcast IP.
 		/// Raises on event on vehicle broardcast received
 		/// </summary>
 		/// <param name="listenPort">Port to listen for vehicle broadcasts</param>
 		// http://msdn.microsoft.com/en-us/library/tst0kwb1.aspx
-		public void Start(ushort listenPort)
+		public void Run(ushort listenPort)
 		{
 			//bool done = false;
-			UdpClient listener = new UdpClient(listenPort);
+			_listener = new UdpClient(listenPort);
 			IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, listenPort);
 			Encoding ASCII = Encoding.ASCII;
-			try {
-				while (!_quit)
+			try
+			{
+				while (true)
 				{
 					// Waiting for broadcast
-					byte[] bytes = listener.Receive(ref groupEP);
+					byte[] bytes = _listener.Receive(ref groupEP);
+
+					dynamic[] msgs = _proto.Feed(Encoding.ASCII.GetString(bytes));
 
 					// add to event
 					string name = "";
-					string ipString = "";
 					ushort connectionPort;
-					try
-					{
-						// get string for ip
-						dynamic received = JsonConvert.DeserializeObject(bytes.ToString());
-						//dynamic received = JsonConvert.DeserializeObject(Encoding.ASCII.GetString(bytes, 0, bytes.Length));
-						name = received.name;
-						connectionPort = received.port;
 
-						IPEndPoint vehicleIPEndPoint = new IPEndPoint(IPAddress.Parse(ipString), connectionPort);
-						VehicleBroadcastEvent(name, vehicleIPEndPoint);
+					foreach (dynamic received in msgs)
+					{
+						try
+						{
+							name = received.name;
+							connectionPort = received.port;
+
+							IPEndPoint vehicleIPEndPoint = new IPEndPoint(groupEP.Address, connectionPort);
+							OnBroadcastReceived(name, vehicleIPEndPoint);
+						}
+						catch (RuntimeBinderException) { } // caught a broadcast that is not formatted correctly (not from a vehicle)
 					}
-					catch { } // caught a broad cast that is not formatted correctly (not from a vehicle)
 				}
 			}
-			catch (Exception ex)
+			catch (SocketException ex)
 			{
-				throw new VehicleException.ConnectionException("Failed to set up Vehicle Listener.", ex);
-			}
-			finally{
-				listener.Close();
+				// Thread was killed
+				if (ex.ErrorCode == 10004)
+					return;
+
+				throw new Exceptions.ConnectionException("Error in protocol.", ex);
 			}
 		}
 
-		public void Quit()
+		/// <summary>
+		/// Kills the thread
+		/// </summary>
+		public void Shutdown()
 		{
-			_quit = true;
+			if(_listener.Client != null)
+				_listener.Client.Close();
+
+			if(_thread.ThreadState == ThreadState.Running)
+				_thread.Join();
 		}
 	}
 }

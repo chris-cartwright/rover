@@ -25,15 +25,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VehicleLib.VehicleException
+namespace VehicleLib.States
 {
-	[Serializable]
-	public class ConnectionException : VehicleException
-	{
-		public ConnectionException() { }
+    [Serializable]
+    public class BackwardMoveState : MoveState
+    {
+        public BackwardMoveState() { }
 
-		public ConnectionException(string message) : base(message) { }
-
-		public ConnectionException(string message, Exception innerException) : base(message, innerException) { }
-	}
+		public BackwardMoveState(ushort speed)
+        {
+            this.Speed = speed;
+        }
+    }
 }
