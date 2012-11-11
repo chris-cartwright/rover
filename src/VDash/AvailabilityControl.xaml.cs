@@ -38,9 +38,9 @@ namespace VDash
     /// <summary>
     /// Interaction logic for VehicleAvailability.xaml
     /// </summary>
-    public partial class VehicleAvailabilityControl : UserControl
+    public partial class AvailabilityControl : UserControl
     {
-		public VehicleAvailabilityControl()
+		public AvailabilityControl()
         {
             InitializeComponent();
         }

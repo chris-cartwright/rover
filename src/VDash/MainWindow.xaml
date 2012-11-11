@@ -40,17 +40,17 @@
                     <avalonDock:LayoutDocumentPaneGroup Orientation="Vertical">
                         <avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocument Title="Video Feed">
-                                <local:VehicleVideoControl x:Name="_video" />
+                                <local:VideoControl x:Name="_video" />
                             </avalonDock:LayoutDocument>
                         </avalonDock:LayoutDocumentPane>
                         <avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocument Title="Vehicle State">
-                                <local:VehicleStateControl x:Name="_state" FlowDirection="LeftToRight" />
+                                <local:StateControl x:Name="_state" FlowDirection="LeftToRight" />
                             </avalonDock:LayoutDocument>
                         </avalonDock:LayoutDocumentPane>
                         <avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocument Title="Vehicle Key State">
-                                <local:VehicleKeyState x:Name="_keyState" />
+                                <local:KeyStateControl x:Name="_keyState" />
                             </avalonDock:LayoutDocument>
                         </avalonDock:LayoutDocumentPane>
                     </avalonDock:LayoutDocumentPaneGroup>
@@ -66,7 +66,7 @@
                     <avalonDock:LayoutAnchorSide>
                         <avalonDock:LayoutAnchorGroup>
                             <avalonDock:LayoutAnchorable Title="Available Vehicles" AutoHideWidth="274">
-                                <local:VehicleAvailabilityControl x:Name="_availability" />
+                                <local:AvailabilityControl x:Name="_availability" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorGroup>
                     </avalonDock:LayoutAnchorSide>

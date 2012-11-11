@@ -39,9 +39,9 @@ namespace VDash
     /// <summary>
     /// Interaction logic for VehicleKeyState.xaml
     /// </summary>
-    public partial class VehicleKeyState : UserControl
+    public partial class KeyStateControl : UserControl
     {
-        public VehicleKeyState()
+        public KeyStateControl()
         {
             InitializeComponent();
         }

@@ -39,9 +39,9 @@ namespace VDash
     /// <summary>
     /// Interaction logic for VehicleStateControl.xaml
     /// </summary>
-    public partial class VehicleStateControl : UserControl
+    public partial class StateControl : UserControl
     {
-        public VehicleStateControl()
+        public StateControl()
         {
             InitializeComponent();
         }
