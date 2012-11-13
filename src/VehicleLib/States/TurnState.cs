@@ -30,12 +30,6 @@ namespace VehicleLib.States
     [Serializable]
     public class TurnState : State
     {
-        public short Percent;
-
         public TurnState() { }
-        public TurnState(short percent)
-        {
-            this.Percent = percent;
-        }
     }
 }

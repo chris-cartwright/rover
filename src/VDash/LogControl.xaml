@@ -31,7 +31,7 @@
     <UserControl.Resources>
         <converters:DateTimeToTimeStringConverter x:Key="timeConverter" />
         <converters:EnumRadioButtonConverter x:Key="enumConverter" />
-        <converters:ProxyMultiConverter x:Key="visibleConverter" Type="{x:Type me:LogControl+LogVisibleConverter}" />
+        <converters:ProxyMultiConverter x:Key="visibleConverter" ClassName="LogControl+LogVisibleConverter" />
         <Style TargetType="ListBoxItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Padding" Value="5,3,3,3" />

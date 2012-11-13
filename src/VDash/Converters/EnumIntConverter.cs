@@ -24,10 +24,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Data;
+using System.Windows;
 
-namespace VehicleLib
+namespace VDash.Converters
 {
-	public class Action
+	[ValueConversion(typeof(Enum), typeof(int))]
+	public class EnumIntConverter : IValueConverter
 	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			return System.Convert.ToInt32(value);
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			return Enum.ToObject(targetType, System.Convert.ToInt32(value));
+		}
 	}
 }

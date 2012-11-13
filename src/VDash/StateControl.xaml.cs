@@ -33,6 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace VDash
 {
@@ -41,9 +42,18 @@ namespace VDash
     /// </summary>
     public partial class StateControl : UserControl
     {
-        public StateControl()
-        {
-            InitializeComponent();
-        }
+		public StateControl()
+		{
+			this.DataContext = DataModel.GetInstance();
+
+			InitializeComponent();
+		}
+
+		private void Stop_Click(object sender, RoutedEventArgs e)
+		{
+			DataModel dm = DataModel.GetInstance();
+			dm.Speed = 0;
+			dm.Turn = DataModel.TurnDirection.None;
+		}
     }
 }

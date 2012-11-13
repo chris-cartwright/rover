@@ -31,8 +31,18 @@ if (config.simulator) {
 else
 	require("bonescript");
 
+module.exports.TurnState = function (data) {
+	log.info("TurnState", data);
+
+	var motor = pins.motor.forward_reverse;
+	digitalWrite(bone[motor.dir], 1);
+	analogWrite(bone[motor.speed], 0);
+};
+
 module.exports.ForwardMoveState = function (data) {
 	log.info("ForwardMoveState", data);
+
+	data.Speed /= 100;
 
 	var motor = pins.motor.forward_reverse;
 	digitalWrite(bone[motor.dir], 1);
@@ -41,6 +51,8 @@ module.exports.ForwardMoveState = function (data) {
 
 module.exports.BackwardMoveState = function (data) {
 	log.info("BackwardMoveState", data);
+
+	data.Speed /= 100;
 
 	var motor = pins.motor.forward_reverse;
 	digitalWrite(bone[motor.dir], 0);

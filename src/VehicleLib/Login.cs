@@ -32,13 +32,13 @@ namespace VehicleLib
 	[Serializable]
 	public class Login
 	{
-		private string _password;
+		public string Password { get; set; }
 
 		public Login() { }
 
 		public Login(string password)
 		{
-			_password = password;
+			Password = password;
 		}
 	}
 }

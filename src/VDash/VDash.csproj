@@ -72,7 +72,9 @@
     </Compile>
     <Compile Include="Converters\DateTimeToTimeStringConverter.cs" />
     <Compile Include="Converters\EnumRadioButtonConverter.cs" />
+    <Compile Include="Converters\EnumIntConverter.cs" />
     <Compile Include="Converters\ProxyMultiConverter.cs" />
+    <Compile Include="DataModel.cs" />
     <Compile Include="HelpWindow.xaml.cs">
       <DependentUpon>HelpWindow.xaml</DependentUpon>
     </Compile>

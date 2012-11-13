@@ -32,6 +32,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using Microsoft.CSharp.RuntimeBinder;
 using VehicleLib.Exceptions;
+using Newtonsoft.Json.Linq;
 
 namespace VehicleLib
 {
@@ -56,7 +57,21 @@ namespace VehicleLib
 
 		public VehiclePipe()
 		{
-			_thread = new Thread(Recv);
+			_thread = new Thread(delegate()
+			{
+				try
+				{
+					Recv();
+				}
+				catch (SocketException ex)
+				{
+					// Thread was killed
+					if (ex.ErrorCode == 10004)
+						return;
+
+					throw ex;
+				}
+			});
 		}
 
 		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
@@ -147,7 +162,7 @@ namespace VehicleLib
 		/// Exceptions are allowed to bubble
 		/// </summary>
 		/// <param name="q">Action object to send to Rover</param>	
-		public void Send(Action a) // might have to be careful here. There is a System.Action 
+		public void Send(States.State a) // might have to be careful here. There is a System.Action 
 		{
 			SendRaw(a, null);
 		}
@@ -224,7 +239,7 @@ namespace VehicleLib
 
 					throw ex;
 				}
-				catch (Exception ex)
+				catch (SocketException ex)
 				{
 					_socket = null;
 
@@ -245,29 +260,45 @@ namespace VehicleLib
 			object receivedObject;
 			try
 			{
-				receivedObject = Convert.ChangeType(packet.data, Type.GetType("VDash." + packet.cmd));
+				string cat = "";
+				if (packet.cmd.ToString().Contains("Error"))
+					cat = "Errors.";
+				else if (packet.cmd.ToString().Contains("SensorInfo"))
+					cat = "Sensors.";
+
+				string finder = "VehicleLib." + cat + packet.cmd + ", VehicleLib";
+				Type t = Type.GetType(finder, true);
+				MethodInfo cast = typeof(JToken).GetMethod("ToObject", new Type[] {}).MakeGenericMethod(t);
+				receivedObject = cast.Invoke(packet.data, null);
 			}
-			catch (RuntimeBinderException ex)
+			catch (RuntimeBinderException)
 			{
 				throw new MalformedMessageException() { Malformed = JsonConvert.SerializeObject(packet) };
 			}
 
-			if (packet.cmd.toString().Contains("Error"))
+			SensorInfoHandler cb = null;
+			if(packet.id != null)
+			{
+				uint id = packet.id.ToObject<uint>();
+				cb = _callbacks[id];
+				_callbacks.Remove(id);
+			}
+
+			if (packet.cmd.ToString().Contains("Error"))
 			{
 				if (OnError != null)
 				{
 					OnError((Errors.Error)receivedObject);
 				}
+
+				return;
 			}
-			if (packet.id != null)
-			{
-				UInt32 id = Convert.ToUInt32(packet.id);
-				_callbacks[id]((Sensors.SensorInfo)receivedObject);
-				_callbacks.Remove(id);
-			}
+			
+			Sensors.SensorInfo sens = (Sensors.SensorInfo)receivedObject;
+			if (cb != null)
+				cb(sens);
 			else
 			{
-				Sensors.SensorInfo sens = (Sensors.SensorInfo)receivedObject;
 				if (OnSensorEvent != null)
 				{
 					OnSensorEvent(sens);

@@ -45,42 +45,20 @@ namespace VDash
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		internal static VehiclePipe Vehicle = new VehiclePipe();
-		internal static BroadcastListener Listener = new BroadcastListener();
-
 		public MainWindow()
         {
 			InitializeComponent();
 
-			Closed += new EventHandler(MainWindow_Closed);
-			try				
+			Closed += new EventHandler(delegate(object sender, EventArgs e)
 			{
-				Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
-			}
-			catch (Exception ex)
-			{
-				LogControl.Error(ex);
-			}
+				DataModel.GetInstance().Shutdown();
+			});
 
 			AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
 			{
 				LogControl.Error(e.ExceptionObject as Exception);
 			};
-
-#if _DEBUG
-			Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
-			{
-				if(!Vehicle.Connected)
-					Vehicle.Connect(ep, new Login("pwd"));
-			};
-#endif
         }
-
-		void MainWindow_Closed(object sender, EventArgs e)
-		{
-			Vehicle.Shutdown();
-			Listener.Shutdown();
-		}
 
 		private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)
 		{

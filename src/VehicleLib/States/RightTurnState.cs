@@ -31,10 +31,5 @@ namespace VehicleLib.States
     public class RightTurnState: TurnState
     {        
         public RightTurnState() { }
-
-		public RightTurnState(short percent)
-        {
-            this.Percent = percent;
-        }
     }
 }

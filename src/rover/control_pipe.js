@@ -58,6 +58,7 @@ var ControlPipe = new function () {
 		_client = socket;
 		_client.on("data", onData);
 		_client.on("error", onClientError);
+		_client.on("close", onDisconnect);
 		_validated = false;
 		_tries = 0;
 	};
@@ -100,9 +101,20 @@ var ControlPipe = new function () {
 			return;
 		}
 
-		if (obj.cmd.indexOf("State") != -1)
+		if (obj.cmd.indexOf("State") != -1) {
+			if (!states.hasOwnProperty(obj.cmd)) {
+				_self.send(new ex.CommandNotFound(obj.cmd));
+				return;
+			}
+
 			states[obj.cmd](obj.data);
+		}
 		else if (obj.cmd.indexOf("Query") != -1) {
+			if (!queries.hasOwnProperty(obj.cmd)) {
+				_self.send(new ex.CommandNotFound(obj.cmd));
+				return;
+			}
+
 			var ret = queries[obj.cmd](obj.data.id);
 			_self.send({ cmd: name, data: ret }, obj.id);
 		}
@@ -146,6 +158,8 @@ var ControlPipe = new function () {
 	};
 
 	this.send = function (obj, id, socket) {
+		log.info("Data sent: ", JSON.stringify({ object: obj, id: id }));
+
 		var name = obj.name;
 		delete obj.name;
 		var d = {

@@ -23,21 +23,25 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="190" d:DesignWidth="250">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:VDash.Converters"
+             xmlns:me="clr-namespace:VDash"
+             mc:Ignorable="d"
+             d:DesignHeight="190" d:DesignWidth="246">
+    <UserControl.Resources>
+        <converters:EnumIntConverter x:Key="enumConverter" />
+    </UserControl.Resources>
     <Grid>
-        <Label Content="Speed" Height="24" HorizontalAlignment="Left" Margin="55,17,0,0" Name="lblMove" VerticalAlignment="Top" Width="60" Padding="17,0,0,0" />
-        <Label Content="Direction" Height="24" HorizontalAlignment="Left" Margin="140,17,0,0" Name="lblTurn" VerticalAlignment="Top" Width="60" Padding="10,0,0,0" />
-        <Label Content="Forwards" Height="24" HorizontalAlignment="Left" Margin="15,40,0,0" Name="lblForward" VerticalAlignment="Top" Width="80" />
-        <Label Content="Backwards" Height="24" HorizontalAlignment="Left" Margin="15,130,0,0" Name="lblReverse" VerticalAlignment="Top" Width="80" />
-        <Label Content="Left" Height="19" HorizontalAlignment="Left" Margin="130,45,0,0" Name="lblLeft" VerticalAlignment="Top" Width="60"  Padding="0,0,0,0" />
-        <Label Content="Right" Height="24" HorizontalAlignment="Left" Margin="188,45,0,0" Name="lblRight" VerticalAlignment="Top" Width="39"  Padding="0,0,0,0" HorizontalContentAlignment="Right" />
-        <Slider Height="100" Orientation="Vertical" HorizontalAlignment="Left" IsSelectionRangeEnabled="true" Margin="80,48,0,0" Name="slideBack" SelectionEnd="100" SelectionStart="0" TickPlacement="BottomRight" VerticalAlignment="Top" Width="25" />
-        <Slider Height="21" Width="100" IsSelectionRangeEnabled="true" Name="slideLeft" SelectionEnd="2" SelectionStart="0" TickPlacement="BottomRight" VerticalAlignment="Top" SmallChange="1" Maximum="2" Margin="130,70,76,0" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="67,160,188,0" Name="tbForwarBackkAmt" VerticalAlignment="Top" Width="42" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="152,160,0,0" Name="tbLefRightAmt" VerticalAlignment="Top" Width="42" />
-        <Label Content="%" Height="28" HorizontalAlignment="Left" Margin="105,160,162,0" Name="label1" VerticalAlignment="Top" Width="28" />
-        <Label Content="%" Height="28" HorizontalAlignment="Left" Margin="190,160,0,0" Name="label2" VerticalAlignment="Top" Width="28" />
+        <Label Content="Speed" Height="30" Margin="55,17,0,0" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Label Content="Direction" Height="24" Margin="140,17,0,0" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Label Content="Forwards" Height="24" Margin="15,40,0,0" Width="65" VerticalAlignment="Top" HorizontalAlignment="Left" HorizontalContentAlignment="Right" />
+        <Label Content="Backwards" Height="24" Margin="15,130,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Width="65" />
+        <Label Content="Left" Height="30" Margin="130,45,0,0" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Label Content="Right" Height="30" Margin="188,45,0,0" Width="39" HorizontalContentAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Slider Height="100" Margin="82,48,0,0" Width="25" TickFrequency="0.01" Maximum="100" Minimum="-100" Orientation="Vertical" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding Speed}" />
+        <Slider Height="25" Width="100" Minimum="0" Maximum="2" Margin="130,70,0,0" IsSnapToTickEnabled="True" Value="{Binding Turn,Converter={StaticResource enumConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <TextBox Height="23" Margin="66,160,0,0" Width="42" Text="{Binding Speed}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Label Content="%" Height="28" Margin="105,160,0,0" Width="28" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Button Content="Stop" Height="23" HorizontalAlignment="Left" Margin="146,124,0,0" VerticalAlignment="Top" Width="65" Click="Stop_Click" />
     </Grid>
 </UserControl>
