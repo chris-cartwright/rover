@@ -119,11 +119,10 @@ namespace VDash
 			Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
 
 #if DEBUG
-			DataModel dm = DataModel.GetInstance();
-			dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
+			Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
 			{
-				if (!dm.Vehicle.Connected)
-					dm.Vehicle.Connect(ep, new Login("pwd"));
+				if (!Vehicle.Connected)
+					Vehicle.Connect(ep, new Login("pwd"));
 			};
 #endif
 		}

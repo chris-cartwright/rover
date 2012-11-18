@@ -40,7 +40,6 @@ namespace VehicleLib
 
 		public event VehicleBroadcastHandler OnBroadcastReceived;
 
-		private bool _quit = false;
 		private JsonLineProtocol _proto = new JsonLineProtocol();
 		private Thread _thread;
 		private UdpClient _listener;
