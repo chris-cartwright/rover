@@ -175,13 +175,6 @@ namespace VDash
 			InitializeComponent();
 
 			OnLogReceived += LogReceived;
-
-#if DEBUG
-			ds.Logs.Add(new LogItem() { Message = "Error", Type = MessageType.Error });
-			ds.Logs.Add(new LogItem() { Message = "Warning", Type = MessageType.Warning });
-			ds.Logs.Add(new LogItem() { Message = "Info", Type = MessageType.Info });
-			ds.Logs.Add(new LogItem() { Message = "Debug", Type = MessageType.Debug });
-#endif
 		}
 
 		private void Clear_Click(object sender, RoutedEventArgs e)

@@ -45,29 +45,29 @@ namespace VDash
 		{
 			public event PropertyChangedEventHandler PropertyChanged;
 
-			private char _moveForward;
-			public char MoveForward
+			private string _moveForward;
+			public string MoveForward
 			{
 				get { return _moveForward; }
 				set { _moveForward = value; Notify("MoveForward"); }
 			}
 
-			private char _moveBackward;
-			public char MoveBackward
+			private string _moveBackward;
+			public string MoveBackward
 			{
 				get { return _moveBackward; }
 				set { _moveBackward = value; Notify("MoveBackward"); }
 			}
 
-			private char _turnLeft;
-			public char TurnLeft
+			private string _turnLeft;
+			public string TurnLeft
 			{
 				get { return _turnLeft; }
 				set { _turnLeft = value; Notify("TurnLeft"); }
 			}
 
-			private char _turnRight;
-			public char TurnRight
+			private string _turnRight;
+			public string TurnRight
 			{
 				get { return _turnRight; }
 				set { _turnRight = value; Notify("TurnRight"); }

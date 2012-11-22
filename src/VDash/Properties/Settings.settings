@@ -2,20 +2,23 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="VDash.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="KeyForward" Type="System.Char" Scope="User">
+    <Setting Name="KeyForward" Type="System.String" Scope="User">
       <Value Profile="(Default)">w</Value>
     </Setting>
-    <Setting Name="KeyBackward" Type="System.Char" Scope="User">
+    <Setting Name="KeyBackward" Type="System.String" Scope="User">
       <Value Profile="(Default)">s</Value>
     </Setting>
-    <Setting Name="KeyLeft" Type="System.Char" Scope="User">
+    <Setting Name="KeyLeft" Type="System.String" Scope="User">
       <Value Profile="(Default)">a</Value>
     </Setting>
-    <Setting Name="KeyRight" Type="System.Char" Scope="User">
+    <Setting Name="KeyRight" Type="System.String" Scope="User">
       <Value Profile="(Default)">d</Value>
     </Setting>
     <Setting Name="ListenPort" Type="System.String" Scope="Application">
       <Value Profile="(Default)">15001</Value>
+    </Setting>
+    <Setting Name="KeyStop" Type="System.String" Scope="User">
+      <Value Profile="(Default)">space</Value>
     </Setting>
   </Settings>
 </SettingsFile>

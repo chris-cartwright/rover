@@ -42,13 +42,15 @@ namespace VehicleLib
 	/// </summary>
 	public class VehiclePipe
 	{
-		public delegate void ErrorHandler(VehicleLib.Errors.Error err);
+		public delegate void ErrorHandler(Errors.Error err);
 		public delegate void SensorInfoHandler(Sensors.SensorInfo si);
+		public delegate void ExceptionHandler(Exception ex);
 
 		public event ErrorHandler OnError;
 		public event System.Action OnConnect;
 		public event System.Action OnDisconnect;
 		public event SensorInfoHandler OnSensorEvent;
+		public event ExceptionHandler OnException;
 
 		private Socket _socket;
 		private Dictionary<uint, SensorInfoHandler> _callbacks;
@@ -69,7 +71,13 @@ namespace VehicleLib
 					if (ex.ErrorCode == 10004)
 						return;
 
-					throw ex;
+					if (OnException != null)
+						OnException(ex);
+				}
+				catch (Exception ex)
+				{
+					if (OnException != null)
+						OnException(ex);
 				}
 			});
 		}

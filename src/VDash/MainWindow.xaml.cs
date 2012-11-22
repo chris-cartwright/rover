@@ -45,8 +45,23 @@ namespace VDash
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		public static Window Self { get; private set; }
+
+		public static void Invoke(Action act)
+		{
+			if (Self == null)
+				return;
+
+			Self.Dispatcher.Invoke(act);
+		}
+
 		public MainWindow()
         {
+			if (Self != null)
+				throw new Exception("Cannot initialize more than one MainWindow.");
+
+			Self = this;
+
 			InitializeComponent();
 
 			Closed += new EventHandler(delegate(object sender, EventArgs e)
@@ -58,7 +73,31 @@ namespace VDash
 			{
 				LogControl.Error(e.ExceptionObject as Exception);
 			};
+
+			this.PreviewKeyDown += new KeyEventHandler(MainWindow_KeyDown);
+			this.ContentRendered += (s, e) => Focus();
         }
+
+		void MainWindow_KeyDown(object sender, KeyEventArgs e)
+		{
+			string k = e.Key.ToString().ToLower();
+
+			DataModel dm = DataModel.GetInstance();
+
+			if (k == Properties.Settings.Default.KeyForward)
+				dm.Speed += 10;
+			else if (k == Properties.Settings.Default.KeyBackward)
+				dm.Speed -= 10;
+			else if (k == Properties.Settings.Default.KeyLeft)
+				dm.Turn--;
+			else if (k == Properties.Settings.Default.KeyRight)
+				dm.Turn++;
+			else if (k == Properties.Settings.Default.KeyStop)
+			{
+				dm.Speed = 0;
+				dm.Turn = DataModel.TurnDirection.None;
+			}
+		}
 
 		private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)
 		{

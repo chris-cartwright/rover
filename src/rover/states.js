@@ -31,6 +31,12 @@ if (config.simulator) {
 else
 	require("bonescript");
 
+// Hacky. It's just a band-aid until #49 is implemented
+pinMode(pins.motor.forward_reverse.speed, OUTPUT);
+pinMode(pins.motor.forward_reverse.dir, OUTPUT);
+pinMode(pins.motor.turn.speed, OUTPUT);
+pinMode(pins.motor.turn.dir, OUTPUT);
+
 module.exports.TurnState = function (data) {
 	log.info("TurnState", data);
 

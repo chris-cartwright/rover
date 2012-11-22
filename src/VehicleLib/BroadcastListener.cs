@@ -66,7 +66,6 @@ namespace VehicleLib
 		// http://msdn.microsoft.com/en-us/library/tst0kwb1.aspx
 		public void Run(ushort listenPort)
 		{
-			//bool done = false;
 			_listener = new UdpClient(listenPort);
 			IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, listenPort);
 			Encoding ASCII = Encoding.ASCII;

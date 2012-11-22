@@ -82,7 +82,7 @@ function validPin(pin) {
 }
 
 function validMode(mode) {
-	if (mode != OUTOUT && mode != INPUT)
+	if (mode != OUTPUT && mode != INPUT)
 		log.error("Invalid mode: " + mode);
 }
 

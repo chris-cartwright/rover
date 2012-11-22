@@ -26,9 +26,9 @@ namespace VDash.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("w")]
-        public char KeyForward {
+        public string KeyForward {
             get {
-                return ((char)(this["KeyForward"]));
+                return ((string)(this["KeyForward"]));
             }
             set {
                 this["KeyForward"] = value;
@@ -38,9 +38,9 @@ namespace VDash.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("s")]
-        public char KeyBackward {
+        public string KeyBackward {
             get {
-                return ((char)(this["KeyBackward"]));
+                return ((string)(this["KeyBackward"]));
             }
             set {
                 this["KeyBackward"] = value;
@@ -50,9 +50,9 @@ namespace VDash.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("a")]
-        public char KeyLeft {
+        public string KeyLeft {
             get {
-                return ((char)(this["KeyLeft"]));
+                return ((string)(this["KeyLeft"]));
             }
             set {
                 this["KeyLeft"] = value;
@@ -62,9 +62,9 @@ namespace VDash.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("d")]
-        public char KeyRight {
+        public string KeyRight {
             get {
-                return ((char)(this["KeyRight"]));
+                return ((string)(this["KeyRight"]));
             }
             set {
                 this["KeyRight"] = value;
@@ -77,6 +77,18 @@ namespace VDash.Properties {
         public string ListenPort {
             get {
                 return ((string)(this["ListenPort"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("space")]
+        public string KeyStop {
+            get {
+                return ((string)(this["KeyStop"]));
+            }
+            set {
+                this["KeyStop"] = value;
             }
         }
     }

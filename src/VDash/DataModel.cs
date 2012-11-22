@@ -28,6 +28,7 @@ using VehicleLib;
 using VehicleLib.States;
 using System.ComponentModel;
 using System.Net;
+using System.Windows.Controls;
 
 namespace VDash
 {
@@ -70,24 +71,41 @@ namespace VDash
 		public BroadcastListener Listener = new BroadcastListener();
 
 		private TurnDirection _turn;
+
+		/// <summary>
+		/// Sets the direction of turn for the vehicle.
+		/// </summary>
 		public TurnDirection Turn
 		{
 			get { return _turn; }
 			set
 			{
 				_turn = value;
+				if (_turn < TurnDirection.Left)
+					_turn = TurnDirection.Left;
+				else if (_turn > TurnDirection.Right)
+					_turn = TurnDirection.Right;
+
 				Notify("Turn");
 
-				if (_turn == TurnDirection.Left)
-					Vehicle.Send(new LeftTurnState());
-				else if (_turn == TurnDirection.Right)
-					Vehicle.Send(new RightTurnState());
-				else
-					Vehicle.Send(new TurnState());
+				if (Vehicle.Connected)
+				{
+					if (_turn == TurnDirection.Left)
+						Vehicle.Send(new LeftTurnState());
+					else if (_turn == TurnDirection.Right)
+						Vehicle.Send(new RightTurnState());
+					else
+						Vehicle.Send(new TurnState());
+				}
 			}
 		}
 
 		private short _speed;
+
+		/// <summary>
+		/// Controls the speed of the vehicle.
+		/// Accepts a range of +100 to -100.
+		/// </summary>
 		public short Speed
 		{
 			get { return _speed; }
@@ -102,10 +120,13 @@ namespace VDash
 				_speed = value;
 				Notify("Speed");
 
-				if (_speed < 0)
-					Vehicle.Send(new BackwardMoveState((ushort)Math.Abs(_speed)));
-				else
-					Vehicle.Send(new ForwardMoveState((ushort)_speed));
+				if (Vehicle.Connected)
+				{
+					if (_speed < 0)
+						Vehicle.Send(new BackwardMoveState((ushort)Math.Abs(_speed)));
+					else
+						Vehicle.Send(new ForwardMoveState((ushort)_speed));
+				}
 			}
 		}
 
@@ -115,6 +136,11 @@ namespace VDash
 		private DataModel()
 		{
 			_turn = TurnDirection.None;
+
+			Vehicle.OnException += delegate(Exception ex)
+			{
+				MainWindow.Invoke(() => LogControl.Error(ex));
+			};
 
 			Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
 
