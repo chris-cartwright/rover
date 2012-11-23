@@ -41,5 +41,9 @@ namespace VehicleLib.States
             this.Green = bytGreen;
             this.Blue = bytBlue;
         }
+		public override string Cmd
+		{
+			get { return "ColourLightState"; }
+		}
     }
 }

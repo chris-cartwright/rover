@@ -32,9 +32,14 @@ namespace VehicleLib.States
     {
         public ForwardMoveState() { }
 
-		public ForwardMoveState(ushort speed)
+		public ForwardMoveState(short speed)
         {
-            this.Speed = speed;
+			Vector = new MoveState.DVector(speed, AxisType.X);
         }
+
+		public override string Cmd
+		{
+			get { return "MoveState"; }
+		}
     }
 }

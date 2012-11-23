@@ -160,7 +160,7 @@ namespace VehicleLib
 			}
 			++_callbackCounter;
 			_callbacks.Add(_callbackCounter, q.Callback);
-			SendRaw(q, _callbackCounter);
+			SendRaw(q, _callbackCounter, "Query");
 		}
 
 		/// <summary>
@@ -172,7 +172,7 @@ namespace VehicleLib
 		/// <param name="q">Action object to send to Rover</param>	
 		public void Send(States.State a) // might have to be careful here. There is a System.Action 
 		{
-			SendRaw(a, null);
+			SendRaw(a, null, a.Cmd);
 		}
 
 		/// <summary>
@@ -181,11 +181,11 @@ namespace VehicleLib
 		/// </summary>
 		/// <param name="o">ojbect to send</param>
 		/// <param name="callbackID">Optional parameter, used when sending an object that expects an object to be returned from the vehicle.</param>
-		private void SendRaw(object o, uint? callbackID)
+		private void SendRaw(object o, uint? callbackID, string cmd)
 		{
 			try
 			{
-				dynamic packet = new { cmd = o.GetType().Name, data = o };
+				dynamic packet = new { cmd = cmd, data = o };
 
 				if (callbackID != null)
 				{
@@ -216,7 +216,7 @@ namespace VehicleLib
 		/// <param name="login">Credentials used for authentication</param>
 		private void Login(Login login)
 		{
-			SendRaw(login, null);
+			SendRaw(login, null, "Login");
 		}
 
 		/// <summary>

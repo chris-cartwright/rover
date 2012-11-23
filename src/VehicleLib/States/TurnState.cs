@@ -30,6 +30,99 @@ namespace VehicleLib.States
     [Serializable]
     public class TurnState : State
     {
+		public short Speed;
+		protected OVector Vector { get; set; }
+
+		[Serializable]
+		protected class OVector
+		{
+			private short _x;
+			private short _y;
+			private short _z;
+			public short X
+			{
+				get { return _x; }
+				set
+				{
+					if (value < -100)
+						value = -100;
+
+					if (value > 100)
+						value = 100;
+					_x = value;
+				}
+			}
+			public short Y
+			{
+				get { return _y; }
+				set
+				{
+					if (value < -100)
+						value = -100;
+
+					if (value > 100)
+						value = 100;
+					_y = value;
+				}
+			}
+			public short Z
+			{
+				get { return _z; }
+				set
+				{
+					if (value < -100)
+						value = -100;
+
+					if (value > 100)
+						value = 100;
+					_z = value;
+				}
+			}
+
+			public OVector(short speed, AxisType axis)
+			{
+				switch (axis)
+				{
+				case AxisType.X:
+					X = speed;
+					break;
+				case AxisType.Y:
+					Y = speed;
+					break;
+				default:
+					Z = speed;
+					break;
+				}
+			}
+
+			public OVector(short speedX, short speedY, short speedZ)
+			{
+				X = speedX;
+				Y = speedY;
+				Z = speedZ;
+			}
+		} // end class DVector
+
         public TurnState() { }
+
+		public TurnState(short speed)
+        {
+			Vector = new OVector(speed, AxisType.X);
+        }
+
+		public TurnState(short speedX, short speedY, short speedZ)
+		{
+			Vector = new OVector(speedX, speedY, speedZ);
+		}
+
+		public TurnState(short speed, AxisType axis)
+		{
+			Vector = new OVector(speed, axis);
+		}
+		
+		public override string Cmd
+		{
+			get { return "TurnState"; }
+		}
     }
 }

@@ -32,9 +32,15 @@ namespace VehicleLib.States
     {
         public BackwardMoveState() { }
 
-		public BackwardMoveState(ushort speed)
+		public BackwardMoveState(short speed)
         {
-            this.Speed = speed;
+			speed *= -1;
+			Vector = new MoveState.DVector(speed, AxisType.X);
         }
+
+		public override string Cmd
+		{
+			get { return "MoveState"; }
+		}
     }
 }

@@ -122,10 +122,11 @@ namespace VDash
 
 				if (Vehicle.Connected)
 				{
-					if (_speed < 0)
-						Vehicle.Send(new BackwardMoveState((ushort)Math.Abs(_speed)));
-					else
-						Vehicle.Send(new ForwardMoveState((ushort)_speed));
+					Vehicle.Send(new MoveState((short)_speed));
+					//if (_speed < 0)
+					//    Vehicle.Send(new BackwardMoveState((short)(_speed)));
+					//else
+					//    Vehicle.Send(new ForwardMoveState((short)_speed));
 				}
 			}
 		}

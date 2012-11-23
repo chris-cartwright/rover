@@ -27,16 +27,105 @@ using System.Text;
 
 namespace VehicleLib.States
 {
+	//public enum AxisType { X = 0, Y, Z };
+
     [Serializable]
     public class MoveState : State
     {
-        public ushort Speed;
+        public short Speed;
+		protected DVector Vector { get; set; }
+
+		[Serializable]
+		protected class DVector
+		{
+			private short _x;
+			private short _y;
+			private short _z;
+			public short X
+			{
+				get { return _x; }
+				set
+				{
+					if (value < -100)
+						value = -100;
+
+					if (value > 100)
+						value = 100;
+					_x = value;
+				}
+			}
+			public short Y
+			{
+				get { return _y; }
+				set
+				{
+					if (value < -100)
+						value = -100;
+
+					if (value > 100)
+						value = 100;
+					_y = value;
+				}
+			}
+			public short Z
+			{
+				get { return _z; }
+				set
+				{
+					if (value < -100)
+						value = -100;
+
+					if (value > 100)
+						value = 100;
+					_z = value;
+				}
+			}
+
+			public DVector(short speed, AxisType axis)
+			{
+				switch (axis)
+				{
+				case AxisType.X :
+					X = speed;
+					break;
+				case AxisType.Y:
+					Y = speed;
+					break;
+				default:
+					Z = speed;
+					break;
+				}
+			}
+
+			public DVector(short speedX, short speedY, short speedZ)
+			{
+				X = speedX;
+				Y = speedY;
+				Z = speedZ;
+			}
+		} // end class DVector
+
 
         public MoveState() { }
 
-        public MoveState(ushort speed)
+		public MoveState(short speed)
         {
-            this.Speed = speed;
+			Vector = new DVector(speed, AxisType.X);
         }
+
+		public MoveState(short speedX, short speedY, short speedZ)
+		{
+			Vector = new DVector(speedX, speedY, speedZ);
+		}
+
+		public MoveState(short speed, AxisType axis)
+		{
+			Vector = new DVector(speed, axis);
+		}
+
+		public override string Cmd
+		{
+			get { return "MoveState"; }
+		}
     }
 }

@@ -41,5 +41,9 @@ namespace VehicleLib.States
             this.Level = level;
         }
 
+		public override string Cmd
+		{
+			get { return "LightState"; }
+		}
     }
 }

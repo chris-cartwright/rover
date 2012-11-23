@@ -31,5 +31,16 @@ namespace VehicleLib.States
     public class LeftTurnState : TurnState
     {        
         public LeftTurnState() { }
+
+		public LeftTurnState(short speed)
+        {
+			speed *= 1;
+			Vector = new TurnState.OVector(speed, AxisType.X);
+        }
+
+		public override string Cmd
+		{
+			get { return "TurnState"; }
+		}
     }
 }

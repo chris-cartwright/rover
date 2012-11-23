@@ -28,17 +28,12 @@ using System.Text;
 namespace VehicleLib.States
 {
     [Serializable]
-    public class State
+    abstract public class State
     {
-        private byte _pwm;
-        private bool _enabled;
+		public enum AxisType { X = 0, Y, Z };
+
+		public abstract string Cmd { get; }
 
         public State() { }
-
-        public State(byte bytPwm, bool blnEnabled)
-        {
-            this._pwm = bytPwm;
-            this._enabled = blnEnabled;
-        }
     }
 }
