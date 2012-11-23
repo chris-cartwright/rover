@@ -131,12 +131,47 @@ namespace VDash
 			}
 		}
 
+		private string _key;
+		/// <summary>
+		/// Reports Last Key pressed 
+		/// </summary>
+		public string Key {
+			get { return _key; }
+			set {				
+				_key = value;
+				Notify("Key");
+			}
+		}
+		
+		private void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Key")
+			{
+				if (Key == Properties.Settings.Default.KeyForward)
+					Speed += 10;
+				else if (Key == Properties.Settings.Default.KeyBackward)
+					Speed -= 10;
+				else if (Key == Properties.Settings.Default.KeyLeft)
+					Turn--;
+				else if (Key == Properties.Settings.Default.KeyRight)
+					Turn++;
+				else if (Key == Properties.Settings.Default.KeyStop)
+				{
+					Speed = 0;
+					Turn = DataModel.TurnDirection.None;
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Constructor. Sets default values for properties.
 		/// </summary>
 		private DataModel()
 		{
 			_turn = TurnDirection.None;
+
+			PropertyChanged += new PropertyChangedEventHandler(dm_PropertyChanged);
 
 			Vehicle.OnException += delegate(Exception ex)
 			{

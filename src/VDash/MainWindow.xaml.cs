@@ -83,20 +83,8 @@ namespace VDash
 			string k = e.Key.ToString().ToLower();
 
 			DataModel dm = DataModel.GetInstance();
-
-			if (k == Properties.Settings.Default.KeyForward)
-				dm.Speed += 10;
-			else if (k == Properties.Settings.Default.KeyBackward)
-				dm.Speed -= 10;
-			else if (k == Properties.Settings.Default.KeyLeft)
-				dm.Turn--;
-			else if (k == Properties.Settings.Default.KeyRight)
-				dm.Turn++;
-			else if (k == Properties.Settings.Default.KeyStop)
-			{
-				dm.Speed = 0;
-				dm.Turn = DataModel.TurnDirection.None;
-			}
+			dm.Key = k;
+			
 		}
 
 		private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)

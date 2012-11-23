@@ -33,6 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace VDash
 {
@@ -41,38 +42,90 @@ namespace VDash
     /// </summary>
     public partial class KeyStateControl : UserControl
     {
+		DataModel dm = DataModel.GetInstance();
         public KeyStateControl()
         {
-            InitializeComponent();
+			this.DataContext = dm;
+
+			dm.PropertyChanged += new PropertyChangedEventHandler(dm_PropertyChanged);
+
+			InitializeComponent();
         }
 
-        private void OnKeyDownHandler(object sender, KeyEventArgs e)
-        {
-            if (e.Key.ToString().Equals(Properties.Settings.Default.KeyForward.ToString(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                label2.Content = "Moving Forward";
-                textBox1.Text = "";
-            }
-            else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyBackward.ToString(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                label2.Content = "Moving Backwards";
-                textBox1.Text = "";
-            }
-            else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyLeft.ToString(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                label2.Content = "Turning Left";
-                textBox1.Text = "";
-            }
-            else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyRight.ToString(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                label2.Content = "Turning Right";
-                textBox1.Text = "";
-            }
-            else
-            {
-                label2.Content = "Invalid Movement Key";
-                textBox1.Text = "";
-            }
-        }
+		void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Speed")
+			{
+				if (dm.Speed > 0)
+				{
+					label2.Content = "Moving Forward";
+				}
+				else if (dm.Speed < 0)
+				{
+					label2.Content = "Moving Backwards";
+				}
+				else
+				{
+					label2.Content = "Stopped";
+				}
+			}
+			else if (e.PropertyName == "Turn")
+			{
+				if (dm.Turn == DataModel.TurnDirection.Left)
+				{
+					label4.Content = "Turning Left";
+				}
+				else if (dm.Turn == DataModel.TurnDirection.Right)
+				{
+					label4.Content = "Turning Right";
+				}
+				else
+				{
+					label4.Content = "Straight";
+				}
+			}
+		}
+
+		//private void OnKeyDownHandler(object sender, KeyEventArgs e)
+		//{
+		//    DataModel dm = DataModel.GetInstance();
+
+		//    if (dm.Speed > 0)
+		//    {
+		//        label2.Content = "Moving Forward";
+		//    }
+		//    else if (dm.Speed < 0)
+		//    {
+		//        label2.Content = "Moving Backwards";
+		//    }
+		//    else 
+		//    {
+		//        label2.Content = "Stopped";
+		//    }
+
+		//    if (e.Key.ToString().Equals(Properties.Settings.Default.KeyForward.ToString(), StringComparison.InvariantCultureIgnoreCase))
+		//    {
+		//        textBox1.Text = "";
+		//    }
+		//    else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyBackward.ToString(), StringComparison.InvariantCultureIgnoreCase))
+		//    {               
+		//        textBox1.Text = "";
+		//    }
+		//    else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyLeft.ToString(), StringComparison.InvariantCultureIgnoreCase))
+		//    {
+		//        label2.Content = "Turning Left";
+		//        textBox1.Text = "";
+		//    }
+		//    else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyRight.ToString(), StringComparison.InvariantCultureIgnoreCase))
+		//    {
+		//        label2.Content = "Turning Right";
+		//        textBox1.Text = "";
+		//    }
+		//    else
+		//    {
+		//        label2.Content = "Invalid Movement Key";
+		//        textBox1.Text = "";
+		//    }
+		//}
     }
 }
