@@ -107,7 +107,12 @@ var ControlPipe = new function () {
 				return;
 			}
 
-			states[obj.cmd](obj.data);
+			try {
+				states[obj.cmd](obj.data);
+			}
+			catch (ex) {
+				_self.send(new ex.CommandFailed(ex));
+			}
 		}
 		else if (obj.cmd.indexOf("Query") != -1) {
 			if (!queries.hasOwnProperty(obj.cmd)) {
@@ -115,8 +120,13 @@ var ControlPipe = new function () {
 				return;
 			}
 
-			var ret = queries[obj.cmd](obj.data.id);
-			_self.send({ cmd: name, data: ret }, obj.id);
+			try {
+				var ret = queries[obj.cmd](obj.data.id);
+				_self.send({ cmd: name, data: ret }, obj.id);
+			}
+			catch (ex) {
+				_self.send(new ex.CommandFailed(ex));
+			}
 		}
 		else
 			_self.send(new ex.CommandNotFound(obj.cmd));

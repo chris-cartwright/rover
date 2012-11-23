@@ -54,3 +54,8 @@ module.exports.InvalidLogin = function (triesLeft) {
 module.exports.ConcurrentConnection = function () {
 	this.name = "ConcurrentConnectionError";
 }
+
+module.exports.CommandFailed = function (err) {
+	this.name = "CommandFailed";
+	this.Exception = err.name + ": " + err.message;
+}
