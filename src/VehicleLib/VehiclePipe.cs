@@ -63,7 +63,8 @@ namespace VehicleLib
 			{
 				try
 				{
-					Recv();
+					while(true)
+						Recv();
 				}
 				catch (SocketException ex)
 				{
@@ -319,7 +320,7 @@ namespace VehicleLib
 		/// </summary>
 		public void Shutdown()
 		{
-			if(_socket != null && _socket.Connected)
+			if(_socket != null)
 				_socket.Close();
 
 			if(_thread.ThreadState == ThreadState.Running)

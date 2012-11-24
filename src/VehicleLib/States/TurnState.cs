@@ -27,102 +27,39 @@ using System.Text;
 
 namespace VehicleLib.States
 {
-    [Serializable]
-    public class TurnState : State
-    {
-		public short Speed;
-		protected OVector Vector { get; set; }
+	[Serializable]
+	public class TurnState : State
+	{
+		public SVector3 Vector { get; set; }
 
-		[Serializable]
-		protected class OVector
+		public TurnState()
 		{
-			private short _x;
-			private short _y;
-			private short _z;
-			public short X
-			{
-				get { return _x; }
-				set
-				{
-					if (value < -100)
-						value = -100;
-
-					if (value > 100)
-						value = 100;
-					_x = value;
-				}
-			}
-			public short Y
-			{
-				get { return _y; }
-				set
-				{
-					if (value < -100)
-						value = -100;
-
-					if (value > 100)
-						value = 100;
-					_y = value;
-				}
-			}
-			public short Z
-			{
-				get { return _z; }
-				set
-				{
-					if (value < -100)
-						value = -100;
-
-					if (value > 100)
-						value = 100;
-					_z = value;
-				}
-			}
-
-			public OVector(short speed, AxisType axis)
-			{
-				switch (axis)
-				{
-				case AxisType.X:
-					X = speed;
-					break;
-				case AxisType.Y:
-					Y = speed;
-					break;
-				default:
-					Z = speed;
-					break;
-				}
-			}
-
-			public OVector(short speedX, short speedY, short speedZ)
-			{
-				X = speedX;
-				Y = speedY;
-				Z = speedZ;
-			}
-		} // end class DVector
-
-        public TurnState() { }
+			Vector = new SVector3();
+		}
 
 		public TurnState(short speed)
-        {
-			Vector = new OVector(speed, AxisType.X);
-        }
-
-		public TurnState(short speedX, short speedY, short speedZ)
+			: this()
 		{
-			Vector = new OVector(speedX, speedY, speedZ);
+			Vector.Y = speed;
 		}
 
-		public TurnState(short speed, AxisType axis)
+		public TurnState(short x, short y, short z)
+			: this()
 		{
-			Vector = new OVector(speed, axis);
+			Vector.X = x;
+			Vector.Y = y;
+			Vector.Z = z;
 		}
-		
+
+		public TurnState(short speed, SVector3.Axis axis)
+			: this()
+		{
+			Vector.SetAxis(axis, speed);
+		}
+
 		public override string Cmd
 		{
 			get { return "TurnState"; }
 		}
-    }
+	}
 }

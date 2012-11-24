@@ -30,16 +30,14 @@ namespace VehicleLib.States
     [Serializable]
     public class ForwardMoveState : MoveState
     {
-        public ForwardMoveState() { }
+        public ForwardMoveState()
+		{
+			Vector.Z = 100;
+		}
 
 		public ForwardMoveState(short speed)
         {
-			Vector = new MoveState.DVector(speed, AxisType.X);
+			Vector.Z = speed;
         }
-
-		public override string Cmd
-		{
-			get { return "MoveState"; }
-		}
     }
 }

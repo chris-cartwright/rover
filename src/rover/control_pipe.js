@@ -25,7 +25,7 @@ var net = require("net");
 var config = require("./config");
 var states = require("./states");
 var queries = require("./queries");
-var ex = require("./errors");
+var err = require("./errors");
 var log = new require("./logger").LabelledLogger("control_pipe");
 
 var ControlPipe = new function () {
@@ -50,7 +50,7 @@ var ControlPipe = new function () {
 		log.info("New connection: " + JSON.stringify(socket.address()));
 
 		if (_client != null) {
-			var e = new ex.ConcurrentConnection();
+			var e = new err.ConcurrentConnection();
 			_self.send(e, null, socket);
 			return;
 		}
@@ -70,9 +70,9 @@ var ControlPipe = new function () {
 		} catch (e) {
 			// This also catches error originating in onCommand
 			if (e.name == "SyntaxError")
-				_self.send(new ex.ParseFailed());
+				_self.send(new err.ParseFailed());
 			else
-				throw e;
+				_self.send(new err.Unknown(e.message));
 		}
 	};
 
@@ -81,13 +81,13 @@ var ControlPipe = new function () {
 
 		if (!_validated) {
 			if (obj.cmd != "Login") {
-				_self.send(new ex.NoLogin());
+				_self.send(new err.NoLogin());
 				return;
 			}
 
 			if (obj.data.Password != config.passwd) {
 				_tries++;
-				_self.send(new ex.InvalidLogin(3 - _tries));
+				_self.send(new err.InvalidLogin(3 - _tries));
 
 				if (_tries >= 3) {
 					_client.end();
@@ -103,20 +103,20 @@ var ControlPipe = new function () {
 
 		if (obj.cmd.indexOf("State") != -1) {
 			if (!states.hasOwnProperty(obj.cmd)) {
-				_self.send(new ex.CommandNotFound(obj.cmd));
+				_self.send(new err.CommandNotFound(obj.cmd));
 				return;
 			}
 
 			try {
 				states[obj.cmd](obj.data);
 			}
-			catch (ex) {
-				_self.send(new ex.CommandFailed(ex));
+			catch (e) {
+				_self.send(new err.CommandFailed(obj.cmd, e));
 			}
 		}
 		else if (obj.cmd.indexOf("Query") != -1) {
 			if (!queries.hasOwnProperty(obj.cmd)) {
-				_self.send(new ex.CommandNotFound(obj.cmd));
+				_self.send(new err.CommandNotFound(obj.cmd));
 				return;
 			}
 
@@ -124,12 +124,12 @@ var ControlPipe = new function () {
 				var ret = queries[obj.cmd](obj.data.id);
 				_self.send({ cmd: name, data: ret }, obj.id);
 			}
-			catch (ex) {
-				_self.send(new ex.CommandFailed(ex));
+			catch (e) {
+				_self.send(new err.CommandFailed(obj.cmd, e));
 			}
 		}
 		else
-			_self.send(new ex.CommandNotFound(obj.cmd));
+			_self.send(new err.CommandNotFound(obj.cmd));
 	};
 
 	function onDisconnect() {

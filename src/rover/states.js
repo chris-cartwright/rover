@@ -25,11 +25,11 @@ var config = require("./config");
 var pins = require("./pins");
 
 if (config.simulator) {
-    var b = require("./bone");
-    b.listen();
+	var b = require("./bone");
+	b.listen();
 }
 else
-    require("bonescript");
+	require("bonescript");
 
 // Hacky. It's just a band-aid until #49 is implemented
 pinMode(pins.motor.forward_reverse.speed, OUTPUT);
@@ -38,69 +38,39 @@ pinMode(pins.motor.turn.speed, OUTPUT);
 pinMode(pins.motor.turn.dir, OUTPUT);
 
 module.exports.TurnState = function (data) {
-    log.info("TurnState", data);
+	log.info("TurnState", data);
 
-    var motor = pins.motor.turn;
-    if (data.Vector.X > 0) { // right turn
-        digitalWrite(bone[motor.dir], 1);
-        analogWrite(bone[motor.speed], 1.0);
-       // analogWrite(bone[motor.speed], data.Vector.X);
-    }
-    else {
-        digitalWrite(bone[motor.dir], 0);
-        analogWrite(bone[motor.speed], 1.0);
-        // analogWrite(bone[motor.speed], data.Vector.X);
-    } 
+	var motor = pins.motor.turn;
+
+	if (data.Vector.Y == 0) {
+		analogWrite(bone[motor.speed], 0);
+	}
+	else if (data.Vector.Y > 0) { // right turn
+		digitalWrite(bone[motor.dir], 1);
+		analogWrite(bone[motor.speed], 1.0);
+		// analogWrite(bone[motor.speed], data.Vector.Y);
+	}
+	else {
+		digitalWrite(bone[motor.dir], 0);
+		analogWrite(bone[motor.speed], 1.0);
+		// analogWrite(bone[motor.speed], data.Vector.Y);
+	}
 };
-
-//module.exports.ForwardMoveState = function (data) {
-//    log.info("ForwardMoveState", data);
-
-//    data.Vector.X = data.Vector.X * 0.004 + 0.6;  // should produce results between 0.6 and 1.0 from input 0 to 100
-//    // should to be abs(data.Speed) as non-directional speed?... as we are not using sign for direction
-
-//    var motor = pins.motor.forward_reverse;
-//    digitalWrite(bone[motor.dir], 0);
-//    analogWrite(bone[motor.speed], data.Vector.X);
-//};
-
-//module.exports.BackwardMoveState = function (data) {
-//    log.info("BackwardMoveState", data);
-
-//    data.Vector.X = data.Vector.X * 0.004 + 0.6; // should to be abs(data.Speed) as non-directional speed?... as we are not using sign for direction
-//    var motor = pins.motor.forward_reverse;
-//    digitalWrite(bone[motor.dir], 1);
-//    analogWrite(bone[motor.speed], data.Vector.X);
-//};
 
 module.exports.MoveState = function (data) {
-    log.info("MoveState", data);
+	log.info("MoveState", data);
 
-   // data.Vector.X = data.Vector.X * 0.004 + 0.6; // should to be abs(data.Speed) as non-directional speed?... as we are not using sign for direction
-    var motor = pins.motor.forward_reverse;
+	var motor = pins.motor.forward_reverse;
 
-    if (data.Vector.X > 0) {
-        digitalWrite(bone[motor.dir], 0);
-        analogWrite(bone[motor.speed], data.Vector.X * 0.004 + 0.6);
-    }
-    else {
-        digitalWrite(bone[motor.dir], 1);
-        analogWrite(bone[motor.speed], data.Vector.X * (-0.004) + 0.6);
-    }
+	if (data.Vector.Z == 0) {
+		analogWrite(bone[motor.speed], 0);
+	}
+	else if (data.Vector.Z > 0) {
+		digitalWrite(bone[motor.dir], 0);
+		analogWrite(bone[motor.speed], data.Vector.Z * 0.004 + 0.6);
+	}
+	else {
+		digitalWrite(bone[motor.dir], 1);
+		analogWrite(bone[motor.speed], data.Vector.Z * (-0.004) + 0.6);
+	}
 };
-
-//module.exports.LeftTurnState = function (data) {
-//    log.info("LeftTurnState", data);
-
-//    var motor = pins.motor.turn;
-//    digitalWrite(bone[motor.dir], 0);
-//    analogWrite(bone[motor.speed], 1.0);
-//};
-
-//module.exports.RightTurnState = function (data) {
-//    log.info("RightTurnState", data);
-
-//    var motor = pins.motor.turn;
-//    digitalWrite(bone[motor.dir], 1);
-//    analogWrite(bone[motor.speed], 1.0);
-//};

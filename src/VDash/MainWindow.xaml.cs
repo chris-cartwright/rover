@@ -76,7 +76,15 @@ namespace VDash
 
 			this.PreviewKeyDown += new KeyEventHandler(MainWindow_KeyDown);
 			this.ContentRendered += (s, e) => Focus();
+			this.Closing += new CancelEventHandler(MainWindow_Closing);
         }
+
+		void MainWindow_Closing(object sender, CancelEventArgs e)
+		{
+			// Make sure to null Self on window close
+			// Cross-thread events will hang otherwise
+			Self = null;
+		}
 
 		void MainWindow_KeyDown(object sender, KeyEventArgs e)
 		{

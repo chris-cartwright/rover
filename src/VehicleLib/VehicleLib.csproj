@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Errors\CommandFailedError.cs" />
     <Compile Include="Exceptions\MalformedMessageException.cs" />
     <Compile Include="JsonLineProtocol.cs" />
     <Compile Include="States\BackwardMoveState.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Sensors\TempSensor.cs" />
     <Compile Include="States\TurnState.cs" />
     <Compile Include="Exceptions\VehicleException.cs" />
+    <Compile Include="Vector3.cs" />
     <Compile Include="VehiclePipe.cs" />
   </ItemGroup>
   <ItemGroup>

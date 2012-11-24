@@ -29,6 +29,7 @@ using VehicleLib.States;
 using System.ComponentModel;
 using System.Net;
 using System.Windows.Controls;
+using VehicleLib.Errors;
 
 namespace VDash
 {
@@ -122,7 +123,7 @@ namespace VDash
 
 				if (Vehicle.Connected)
 				{
-					Vehicle.Send(new MoveState((short)_speed));
+					Vehicle.Send(new MoveState(0, 0, _speed));
 					//if (_speed < 0)
 					//    Vehicle.Send(new BackwardMoveState((short)(_speed)));
 					//else
@@ -178,6 +179,11 @@ namespace VDash
 				MainWindow.Invoke(() => LogControl.Error(ex));
 			};
 
+			Vehicle.OnError += delegate(Error err)
+			{
+				MainWindow.Invoke(() => LogControl.Error(err.ToString()));
+			};
+
 			Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
 
 #if DEBUG
@@ -196,8 +202,9 @@ namespace VDash
 		/// </summary>
 		public void Shutdown()
 		{
-			Vehicle.Shutdown();
+			// Kill Listener first so a reconnect isn't attempted on shutdown
 			Listener.Shutdown();
+			Vehicle.Shutdown();
 		}
 
 		/// <summary>

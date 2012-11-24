@@ -30,17 +30,15 @@ namespace VehicleLib.States
     [Serializable]
     public class BackwardMoveState : MoveState
     {
-        public BackwardMoveState() { }
+        public BackwardMoveState()
+		{
+			Vector.Z = -100;
+		}
 
 		public BackwardMoveState(short speed)
-        {
-			speed *= -1;
-			Vector = new MoveState.DVector(speed, AxisType.X);
-        }
-
-		public override string Cmd
 		{
-			get { return "MoveState"; }
+			speed *= -1;
+			Vector.Z = speed;
 		}
     }
 }

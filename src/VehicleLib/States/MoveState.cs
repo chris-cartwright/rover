@@ -27,105 +27,39 @@ using System.Text;
 
 namespace VehicleLib.States
 {
-	//public enum AxisType { X = 0, Y, Z };
+	[Serializable]
+	public class MoveState : State
+	{
+		public SVector3 Vector { get; protected set; }
 
-    [Serializable]
-    public class MoveState : State
-    {
-        public short Speed;
-		protected DVector Vector { get; set; }
-
-		[Serializable]
-		protected class DVector
+		public MoveState()
 		{
-			private short _x;
-			private short _y;
-			private short _z;
-			public short X
-			{
-				get { return _x; }
-				set
-				{
-					if (value < -100)
-						value = -100;
-
-					if (value > 100)
-						value = 100;
-					_x = value;
-				}
-			}
-			public short Y
-			{
-				get { return _y; }
-				set
-				{
-					if (value < -100)
-						value = -100;
-
-					if (value > 100)
-						value = 100;
-					_y = value;
-				}
-			}
-			public short Z
-			{
-				get { return _z; }
-				set
-				{
-					if (value < -100)
-						value = -100;
-
-					if (value > 100)
-						value = 100;
-					_z = value;
-				}
-			}
-
-			public DVector(short speed, AxisType axis)
-			{
-				switch (axis)
-				{
-				case AxisType.X :
-					X = speed;
-					break;
-				case AxisType.Y:
-					Y = speed;
-					break;
-				default:
-					Z = speed;
-					break;
-				}
-			}
-
-			public DVector(short speedX, short speedY, short speedZ)
-			{
-				X = speedX;
-				Y = speedY;
-				Z = speedZ;
-			}
-		} // end class DVector
-
-
-        public MoveState() { }
-
-		public MoveState(short speed)
-        {
-			Vector = new DVector(speed, AxisType.X);
-        }
-
-		public MoveState(short speedX, short speedY, short speedZ)
-		{
-			Vector = new DVector(speedX, speedY, speedZ);
+			Vector = new SVector3();
 		}
 
-		public MoveState(short speed, AxisType axis)
+		public MoveState(short speed)
+			: this()
 		{
-			Vector = new DVector(speed, axis);
+			Vector.Z = speed;
+		}
+
+		public MoveState(short x, short y, short z)
+			: this()
+		{
+			Vector.X = x;
+			Vector.Y = y;
+			Vector.Z = z;
+		}
+
+		public MoveState(short speed, SVector3.Axis axis)
+			: this()
+		{
+			Vector.SetAxis(axis, speed);
 		}
 
 		public override string Cmd
 		{
 			get { return "MoveState"; }
 		}
-    }
+	}
 }

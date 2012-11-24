@@ -24,14 +24,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace VehicleLib.States
 {
     [Serializable]
-    abstract public class State
+    public abstract class State
     {
-		public enum AxisType { X = 0, Y, Z };
-
+		[JsonIgnore]
 		public abstract string Cmd { get; }
 
         public State() { }

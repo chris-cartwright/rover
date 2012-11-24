@@ -30,16 +30,14 @@ namespace VehicleLib.States
     [Serializable]
     public class RightTurnState: TurnState
     {        
-        public RightTurnState() { }
+        public RightTurnState()
+		{
+			Vector.Y = 100;
+		}
 
 		public RightTurnState(short speed)
         {
-			Vector = new TurnState.OVector(speed, AxisType.X);
+			Vector.Y = speed;
         }
-
-		public override string Cmd
-		{
-			get { return "TurnState"; }
-		}
     }
 }
