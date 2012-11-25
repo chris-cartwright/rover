@@ -87,6 +87,8 @@ namespace VDash
 				else if (_turn > TurnDirection.Right)
 					_turn = TurnDirection.Right;
 
+				LogControl.Debug("Turn set: " + value);
+
 				Notify("Turn");
 
 				if (Vehicle.Connected)
@@ -118,6 +120,8 @@ namespace VDash
 				if (value > 100)
 					value = 100;
 
+				LogControl.Debug("Speed set: " + _speed);
+
 				_speed = value;
 				Notify("Speed");
 
@@ -138,7 +142,9 @@ namespace VDash
 		/// </summary>
 		public string Key {
 			get { return _key; }
-			set {				
+			set {
+				LogControl.Debug("Key pressed: " + value);
+
 				_key = value;
 				Notify("Key");
 			}
@@ -184,13 +190,17 @@ namespace VDash
 				MainWindow.Invoke(() => LogControl.Error(err.ToString()));
 			};
 
+			LogControl.Info("Broadcast listener starting");
 			Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
 
 #if DEBUG
 			Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
 			{
 				if (!Vehicle.Connected)
+				{
+					LogControl.Debug("Attempting connection to " + ep.Address);
 					Vehicle.Connect(ep, new Login("pwd"));
+				}
 			};
 #endif
 		}

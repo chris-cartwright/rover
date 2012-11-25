@@ -27,11 +27,12 @@ using System.Text;
 
 namespace VehicleLib.Errors
 {
+	/// <summary>
+	/// Return when someone else is already controlling the vehicle.
+	/// </summary>
 	[Serializable]
 	public class ConcurrentConnectionError : Error
 	{
-		public ConcurrentConnectionError() { }  // consider making default private and exposing to JSON deserializartio only
-
-		public ConcurrentConnectionError(string message) : base(message) { }
+		public ConcurrentConnectionError() : base("Vehicle already in use.") { }
 	}
 }

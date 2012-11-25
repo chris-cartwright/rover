@@ -27,18 +27,22 @@ using System.Text;
 
 namespace VehicleLib.Errors
 {
+	/// <summary>
+	/// Thrown when a given command was not found on the vehicle.
+	/// </summary>
 	[Serializable]
 	public class CommandNotFoundError : Error
 	{
-		public string Command {get; set;}
+		/// <summary>
+		/// Name of command that was not found.
+		/// </summary>
+		public string Command { get; set; }
 
-		public CommandNotFoundError() { }  // consider making default private and exposing to JSON deserializartio only
+		public CommandNotFoundError() : base("Command not found.") { }
 
-		public CommandNotFoundError(string message) : base(message) { }
-
-		public CommandNotFoundError(string message, string command) : base(message) 
+		public override string ToString()
 		{
-			Command = command;
+			return String.Format("{0} [{1}]", Message, Command);
 		}
 	}
 }

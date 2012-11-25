@@ -27,10 +27,12 @@ using System.Text;
 
 namespace VehicleLib.Errors 
 {
+	/// <summary>
+	/// Returned by vehicle when a login has not been attempted and another command was sent.
+	/// </summary>
 	[Serializable]
 	public class NoLoginError : Error
 	{
-		public NoLoginError() { }  // consider making default private and exposing to JSON deserializartio only
-		public NoLoginError(string message) : base(message) { }
+		public NoLoginError() : base("Not logged in yet.") { }
 	}
 }

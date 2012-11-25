@@ -27,13 +27,22 @@ using System.Text;
 
 namespace VehicleLib.Errors
 {
+	/// <summary>
+	/// Returned from vehicle when a login attempt fails.
+	/// </summary>
 	[Serializable]
 	public class InvalidLoginError : Error
 	{
+		/// <summary>
+		/// Number of tried left before vehicle drops connection.
+		/// </summary>
 		public short TriesLeft { get; set; }
 
-		public InvalidLoginError() { }  // consider making default private and exposing to JSON deserializartio only
+		public InvalidLoginError() : base("Invalid credentials.") { }
 
-		public InvalidLoginError(string message) : base(message) { }
+		public override string ToString()
+		{
+			return String.Format("{0} [{1}]", Message, TriesLeft);
+		}
 	}
 }

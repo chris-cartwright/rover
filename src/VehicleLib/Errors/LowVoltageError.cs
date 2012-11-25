@@ -27,17 +27,23 @@ using System.Text;
 
 namespace VehicleLib.Errors
 {
+	/// <summary>
+	/// Sent from vehicle when the voltage drops down too far.
+	/// This means the vehicle's battery/batteries are about to be depleted.
+	/// </summary>
 	[Serializable]
-	public class LowVoltageException : Error
+	public class LowVoltageError : Error
 	{
+		/// <summary>
+		/// Remaining voltage in battery/batteries.
+		/// </summary>
 		public float Voltage { get; private set; }
 
-		// constructors
-		public LowVoltageException() { }
+		public LowVoltageError() : base("Voltage at or below critical level.") { }
 
-		public LowVoltageException(float voltage, string message) : base(message) 
+		public override string ToString()
 		{
-			Voltage = voltage;
+			return String.Format("{0} [{1}]", Message, Voltage);
 		}
 	}
 }

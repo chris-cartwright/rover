@@ -27,11 +27,12 @@ using System.Text;
 
 namespace VehicleLib.Errors
 {
+	/// <summary>
+	/// Returned from vehicle when it receives a string that does not conform to JSON syntax.
+	/// </summary>
 	[Serializable]
 	public class ParseFailedError : Error
 	{
-		public ParseFailedError() { }  // consider making default private and exposing to JSON deserializartio only
-
-		public ParseFailedError(string message) : base(message) { }
+		public ParseFailedError() : base("Failed to parse received data.") { }
 	}
 }

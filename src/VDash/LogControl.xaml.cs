@@ -137,7 +137,7 @@ namespace VDash
 			if (OnLogReceived == null)
 				return;
 
-			OnLogReceived(type, message);
+			MainWindow.Invoke(() => OnLogReceived(type, message));
 		}
 
 		public static void Error(string msg)
@@ -184,7 +184,28 @@ namespace VDash
 
 		private void LogReceived(MessageType type, string message)
 		{
+			ScrollViewer sv = GetScrollViewer();
+			bool scroll = sv.VerticalOffset == sv.ScrollableHeight;
+
 			ds.Logs.Add(new LogItem() { Type = type, Message = message });
+			if (ds.Logs.Count > 100)
+				ds.Logs.RemoveAt(0);
+
+			if (scroll)
+				sv.ScrollToBottom();
+		}
+
+		private ScrollViewer GetScrollViewer()
+		{
+			object obj = VisualTreeHelper.GetChild(listBoxLogs, 0);
+
+			while(obj != null && obj.GetType() != typeof(Border))
+				obj = VisualTreeHelper.GetChild(listBoxLogs, 0);
+
+			if (obj == null)
+				return null;
+
+			return (ScrollViewer)((Border)obj).Child;
 		}
 	}
 }
