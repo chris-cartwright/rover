@@ -68,8 +68,8 @@ namespace VDash
 		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public VehiclePipe Vehicle = new VehiclePipe();
-		public BroadcastListener Listener = new BroadcastListener();
+		public VehiclePipe Vehicle { get; private set; }
+		public BroadcastListener Listener { get; private set; }
 
 		private TurnDirection _turn;
 
@@ -176,6 +176,9 @@ namespace VDash
 		/// </summary>
 		private DataModel()
 		{
+			Vehicle = new VehiclePipe();
+			Listener = new BroadcastListener();
+
 			_turn = TurnDirection.None;
 
 			PropertyChanged += new PropertyChangedEventHandler(dm_PropertyChanged);
