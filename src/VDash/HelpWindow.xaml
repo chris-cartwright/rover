@@ -51,23 +51,32 @@
                 <FlowDocumentScrollViewer>
                     <FlowDocument>
                         <Paragraph Style="{StaticResource Heading1}">Getting Started</Paragraph>
-                        <Paragraph>This is some text</Paragraph>
-                        <Paragraph>This is some text</Paragraph>
-                        <Paragraph Style="{StaticResource Heading2}">Getting Started</Paragraph>
-                        <Paragraph>This is some text</Paragraph>
-                        <Paragraph>This is some text</Paragraph>
+                        <Paragraph>Step 1: Chose your vehicle from the list in the Available Vehicles control</Paragraph>
+                        <Paragraph ></Paragraph>
+                        <Paragraph>Step 2: Click your mouse into the text box on the Vehicle Key State control</Paragraph>
+                        <Paragraph ></Paragraph>
+                        <Paragraph>Step 3: Use the keyboard commands to drive the vehicle </Paragraph>
+                        <Paragraph ></Paragraph>
+                        <Paragraph Style="{StaticResource Heading2}">Movement Controls</Paragraph>
+                        <Paragraph>Default Controls</Paragraph>
+                        <Paragraph>Forwards = w</Paragraph>
+                        <Paragraph>Backwards = s</Paragraph>
+                        <Paragraph>Left = a</Paragraph>
+                        <Paragraph>Right = d</Paragraph>
                     </FlowDocument>
                 </FlowDocumentScrollViewer>
             </TabItem>
             <TabItem Header="More Info">
                 <FlowDocumentScrollViewer>
                     <FlowDocument>
-                        <Paragraph Style="{StaticResource Heading1}">Getting Started</Paragraph>
-                        <Paragraph>This is some text</Paragraph>
-                        <Paragraph>This is some text</Paragraph>
-                        <Paragraph Style="{StaticResource Heading2}">Getting Started</Paragraph>
-                        <Paragraph>This is some text</Paragraph>
-                        <Paragraph>This is some text</Paragraph>
+                        <Paragraph Style="{StaticResource Heading1}">Other Features</Paragraph>
+                        <Paragraph>Logs Control: The log window will display any messages that are being created.  
+                        Click on the buttons to filter which messages appear.</Paragraph>
+                        <Paragraph ></Paragraph>
+                        <Paragraph>Video Feed:  Turn on the vehicles webcam and you can view what it sees
+                         through the Video Feed control.</Paragraph>
+                        <Paragraph ></Paragraph>
+                        <Paragraph>Key Bindings: To change the movement controls go to File -> Key Bindings</Paragraph>
                     </FlowDocument>
                 </FlowDocumentScrollViewer>
             </TabItem>
