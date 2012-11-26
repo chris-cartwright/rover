@@ -26,8 +26,7 @@ var config = {
 		bcast: 15001
 	},
 	bcast: {
-		interval: 5000,
-		addr: "192.168.0.255"
+		interval: 5000
 	},
 	passwd: "pwd",
 	debug: true,

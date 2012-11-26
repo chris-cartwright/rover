@@ -7,7 +7,8 @@
   "dependencies": {
     "json-line-protocol": "0.0.3",
     "winston": "0.6.2",
-	"bonescript": "0.0.1"
+	"bonescript": "0.0.1",
+	"netmask": "0.0.2"
   },
   "devDependencies": {
     "node-inspector": "0.2.0beta3"
