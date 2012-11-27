@@ -90,6 +90,7 @@
     <Compile Include="KeyStateControl.xaml.cs">
       <DependentUpon>KeyStateControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Record.cs" />
     <Compile Include="StateControl.xaml.cs">
       <DependentUpon>StateControl.xaml</DependentUpon>
     </Compile>

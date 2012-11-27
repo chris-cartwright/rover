@@ -34,6 +34,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace VDash
 {
@@ -43,6 +44,10 @@ namespace VDash
     public partial class KeyStateControl : UserControl
     {
 		DataModel dm = DataModel.GetInstance();
+        double timeOffset = 0.0;
+        DateTime currentTime = DateTime.Now;
+        DateTime lastCmdTime;
+        List<Record> records = new List<Record>();
         public KeyStateControl()
         {
 			this.DataContext = dm;
@@ -54,6 +59,28 @@ namespace VDash
 
 		void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+            // if you are recording
+            if (cbRecord.IsChecked.Value)
+            {
+                lastCmdTime = currentTime;
+                currentTime = DateTime.Now;
+                Record rec = new Record();
+                PropertyInfo pi = dm.GetType().GetProperty(e.PropertyName);
+                rec.setValue(pi.GetValue(dm, null));
+                rec.setName(e.PropertyName);
+                if (timeOffset == 0.0)
+                {
+                    rec.setTimeOffset(timeOffset);
+                    timeOffset = 1.0;  //just random number so that it doesn't enter this if after the first run
+                }
+                else
+                {
+                    TimeSpan diff = currentTime.Subtract(lastCmdTime);
+                    timeOffset = diff.Seconds + diff.Milliseconds;
+                }
+                records.Add(rec);
+            }
+
 			if (e.PropertyName == "Speed")
 			{
 				if (dm.Speed > 0)
@@ -85,6 +112,16 @@ namespace VDash
 				}
 			}
 		}
+
+        private void cbRecord_Checked(object sender, RoutedEventArgs e)
+        {
+            btnSaveRecord.IsEnabled = true;
+        }
+
+        private void btnSaveRecord_Click(object sender, RoutedEventArgs e)
+        {
+            //write the Record List to an xml file
+        }
 
 		//private void OnKeyDownHandler(object sender, KeyEventArgs e)
 		//{

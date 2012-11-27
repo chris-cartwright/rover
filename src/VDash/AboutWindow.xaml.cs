@@ -49,6 +49,7 @@ namespace VDash
 				Copyright (C) 2012 Richard Payne
 				Copyright (C) 2012 Andrew Hill
 				Copyright (C) 2012 David Shirley
+                Copyright (C) 2012 Brent Cornwall
     
 				This file is part of VDash.
 
