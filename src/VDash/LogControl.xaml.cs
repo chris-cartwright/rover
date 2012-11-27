@@ -185,7 +185,9 @@ namespace VDash
 		private void LogReceived(MessageType type, string message)
 		{
 			ScrollViewer sv = GetScrollViewer();
-			bool scroll = sv.VerticalOffset == sv.ScrollableHeight;
+			bool scroll = false;
+			if(sv != null)
+				scroll = sv.VerticalOffset == sv.ScrollableHeight;
 
 			ds.Logs.Add(new LogItem() { Type = type, Message = message });
 			if (ds.Logs.Count > 100)
@@ -197,15 +199,28 @@ namespace VDash
 
 		private ScrollViewer GetScrollViewer()
 		{
-			object obj = VisualTreeHelper.GetChild(listBoxLogs, 0);
+			try
+			{
+				int idx = 0;
+				object obj = null;
 
-			while(obj != null && obj.GetType() != typeof(Border))
-				obj = VisualTreeHelper.GetChild(listBoxLogs, 0);
+				do
+				{
+					obj = VisualTreeHelper.GetChild(listBoxLogs, idx);
+					idx++;
+				}
+				while (obj != null && obj.GetType() != typeof(Border));
 
-			if (obj == null)
+				if (obj == null)
+					return null;
+
+				return (ScrollViewer)((Border)obj).Child;
+			}
+			catch (ArgumentOutOfRangeException)
+			{
+				// Cycled through all children
 				return null;
-
-			return (ScrollViewer)((Border)obj).Child;
+			}
 		}
 	}
 }

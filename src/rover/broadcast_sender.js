@@ -41,9 +41,15 @@ var BroadcastSender = new function () {
 		_setup = true;
 
 		getInterfaces(function (list) {
-			var im = list[0];
-			if (im['ip'] == "127.0.0.1" && list.length > 1)
-				im = list[1];
+			var im = null;
+			if (list.length == 0) {
+				im = { ip: "127.0.0.1", mask: "255.255.255.0" };
+			}
+			else {
+				im = list[0];
+				if (im['ip'] == "127.0.0.1" && list.length > 1)
+					im = list[1];
+			}
 
 			var block = new nm(im['ip'] + "/" + im['mask']);
 			_addr = block.broadcast;
