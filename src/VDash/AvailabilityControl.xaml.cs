@@ -118,9 +118,6 @@ namespace VDash
 					_vehicles.Add(new Vehicle (name, ep));
 			};
 
-			_vehicles.Add(new Vehicle("rover1", new IPEndPoint(new IPAddress(111), 10)));
-			_vehicles.Add(new Vehicle("rover2", new IPEndPoint(new IPAddress(222), 20)));
-
 			//listViewVehicles.ItemsSource = _vehicles;
 			Resources["Vehicles"] = _vehicles;
 			
@@ -142,10 +139,10 @@ namespace VDash
 		{
 			if (listViewVehicles.SelectedItems.Count < 1)
 			{
-				MessageBox.Show("Select a vehicle to connect to");
-				// message to select a vehicle?
+				MessageBox.Show("Please select a vehicle to connect to.");
 				return;
 			}
+
 			var selItem = (Vehicle)listViewVehicles.SelectedItems[0];
 			_selVehicle = selItem;
 

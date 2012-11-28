@@ -27,21 +27,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="198" d:DesignWidth="287">
-    <Grid Height="190" Width="274">
-        <Label Content="Vehicle Availability" Height="33" HorizontalAlignment="Left" Margin="57,0,0,0" Name="lblVehVideo" VerticalAlignment="Top" Width="152" FontSize="16" />
-            <ListView ItemsSource="{DynamicResource Vehicles}" Height="114" HorizontalAlignment="Left" Margin="4,40,0,0" Name="listViewVehicles" VerticalAlignment="Top" Width="266" SelectionMode="Single">
+    <Grid>
+        <ListView ItemsSource="{DynamicResource Vehicles}" Margin="0,0,0,29" Name="listViewVehicles" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="        Name        "
-                            DisplayMemberBinding="{Binding Path=Name}" />
-                        <GridViewColumn Header="IP Address"
-                            DisplayMemberBinding="{Binding Path=Ip}" />
-                        <GridViewColumn Header="Connected"
-                            DisplayMemberBinding="{Binding Path=Connected}" />
-                </GridView>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}" Width="100" />
+                        <GridViewColumn Header="IP Address" DisplayMemberBinding="{Binding Path=Ip}" Width="100" />
+                        <GridViewColumn Header="Connected" DisplayMemberBinding="{Binding Path=Connected}" Width="100" />
+                    </GridView>
                 </ListView.View>
             </ListView>
-            <Button Content="Connect" Height="24" HorizontalAlignment="Left" Margin="6,162,0,0" Name="buttonConnect" VerticalAlignment="Top" Width="97" Click="buttonConnect_Click" />
-        <Button Content="Find Connections" Height="23" HorizontalAlignment="Left" Margin="164,163,0,0" Name="buttonFindConnect" VerticalAlignment="Top" Width="106" />
+            <Button Content="Connect" Height="24" HorizontalAlignment="Left" Name="buttonConnect" VerticalAlignment="Bottom" Width="97" Click="buttonConnect_Click" />
+        <Button Content="Find Connections" Height="23" HorizontalAlignment="Right" Name="buttonFindConnect" VerticalAlignment="Bottom" Width="106" />
     </Grid>
 </UserControl>

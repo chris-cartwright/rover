@@ -37,23 +37,25 @@
         <avalonDock:DockingManager Grid.Row="1">
             <avalonDock:LayoutRoot>
                 <avalonDock:LayoutPanel Orientation="Vertical">
-                    <avalonDock:LayoutDocumentPaneGroup Orientation="Vertical">
+                    <avalonDock:LayoutPanel Orientation="Horizontal">
+                        <avalonDock:LayoutPanel Orientation="Vertical">
+                            <avalonDock:LayoutDocumentPane>
+                                <avalonDock:LayoutDocument Title="Vehicle State">
+                                    <local:StateControl x:Name="_state" FlowDirection="LeftToRight" />
+                                </avalonDock:LayoutDocument>
+                            </avalonDock:LayoutDocumentPane>
+                            <avalonDock:LayoutDocumentPane>
+                                <avalonDock:LayoutDocument Title="Vehicle Key State">
+                                    <local:KeyStateControl x:Name="_keyState" />
+                                </avalonDock:LayoutDocument>
+                            </avalonDock:LayoutDocumentPane>
+                        </avalonDock:LayoutPanel>
                         <avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocument Title="Video Feed">
                                 <local:VideoControl x:Name="_video" />
                             </avalonDock:LayoutDocument>
                         </avalonDock:LayoutDocumentPane>
-                        <avalonDock:LayoutDocumentPane>
-                            <avalonDock:LayoutDocument Title="Vehicle State">
-                                <local:StateControl x:Name="_state" FlowDirection="LeftToRight" />
-                            </avalonDock:LayoutDocument>
-                        </avalonDock:LayoutDocumentPane>
-                        <avalonDock:LayoutDocumentPane>
-                            <avalonDock:LayoutDocument Title="Vehicle Key State">
-                                <local:KeyStateControl x:Name="_keyState" />
-                            </avalonDock:LayoutDocument>
-                        </avalonDock:LayoutDocumentPane>
-                    </avalonDock:LayoutDocumentPaneGroup>
+                    </avalonDock:LayoutPanel>
                     <avalonDock:LayoutAnchorablePaneGroup DockHeight="300">
                         <avalonDock:LayoutAnchorablePane>
                             <avalonDock:LayoutAnchorable Title="Logs" AutoHideHeight="300">

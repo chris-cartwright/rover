@@ -203,7 +203,7 @@ pinMode = exports.pinMode = function (pin, mode) {
 	validPin(pin);
 	validMode(mode);
 
-	activePins.push(bone[pin].name);
+	activePins.push(pin.name);
 
 	bcast({ cmd: "pinMode", pin: pin.name, mode: mode });
 };
