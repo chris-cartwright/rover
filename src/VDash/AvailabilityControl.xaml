@@ -29,14 +29,16 @@
              d:DesignHeight="198" d:DesignWidth="287">
     <Grid Height="190" Width="274">
         <Label Content="Vehicle Availability" Height="33" HorizontalAlignment="Left" Margin="57,0,0,0" Name="lblVehVideo" VerticalAlignment="Top" Width="152" FontSize="16" />
-            <ListView ItemsSource="{DynamicResource Vehicles}"  Height="114" HorizontalAlignment="Left" Margin="4,40,0,0" Name="listBoxVehicles" VerticalAlignment="Top" Width="266">
+            <ListView ItemsSource="{DynamicResource Vehicles}" Height="114" HorizontalAlignment="Left" Margin="4,40,0,0" Name="listViewVehicles" VerticalAlignment="Top" Width="266" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="        Name        "
-                            DisplayMemberBinding="{Binding Key}" />
+                            DisplayMemberBinding="{Binding Path=Name}" />
+                        <GridViewColumn Header="IP Address"
+                            DisplayMemberBinding="{Binding Path=Ip}" />
                         <GridViewColumn Header="Connected"
-                            DisplayMemberBinding="{Binding Value}" />
-                    </GridView>
+                            DisplayMemberBinding="{Binding Path=Connected}" />
+                </GridView>
                 </ListView.View>
             </ListView>
             <Button Content="Connect" Height="24" HorizontalAlignment="Left" Margin="6,162,0,0" Name="buttonConnect" VerticalAlignment="Top" Width="97" Click="buttonConnect_Click" />

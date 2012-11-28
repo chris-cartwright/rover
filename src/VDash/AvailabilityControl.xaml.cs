@@ -49,25 +49,61 @@ namespace VDash
 		Vehicle _selVehicle;
 
 		private class Vehicle {
-			public string Name;
-			public IPEndPoint Ip;
+			private string _name;
+			private IPEndPoint _ip;
+			private bool _connected;
+
+			public string Name
+			{
+				get { return _name; }
+				set { _name = value; Notify("Name"); }
+				
+			}
+			public IPEndPoint Ip
+			{
+				get { return _ip; }
+				set { _ip = value; Notify("Ip"); }
+			}
+			public bool Connected
+			{
+				get { return _connected; }
+				set { _connected = value; Notify("Connected"); }
+			}
+			public event PropertyChangedEventHandler PropertyChanged;
 
 			public Vehicle(string name, IPEndPoint ip)
 			{
 				Name = name;
 				Ip = ip;
+				Connected = false;
+			}
+
+			public Vehicle(string name, IPEndPoint ip, bool connected)
+			{
+				Name = name;
+				Ip = ip;
+				Connected = connected;
 			}
 
 			public override string ToString()
 			{
-				return Ip.Address.ToString();
+				return Name.ToString();
 			}
 
-		}
-		private Dictionary<string, Vehicle> _vehicles;
+			private void Notify(string name)
+			{
+				if (PropertyChanged == null)
+					return;
+
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+			}
+
+		}// end class Vehicle
+
+		private List<Vehicle> _vehicles;
 		private VehicleLogin login = null;
 
-		private Dictionary<string, Vehicle> Vehicles
+		private List<Vehicle> Vehicles
 		{
 			get { return _vehicles; }
 			set { _vehicles = value; }
@@ -75,32 +111,43 @@ namespace VDash
 
 		public AvailabilityControl()
         {
-			_vehicles = new Dictionary<string, Vehicle>();
+			_vehicles = new List<Vehicle>();
 			dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
 			{
-				Vehicle hasKey;
-				_vehicles.TryGetValue(name, out hasKey);
-				if (hasKey != null)
-				{
-					_vehicles.Add(name, new Vehicle (name, ep));
-				}
+				if (!VehiclesContains(name))
+					_vehicles.Add(new Vehicle (name, ep));
 			};
 
-			Resources["Vehicles"] = _vehicles;
+			_vehicles.Add(new Vehicle("rover1", new IPEndPoint(new IPAddress(111), 10)));
+			_vehicles.Add(new Vehicle("rover2", new IPEndPoint(new IPAddress(222), 20)));
 
+			//listViewVehicles.ItemsSource = _vehicles;
+			Resources["Vehicles"] = _vehicles;
+			
             InitializeComponent();
         }
 
+		private bool VehiclesContains(string name)
+		{
+			foreach (Vehicle v in _vehicles)
+			{
+				if (v.Name.Equals(name)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		private void buttonConnect_Click(object sender, RoutedEventArgs e)
 		{
-			if (listBoxVehicles.SelectedItems.Count < 1)
+			if (listViewVehicles.SelectedItems.Count < 1)
 			{
 				MessageBox.Show("Select a vehicle to connect to");
 				// message to select a vehicle?
 				return;
 			}
-			var selItem = (KeyValuePair<string, Vehicle>)listBoxVehicles.SelectedItems[0];
-			_selVehicle = selItem.Value;
+			var selItem = (Vehicle)listViewVehicles.SelectedItems[0];
+			_selVehicle = selItem;
 
 			login = new VehicleLogin(_selVehicle.Name);
 			login.Owner = MainWindow.Self;
