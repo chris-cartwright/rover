@@ -29,11 +29,17 @@
              d:DesignHeight="198" d:DesignWidth="287">
     <Grid Height="190" Width="274">
         <Label Content="Vehicle Availability" Height="33" HorizontalAlignment="Left" Margin="57,0,0,0" Name="lblVehVideo" VerticalAlignment="Top" Width="152" FontSize="16" />
-        <ListBox Height="114" HorizontalAlignment="Left" Margin="4,40,0,0" Name="listBox1" VerticalAlignment="Top" Width="266">
-            <ListBoxItem Content="Rover" />
-            <ListBoxItem Content="Submarine" />
-        </ListBox>
-        <Button Content="Connect" Height="24" HorizontalAlignment="Left" Margin="6,162,0,0" Name="buttonConnect" VerticalAlignment="Top" Width="97" />
+            <ListView ItemsSource="{DynamicResource Vehicles}"  Height="114" HorizontalAlignment="Left" Margin="4,40,0,0" Name="listBoxVehicles" VerticalAlignment="Top" Width="266">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="        Name        "
+                            DisplayMemberBinding="{Binding Key}" />
+                        <GridViewColumn Header="Connected"
+                            DisplayMemberBinding="{Binding Value}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Button Content="Connect" Height="24" HorizontalAlignment="Left" Margin="6,162,0,0" Name="buttonConnect" VerticalAlignment="Top" Width="97" Click="buttonConnect_Click" />
         <Button Content="Find Connections" Height="23" HorizontalAlignment="Left" Margin="164,163,0,0" Name="buttonFindConnect" VerticalAlignment="Top" Width="106" />
     </Grid>
 </UserControl>

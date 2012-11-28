@@ -94,6 +94,9 @@
     <Compile Include="StateControl.xaml.cs">
       <DependentUpon>StateControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VehicleLogin.xaml.cs">
+      <DependentUpon>VehicleLogin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VideoControl.xaml.cs">
       <DependentUpon>VideoControl.xaml</DependentUpon>
     </Compile>
@@ -138,6 +141,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="StateControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VehicleLogin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

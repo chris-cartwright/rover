@@ -33,6 +33,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Net;
+using System.ComponentModel;
+using VehicleLib;
 
 namespace VDash
 {
@@ -41,9 +44,78 @@ namespace VDash
     /// </summary>
     public partial class AvailabilityControl : UserControl
     {
+		DataModel dm = DataModel.GetInstance();
+		string _password;
+		Vehicle _selVehicle;
+
+		private class Vehicle {
+			public string Name;
+			public IPEndPoint Ip;
+
+			public Vehicle(string name, IPEndPoint ip)
+			{
+				Name = name;
+				Ip = ip;
+			}
+
+			public override string ToString()
+			{
+				return Ip.Address.ToString();
+			}
+
+		}
+		private Dictionary<string, Vehicle> _vehicles;
+		private VehicleLogin login = null;
+
+		private Dictionary<string, Vehicle> Vehicles
+		{
+			get { return _vehicles; }
+			set { _vehicles = value; }
+		}
+
 		public AvailabilityControl()
         {
+			_vehicles = new Dictionary<string, Vehicle>();
+			dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
+			{
+				Vehicle hasKey;
+				_vehicles.TryGetValue(name, out hasKey);
+				if (hasKey != null)
+				{
+					_vehicles.Add(name, new Vehicle (name, ep));
+				}
+			};
+
+			Resources["Vehicles"] = _vehicles;
+
             InitializeComponent();
         }
+
+		private void buttonConnect_Click(object sender, RoutedEventArgs e)
+		{
+			if (listBoxVehicles.SelectedItems.Count < 1)
+			{
+				MessageBox.Show("Select a vehicle to connect to");
+				// message to select a vehicle?
+				return;
+			}
+			var selItem = (KeyValuePair<string, Vehicle>)listBoxVehicles.SelectedItems[0];
+			_selVehicle = selItem.Value;
+
+			login = new VehicleLogin(_selVehicle.Name);
+			login.Owner = MainWindow.Self;
+				
+			if (!dm.Vehicle.Connected)
+				login.Closing += new CancelEventHandler(login_Closing);
+
+			login.ShowDialog();			
+		}
+
+		void login_Closing(object sender, CancelEventArgs e)
+		{
+			_password = login.Password;
+			LogControl.Debug("Attempting connection to " + _selVehicle.Name);
+			dm.Vehicle.Connect(_selVehicle.Ip, new Login(_password));
+		}
     }
 }

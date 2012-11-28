@@ -213,16 +213,16 @@ namespace VDash
 			LogControl.Info("Broadcast listener starting");
 			Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
 
-#if DEBUG
-			Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
-			{
-				if (!Vehicle.Connected)
-				{
-					LogControl.Debug("Attempting connection to " + ep.Address);
-					Vehicle.Connect(ep, new Login("pwd"));
-				}
-			};
-#endif
+//#if DEBUG
+//            Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
+//            {
+//                if (!Vehicle.Connected)
+//                {
+//                    LogControl.Debug("Attempting connection to " + ep.Address);
+//                    Vehicle.Connect(ep, new Login("pwd"));
+//                }
+//            };
+//#endif
 		}
 
 		/// <summary>
