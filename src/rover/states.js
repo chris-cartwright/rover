@@ -32,10 +32,11 @@ else
 	require("bonescript");
 
 // Hacky. It's just a band-aid until #49 is implemented
-pinMode(pins.motor.forward_reverse.speed, OUTPUT);
-pinMode(pins.motor.forward_reverse.dir, OUTPUT);
-pinMode(pins.motor.turn.speed, OUTPUT);
-pinMode(pins.motor.turn.dir, OUTPUT);
+pinMode(bone[pins.motor.forward_reverse.speed], OUTPUT);
+pinMode(bone[pins.motor.forward_reverse.dir], OUTPUT);
+pinMode(bone[pins.motor.turn.speed], OUTPUT);
+pinMode(bone[pins.motor.turn.dir], OUTPUT);
+pinMode(bone[pins.light.head.pin], OUTPUT);
 
 module.exports.TurnState = function (data) {
 	log.info("TurnState", data);
@@ -74,3 +75,17 @@ module.exports.MoveState = function (data) {
 		analogWrite(bone[motor.speed], data.Vector.Z * (-0.004) + 0.6);
 	}
 };
+
+module.exports.LightState = function (data) {
+	log.info("LightState", data);
+
+	if (!pins.light.hasOwnProperty(data.Id))
+		throw new Error("Light does not exist.");
+
+	var light = pins.light[data.Id];
+
+	if (light.pwm)
+		analogWrite(bone[light.pin], data.Level * 0.01);
+	else
+		digitalWrite(bone[light.pin], data.Level > 0);
+}

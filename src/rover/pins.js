@@ -30,11 +30,16 @@ var pins = {
 			speed: "P9_16",
 			dir: "P9_27"
 		}
+	},
+	light: {
+		head: {
+			pwm: true,
+			pin: "P8_13"
+		}
 	}
 	/*
 	Hookups that exist in hardware, but haven't been hooked up yet
 	light: {
-		head: P9_,
 		larson_1: P9_,
 		larson_2: P9_,
 		larson_3: P9_

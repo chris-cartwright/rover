@@ -67,6 +67,7 @@
     <Compile Include="Exceptions\ConnectionException.cs" />
     <Compile Include="States\ForwardMoveState.cs" />
     <Compile Include="Errors\InvalidLoginError.cs" />
+    <Compile Include="States\HeadLightState.cs" />
     <Compile Include="States\LeftTurnState.cs" />
     <Compile Include="Sensors\LightSensor.cs" />
     <Compile Include="States\LightState.cs" />

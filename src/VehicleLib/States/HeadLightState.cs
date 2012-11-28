@@ -27,23 +27,15 @@ using System.Text;
 
 namespace VehicleLib.States
 {
-    [Serializable]
-    public class LightState : State
-    {
-        public string Id;
-        public ushort Level;
-
-        public LightState() { }
-
-        public LightState(string id, ushort level)
-        {
-            this.Id = id;
-            this.Level = level;
-        }
-
-		public override string Cmd
+	/// <summary>
+	/// Manages the headlights on a vehicle
+	/// </summary>
+	public class HeadLightState : LightState
+	{
+		public HeadLightState(ushort level)
 		{
-			get { return "LightState"; }
+			Level = level;
+			Id = "head";
 		}
-    }
+	}
 }

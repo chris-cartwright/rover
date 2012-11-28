@@ -120,19 +120,36 @@ namespace VDash
 				if (value > 100)
 					value = 100;
 
-				LogControl.Debug("Speed set: " + _speed);
+				LogControl.Debug("Speed set: " + value);
 
 				_speed = value;
 				Notify("Speed");
 
 				if (Vehicle.Connected)
-				{
 					Vehicle.Send(new MoveState(0, 0, _speed));
-					//if (_speed < 0)
-					//    Vehicle.Send(new BackwardMoveState((short)(_speed)));
-					//else
-					//    Vehicle.Send(new ForwardMoveState((short)_speed));
-				}
+			}
+		}
+
+		private ushort _headlights;
+		/// <summary>
+		/// Controls the brightness of the headlights.
+		/// Set to 0 to turn off.
+		/// </summary>
+		public ushort Headlights
+		{
+			get { return _headlights; }
+			set
+			{
+				if (value > 100)
+					value = 100;
+
+				LogControl.Debug("Headlights set: " + value);
+
+				_headlights = value;
+				Notify("Headlights");
+
+				if (Vehicle.Connected)
+					Vehicle.Send(new HeadLightState(_headlights));
 			}
 		}
 

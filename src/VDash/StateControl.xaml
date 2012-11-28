@@ -27,7 +27,7 @@
              xmlns:converters="clr-namespace:VDash.Converters"
              xmlns:me="clr-namespace:VDash"
              mc:Ignorable="d"
-             d:DesignHeight="190" d:DesignWidth="246">
+             d:DesignHeight="190" d:DesignWidth="414">
     <UserControl.Resources>
         <converters:EnumIntConverter x:Key="enumConverter" />
     </UserControl.Resources>
@@ -38,10 +38,16 @@
         <Label Content="Backwards" Height="24" Margin="15,130,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Width="65" />
         <Label Content="Left" Height="30" Margin="130,45,0,0" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <Label Content="Right" Height="30" Margin="188,45,0,0" Width="39" HorizontalContentAlignment="Right" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        <Slider Height="100" Margin="82,48,0,0" Width="25" TickFrequency="0.01" Maximum="100" Minimum="-100" Orientation="Vertical" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding Speed}" />
+        <Slider Height="100" Margin="82,48,0,0" TickFrequency="0.01" Maximum="100" Minimum="-100" Orientation="Vertical" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" Value="{Binding Speed}" />
         <Slider Height="25" Width="100" Minimum="0" Maximum="2" Margin="130,70,0,0" IsSnapToTickEnabled="True" Value="{Binding Turn,Converter={StaticResource enumConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <TextBox Height="23" Margin="66,160,0,0" Width="42" Text="{Binding Speed}" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <Label Content="%" Height="28" Margin="105,160,0,0" Width="28" HorizontalAlignment="Left" VerticalAlignment="Top" />
         <Button Content="Stop" Height="23" HorizontalAlignment="Left" Margin="146,124,0,0" VerticalAlignment="Top" Width="65" Click="Stop_Click" />
+        <Label Content="Headlights" Height="28" HorizontalAlignment="Left" Margin="263,17,0,0" VerticalAlignment="Top" />
+        <Slider Height="86" HorizontalAlignment="Left" Margin="313,48,0,0" VerticalAlignment="Top" Orientation="Vertical" Value="{Binding Headlights}" Maximum="100" TickFrequency="0.01" />
+        <Label Content="Full Bright" Height="28" HorizontalAlignment="Left" Margin="251,40,0,0" VerticalAlignment="Top" />
+        <Label Content="Off" Height="28" HorizontalAlignment="Left" Margin="285,116,0,0" VerticalAlignment="Top" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="268,155,0,0" VerticalAlignment="Top" Width="42" Text="{Binding Headlights}" />
+        <Label Content="%" Height="28" HorizontalAlignment="Left" Margin="307,153,0,0" VerticalAlignment="Top" />
     </Grid>
 </UserControl>

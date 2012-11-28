@@ -37,6 +37,8 @@ var server = net.createServer();
 var clients = [];
 var reads = [];
 
+var activePins = [];
+
 server.on("connection", function (socket) {
 	log.info("Sim connection: " + socket.remoteAddress);
 	clients.push(socket);
@@ -77,7 +79,7 @@ function bcast(data) {
 }
 
 function validPin(pin) {
-	if (!pin.name in bone)
+	if (!bone.hasOwnProperty(pin.name))
 		log.error("Invalid pin: " + pin.name);
 }
 
@@ -94,6 +96,11 @@ function validBool(bool) {
 function validAnalog(value) {
 	if (value < 0 || value > 1)
 		log.error("Invalid analog: " + value);
+}
+
+function activePin(pin) {
+	if (!activePins.hasOwnProperty(pin.name))
+		log.error("Inactive pin used: " + pin.name);
 }
 
 bone = exports.bone = {
@@ -196,18 +203,22 @@ pinMode = exports.pinMode = function (pin, mode) {
 	validPin(pin);
 	validMode(mode);
 
+	activePins.push(bone[pin].name);
+
 	bcast({ cmd: "pinMode", pin: pin.name, mode: mode });
 };
 
 digitalWrite = exports.digitalWrite = function (pin, value) {
 	validPin(pin);
 	validBool(value);
+	activePin(pin);
 
 	bcast({ cmd: "digitalWrite", pin: pin.name, value: value });
 };
 
 digitalRead = exports.digitalRead = function (pin) {
 	validPin(pin);
+	activePin(pin);
 
 	bcast({ cmd: "digitalRead", pin: pin.name });
 	return bone[pin].state;
@@ -216,6 +227,7 @@ digitalRead = exports.digitalRead = function (pin) {
 analogWrite = exports.analogWrite = function (pin, value) {
 	validPin(pin);
 	validAnalog(value);
+	activePin(pin);
 
 	bcast({ cmd: "analogWrite", pin: pin.name, value: value });
 };
