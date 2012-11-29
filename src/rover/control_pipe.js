@@ -29,167 +29,173 @@ var err = require("./errors");
 var log = new require("./logger").LabelledLogger("control_pipe");
 
 var ControlPipe = new function () {
-	var _self = this;
+    var _self = this;
 
-	var _server = null;
-	var _client = null;
-	var _port = 0;
-	var _validated = false;
-	var _tries = 0;
-	var _listening = false;
-	var _proto = new jsonLineProtocol.JsonLineProtocol();
+    var _server = null;
+    var _client = null;
+    var _port = 0;
+    var _validated = false;
+    var _tries = 0;
+    var _listening = false;
+    var _proto = new jsonLineProtocol.JsonLineProtocol();
 
-	_proto.on("value", onCommand);
-	_server = net.createServer();
-	_server.on("close", onDisconnect);
-	_server.on("error", onError);
-	_server.on("listening", onListening);
-	_server.on("connection", onConnect);
+    _proto.on("value", onCommand);
+    _server = net.createServer();
+    _server.on("close", onDisconnect);
+    _server.on("error", onError);
+    _server.on("listening", onListening);
+    _server.on("connection", onConnect);
 
-	function onConnect(socket) {
-		log.info("New connection: " + JSON.stringify(socket.address()));
+    function onConnect(socket) {
+        log.info("New connection: " + JSON.stringify(socket.address()));
 
-		if (_client != null) {
-			var e = new err.ConcurrentConnection();
-			_self.send(e, null, socket);
-			return;
-		}
+        if (_client != null) {
+            var e = new err.ConcurrentConnection();
+            _self.send(e, null, socket);
+            return;
+        }
 
-		_client = socket;
-		_client.on("data", onData);
-		_client.on("error", onClientError);
-		_client.on("close", onDisconnect);
-		_validated = false;
-		_tries = 0;
-	};
+        _client = socket;
+        _client.on("data", onData);
+        _client.on("error", onClientError);
+        _client.on("close", onDisconnect);
+        _validated = false;
+        _tries = 0;
+    };
 
-	function onData(data) {
-		log.info("Data received: " + data);
-		try {
-			_proto.feed(data);
-		} catch (e) {
-			// This also catches error originating in onCommand
-			if (e.name == "SyntaxError")
-				_self.send(new err.ParseFailed());
-			else
-				_self.send(new err.Unknown(e.message));
-		}
-	};
+    function onData(data) {
+        log.info("Data received: " + data);
+        try {
+            _proto.feed(data);
+        } catch (e) {
+            // This also catches error originating in onCommand
+            if (e.name == "SyntaxError")
+                _self.send(new err.ParseFailed());
+            else
+                _self.send(new err.Unknown(e.message));
+        }
+    };
 
-	function onCommand(obj) {
-		log.info("Command received: " + obj.cmd);
+    function onCommand(obj) {
+        log.info("Command received: " + obj.cmd);
 
-		if (!_validated) {
-			if (obj.cmd != "Login") {
-				_self.send(new err.NoLogin());
-				return;
-			}
+        if (!_validated) {
+            if (obj.cmd != "Login") {
+                _self.send(new err.NoLogin());
+                return;
+            }
 
-			if (obj.data.Password != config.passwd) {
-				_tries++;
-				_self.send(new err.InvalidLogin(3 - _tries));
+            if (obj.data.Password != config.passwd) {
+                _tries++;
+                _self.send(new err.InvalidLogin(3 - _tries));
 
-				if (_tries >= 3) {
-					_client.end();
-					_client = null;
-				}
+                if (_tries >= 3) {
+                    _client.end();
+                    _client = null;
+                }
 
-				return;
-			}
+                return;
+            }
 
-			_validated = true;
-			return;
-		}
+            // need to send a response containing videofeed Uri
+            // need to include vehicle sensor, device, etc. states
+            // var ret = // Uri
+            //_self.send({ cmd: name, data: ret }, obj.id);
 
-		if (obj.cmd.indexOf("State") != -1) {
-			if (!states.hasOwnProperty(obj.cmd)) {
-				_self.send(new err.CommandNotFound(obj.cmd));
-				return;
-			}
+            _validated = true;
+            
+            return;
+        }
 
-			try {
-				states[obj.cmd](obj.data);
-			}
-			catch (e) {
-				_self.send(new err.CommandFailed(obj.cmd, e));
-			}
-		}
-		else if (obj.cmd.indexOf("Query") != -1) {
-			if (!queries.hasOwnProperty(obj.cmd)) {
-				_self.send(new err.CommandNotFound(obj.cmd));
-				return;
-			}
+        if (obj.cmd.indexOf("State") != -1) {
+            if (!states.hasOwnProperty(obj.cmd)) {
+                _self.send(new err.CommandNotFound(obj.cmd));
+                return;
+            }
 
-			try {
-				var ret = queries[obj.cmd](obj.data.id);
-				_self.send({ cmd: name, data: ret }, obj.id);
-			}
-			catch (e) {
-				_self.send(new err.CommandFailed(obj.cmd, e));
-			}
-		}
-		else
-			_self.send(new err.CommandNotFound(obj.cmd));
-	};
+            try {
+                states[obj.cmd](obj.data);
+            }
+            catch (e) {
+                _self.send(new err.CommandFailed(obj.cmd, e));
+            }
+        }
+        else if (obj.cmd.indexOf("Query") != -1) {
+            if (!queries.hasOwnProperty(obj.cmd)) {
+                _self.send(new err.CommandNotFound(obj.cmd));
+                return;
+            }
 
-	function onDisconnect() {
-		log.info("Disconnected.");
+            try {
+                var ret = queries[obj.cmd](obj.data.id);
+                _self.send({ cmd: name, data: ret }, obj.id);
+            }
+            catch (e) {
+                _self.send(new err.CommandFailed(obj.cmd, e));
+            }
+        }
+        else
+            _self.send(new err.CommandNotFound(obj.cmd));
+    };
 
-		_client = null;
-		_validated = false;
-		_tries = 0;
-	};
+    function onDisconnect() {
+        log.info("Disconnected.");
 
-	function onError(e) {
-		if (e.code == "EADDRINUSE")
-			throw new Error("Address already in use.");
-	};
+        _client = null;
+        _validated = false;
+        _tries = 0;
+    };
 
-	function onClientError(e) {
-		throw e;
-	};
+    function onError(e) {
+        if (e.code == "EADDRINUSE")
+            throw new Error("Address already in use.");
+    };
 
-	function onListening() {
-		_listening = true;
-	}
+    function onClientError(e) {
+        throw e;
+    };
 
-	this.setPort = function (port) {
-		_port = port;
-	};
+    function onListening() {
+        _listening = true;
+    }
 
-	this.listen = function () {
-		if (_port == null)
-			throw new Error("Port does not contain a value.");
+    this.setPort = function (port) {
+        _port = port;
+    };
 
-		if (_listening)
-			throw new Error("Already listening for connections.");
+    this.listen = function () {
+        if (_port == null)
+            throw new Error("Port does not contain a value.");
 
-		_server.listen(_port);
-	};
+        if (_listening)
+            throw new Error("Already listening for connections.");
 
-	this.send = function (obj, id, socket) {
-		log.info("Data sent: ", JSON.stringify({ object: obj, id: id }));
+        _server.listen(_port);
+    };
 
-		var name = obj.name;
-		delete obj.name;
-		var d = {
-			cmd: name,
-			data: obj
-		};
+    this.send = function (obj, id, socket) {
+        log.info("Data sent: ", JSON.stringify({ object: obj, id: id }));
 
-		if (typeof (id) != "undefined" && id != null)
-			d.id = id;
+        var name = obj.name;
+        delete obj.name;
+        var d = {
+            cmd: name,
+            data: obj
+        };
 
-		var msg = JSON.stringify(d) + "\r\n";
-		if (typeof (socket) != "undefined")
-			socket.write(msg);
-		else
-			_client.write(msg);
-	};
+        if (typeof (id) != "undefined" && id != null)
+            d.id = id;
 
-	this.isListening = function () {
-		return _listening;
-	};
+        var msg = JSON.stringify(d) + "\r\n";
+        if (typeof (socket) != "undefined")
+            socket.write(msg);
+        else
+            _client.write(msg);
+    };
+
+    this.isListening = function () {
+        return _listening;
+    };
 }
 
 module.exports = ControlPipe;

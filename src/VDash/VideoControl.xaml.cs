@@ -33,6 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace VDash
 {
@@ -41,8 +42,11 @@ namespace VDash
     /// </summary>
     public partial class VideoControl : UserControl
     {
+		DataModel dm = DataModel.GetInstance();
 		public VideoControl()
         {
+			this.DataContext = dm;
+
             InitializeComponent();
         }
     }

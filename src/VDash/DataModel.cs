@@ -157,16 +157,37 @@ namespace VDash
 		/// <summary>
 		/// Reports Last Key pressed 
 		/// </summary>
-		public string Key {
+		public string Key
+		{
 			get { return _key; }
-			set {
+			set
+			{
 				LogControl.Debug("Key pressed: " + value);
 
 				_key = value;
 				Notify("Key");
 			}
 		}
-		
+
+		/// <summary>
+		/// Reports when Video feed Uri is set
+		/// </summary>
+		public Uri VideoFeed
+		{
+			get { return VideoFeed; }
+			set
+			{
+				VideoFeed = value;
+				LogControl.Debug("Video feed Uri set: " + value);
+				Notify("VideoFeed");
+			}
+		}
+
+		/// <summary>
+		///  Event handler to responging to internal property changes
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "Key")
@@ -213,16 +234,16 @@ namespace VDash
 			LogControl.Info("Broadcast listener starting");
 			Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
 
-//#if DEBUG
-//            Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
-//            {
-//                if (!Vehicle.Connected)
-//                {
-//                    LogControl.Debug("Attempting connection to " + ep.Address);
-//                    Vehicle.Connect(ep, new Login("pwd"));
-//                }
-//            };
-//#endif
+			//#if DEBUG
+			//            Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
+			//            {
+			//                if (!Vehicle.Connected)
+			//                {
+			//                    LogControl.Debug("Attempting connection to " + ep.Address);
+			//                    Vehicle.Connect(ep, new Login("pwd"));
+			//                }
+			//            };
+			//#endif
 		}
 
 		/// <summary>

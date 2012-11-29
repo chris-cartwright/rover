@@ -54,7 +54,17 @@ namespace VehicleLib
 
 		private Socket _socket;
 		private Dictionary<uint, SensorInfoHandler> _callbacks;
-		private uint _callbackCounter;
+		private uint _callbackCounter
+		{
+			get { return _callbackCounter; }
+			set
+			{
+				if (_callbackCounter == uint.MaxValue)
+				{
+					_callbackCounter = 0;
+				}
+			}
+		}
 		private Thread _thread;
 
 		public VehiclePipe()
@@ -154,11 +164,7 @@ namespace VehicleLib
 		/// <param name="q">Query object to send to Rover</param>
 		/// Exceptions are allowed to bubble
 		public void Send(Query q)
-		{
-			if (_callbackCounter == uint.MaxValue)
-			{
-				_callbackCounter = 0;
-			}
+		{		
 			++_callbackCounter;
 			_callbacks.Add(_callbackCounter, q.Callback);
 			SendRaw(q, _callbackCounter, "Query");
@@ -217,7 +223,9 @@ namespace VehicleLib
 		/// <param name="login">Credentials used for authentication</param>
 		private void Login(Login login)
 		{
-			SendRaw(login, null, "Login");
+			++_callbackCounter;
+			_callbacks.Add(_callbackCounter, null);
+			SendRaw(login, _callbackCounter, "Login");
 		}
 
 		/// <summary>
