@@ -21,22 +21,9 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Configuration;
-using VehicleLib;
-using System.Net;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Input;
 
 namespace VDash
 {
@@ -67,7 +54,7 @@ namespace VDash
 
 			Closed += new EventHandler(delegate(object sender, EventArgs e)
 			{
-				DataModel.GetInstance().Shutdown();
+				dm.Shutdown();
 			});
 
 			AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
@@ -75,29 +62,21 @@ namespace VDash
 				LogControl.Error(e.ExceptionObject as Exception);
 			};
 
-			this.PreviewKeyDown += new KeyEventHandler(MainWindow_KeyDown);
+			this.PreviewKeyDown += (s, e) => dm.Key = e.Key.ToString().ToLower();
 			this.ContentRendered += (s, e) => Focus();
 			this.Closing += new CancelEventHandler(MainWindow_Closing);
         }
 
 		void MainWindow_Closing(object sender, CancelEventArgs e)
 		{
-			// Make sure to null Self on window close
-			// Cross-thread events will hang otherwise
 			if (dm.Vehicle.Connected)
 			{
 				dm.Vehicle.Disconnect();
 			}
+
+			// Make sure to null Self on window close
+			// Cross-thread events will hang otherwise
 			Self = null;
-		}
-
-		void MainWindow_KeyDown(object sender, KeyEventArgs e)
-		{
-			string k = e.Key.ToString().ToLower();
-
-			DataModel dm = DataModel.GetInstance();
-			dm.Key = k;
-			
 		}
 
 		private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)

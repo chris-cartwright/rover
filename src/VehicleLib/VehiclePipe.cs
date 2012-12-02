@@ -22,17 +22,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using Newtonsoft.Json;
+using System.Text;
 using System.Threading;
 using Microsoft.CSharp.RuntimeBinder;
-using VehicleLib.Exceptions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using VehicleLib.Exceptions;
 
 namespace VehicleLib
 {
@@ -54,17 +52,7 @@ namespace VehicleLib
 
 		private Socket _socket;
 		private Dictionary<uint, SensorInfoHandler> _callbacks;
-		private uint _callbackCounter
-		{
-			get { return _callbackCounter; }
-			set
-			{
-				if (_callbackCounter == uint.MaxValue)
-				{
-					_callbackCounter = 0;
-				}
-			}
-		}
+		private uint _callbackCounter;
 		private Thread _thread;
 
 		public VehiclePipe()
@@ -153,7 +141,9 @@ namespace VehicleLib
 			catch { }
 
 			_socket = null;
-			OnDisconnect();
+
+			if(OnDisconnect != null)
+				OnDisconnect();
 		}
 
 		/// <summary>
@@ -166,6 +156,9 @@ namespace VehicleLib
 		public void Send(Query q)
 		{		
 			++_callbackCounter;
+			if (_callbackCounter > uint.MaxValue)
+				_callbackCounter = 0;
+
 			_callbacks.Add(_callbackCounter, q.Callback);
 			SendRaw(q, _callbackCounter, "Query");
 		}
@@ -223,9 +216,7 @@ namespace VehicleLib
 		/// <param name="login">Credentials used for authentication</param>
 		private void Login(Login login)
 		{
-			++_callbackCounter;
-			_callbacks.Add(_callbackCounter, null);
-			SendRaw(login, _callbackCounter, "Login");
+			SendRaw(login, null, "Login");
 		}
 
 		/// <summary>

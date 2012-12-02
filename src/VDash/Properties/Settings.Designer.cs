@@ -74,9 +74,9 @@ namespace VDash.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("15001")]
-        public string ListenPort {
+        public ushort ListenPort {
             get {
-                return ((string)(this["ListenPort"]));
+                return ((ushort)(this["ListenPort"]));
             }
         }
         

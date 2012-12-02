@@ -26,9 +26,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="198" d:DesignWidth="287">
+             d:DesignHeight="198" d:DesignWidth="287" Padding="5">
     <Grid>
-        <ListView ItemsSource="{DynamicResource Vehicles}" Margin="0,0,0,29" Name="listViewVehicles" SelectionMode="Single">
+        <ListView ItemsSource="{Binding Vehicles}" Margin="0,29" Name="listViewVehicles" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}" Width="100" />
@@ -39,5 +39,7 @@
             </ListView>
             <Button Content="Connect" Height="24" HorizontalAlignment="Left" Name="buttonConnect" VerticalAlignment="Bottom" Width="97" Click="buttonConnect_Click" />
         <Button Content="Find Connections" Height="23" HorizontalAlignment="Right" Name="buttonFindConnect" VerticalAlignment="Bottom" Width="106" />
+        <Label Content="Interface:" Height="28" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <ComboBox Height="23" HorizontalAlignment="Left" Margin="65,0,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding IPAddresses}" SelectedItem="{Binding ListenAddress}" />
     </Grid>
 </UserControl>

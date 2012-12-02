@@ -21,21 +21,17 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Net;
-using System.ComponentModel;
 using VehicleLib;
+using System.Collections.ObjectModel;
+using System;
 
 namespace VDash
 {
@@ -44,10 +40,6 @@ namespace VDash
     /// </summary>
     public partial class AvailabilityControl : UserControl
     {
-		DataModel dm = DataModel.GetInstance();
-		string _password;
-		Vehicle _selVehicle;
-
 		private class Vehicle {
 			private string _name;
 			private IPEndPoint _ip;
@@ -100,38 +92,101 @@ namespace VDash
 
 		}// end class Vehicle
 
-		private List<Vehicle> _vehicles;
-		private VehicleLogin login = null;
-
-		private List<Vehicle> Vehicles
+		private class DataSource : INotifyPropertyChanged
 		{
-			get { return _vehicles; }
-			set { _vehicles = value; }
+			public event PropertyChangedEventHandler PropertyChanged;
+
+			private DataModel _dm = DataModel.GetInstance();
+
+			private ObservableCollection<Vehicle> _vehicles;
+			public ObservableCollection<Vehicle> Vehicles
+			{
+				get { return _vehicles; }
+				set
+				{
+					_vehicles = value;
+					Notify("Vehicles");
+				}
+			}
+
+			private IPAddress[] _ipAddresses;
+			public IPAddress[] IPAddresses
+			{
+				get { return _ipAddresses; }
+				set
+				{
+					_ipAddresses = value;
+					Notify("IPAddresses");
+
+					if (_listenAddress == null && value.Length > 0)
+						ListenAddress = value[0];
+				}
+			}
+
+			private IPAddress _listenAddress;
+			public IPAddress ListenAddress
+			{
+				get { return _listenAddress; }
+				set
+				{
+					if (_listenAddress == value)
+						return;
+
+					_listenAddress = value;
+
+					IPEndPoint ep = new IPEndPoint(value, Properties.Settings.Default.ListenPort);
+					_dm.Listener.Shutdown();
+					_dm.Listener.Start(ep);
+					LogControl.Info(String.Format("Starting listener on {0}", ep));
+
+					Vehicles = new ObservableCollection<Vehicle>();
+				}
+			}
+
+			public DataSource()
+			{
+				_vehicles = new ObservableCollection<Vehicle>();
+			}
+
+			private void Notify(string name)
+			{
+				if (PropertyChanged == null)
+					return;
+
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+			}
 		}
+
+		private VehicleLogin _login;
+		private DataModel _dm = DataModel.GetInstance();
+		private string _password;
+		private Vehicle _selVehicle;
+		private DataSource _ds;
 
 		public AvailabilityControl()
         {
-			_vehicles = new List<Vehicle>();
-			dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
+			_ds = new DataSource();
+			DataContext = _ds;
+			_ds.IPAddresses = GetIPAddresses();
+
+			_dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
 			{
 				if (!VehiclesContains(name))
-					_vehicles.Add(new Vehicle (name, ep));
+					MainWindow.Invoke(() => _ds.Vehicles.Add(new Vehicle(name, ep)));
 			};
-
-			//listViewVehicles.ItemsSource = _vehicles;
-			Resources["Vehicles"] = _vehicles;
 			
             InitializeComponent();
         }
 
 		private bool VehiclesContains(string name)
 		{
-			foreach (Vehicle v in _vehicles)
+			foreach (Vehicle v in _ds.Vehicles)
 			{
 				if (v.Name.Equals(name)) {
 					return true;
 				}
 			}
+
 			return false;
 		}
 
@@ -146,20 +201,51 @@ namespace VDash
 			var selItem = (Vehicle)listViewVehicles.SelectedItems[0];
 			_selVehicle = selItem;
 
-			login = new VehicleLogin(_selVehicle.Name);
-			login.Owner = MainWindow.Self;
+			_login = new VehicleLogin(_selVehicle.Name);
+			_login.Owner = MainWindow.Self;
 				
-			if (!dm.Vehicle.Connected)
-				login.Closing += new CancelEventHandler(login_Closing);
+			if (!_dm.Vehicle.Connected)
+				_login.Closing += new CancelEventHandler(login_Closing);
 
-			login.ShowDialog();			
+			_login.ShowDialog();			
 		}
 
-		void login_Closing(object sender, CancelEventArgs e)
+		private void login_Closing(object sender, CancelEventArgs e)
 		{
-			_password = login.Password;
-			LogControl.Debug("Attempting connection to " + _selVehicle.Name);
-			dm.Vehicle.Connect(_selVehicle.Ip, new Login(_password));
+			_password = _login.Password;
+			LogControl.Info("Attempting connection to " + _selVehicle.Name);
+			_dm.Vehicle.Connect(_selVehicle.Ip, new Login(_password));
+		}
+
+		/// <summary>
+		/// Returns all IP addresses associated with this machine.
+		/// Filters out IPv6 and 169.254.* addresses.
+		/// </summary>
+		/// <returns>List of associated IP addresses.</returns>
+		private IPAddress[] GetIPAddresses()
+		{
+			List<IPAddress> ips = new List<IPAddress>();
+			foreach (NetworkInterface iface in NetworkInterface.GetAllNetworkInterfaces())
+			{
+				if (iface.OperationalStatus == OperationalStatus.Down)
+					continue;
+
+				foreach (UnicastIPAddressInformation uni in iface.GetIPProperties().UnicastAddresses)
+				{
+					if (uni.Address.AddressFamily == AddressFamily.InterNetworkV6)
+						continue;
+
+					// Filter out 169.254.*
+					if (!uni.IsDnsEligible)
+						continue;
+
+					ips.Add(uni.Address);
+				}
+			}
+
+			ips.Add(new IPAddress(new byte[] { 127, 0, 0, 1 }));
+
+			return ips.ToArray();
 		}
     }
 }

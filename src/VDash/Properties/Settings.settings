@@ -14,7 +14,7 @@
     <Setting Name="KeyRight" Type="System.String" Scope="User">
       <Value Profile="(Default)">d</Value>
     </Setting>
-    <Setting Name="ListenPort" Type="System.String" Scope="Application">
+    <Setting Name="ListenPort" Type="System.UInt16" Scope="Application">
       <Value Profile="(Default)">15001</Value>
     </Setting>
     <Setting Name="KeyStop" Type="System.String" Scope="User">

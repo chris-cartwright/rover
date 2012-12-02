@@ -21,9 +21,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Data;
 
 namespace VDash.Converters
@@ -40,7 +37,7 @@ namespace VDash.Converters
 				return "";
 
 			DateTime dt = (DateTime)value;
-			return String.Format("[{0}:{1}:{2}] ", dt.Hour, dt.Minute, dt.Second);
+			return String.Format("[{0:hh}:{0:mm}:{0:ss}] ", dt);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

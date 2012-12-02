@@ -21,15 +21,10 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using VehicleLib;
-using VehicleLib.States;
 using System.ComponentModel;
-using System.Net;
-using System.Windows.Controls;
+using VehicleLib;
 using VehicleLib.Errors;
+using VehicleLib.States;
 
 namespace VDash
 {
@@ -230,20 +225,6 @@ namespace VDash
 			{
 				MainWindow.Invoke(() => LogControl.Error(err.ToString()));
 			};
-
-			LogControl.Info("Broadcast listener starting");
-			Listener.Start(Convert.ToUInt16(Properties.Settings.Default.ListenPort));
-
-			//#if DEBUG
-			//            Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
-			//            {
-			//                if (!Vehicle.Connected)
-			//                {
-			//                    LogControl.Debug("Attempting connection to " + ep.Address);
-			//                    Vehicle.Connect(ep, new Login("pwd"));
-			//                }
-			//            };
-			//#endif
 		}
 
 		/// <summary>
