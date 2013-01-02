@@ -24,10 +24,8 @@ var log = new require("./logger").LabelledLogger("states");
 var config = require("./config");
 var pins = require("./pins");
 
-if (config.simulator) {
-	var b = require("./bone");
-	b.listen();
-}
+if (config.simulator)
+	require("./bone");
 else
 	require("bonescript");
 

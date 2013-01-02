@@ -28,6 +28,13 @@ var ControlPipe = require("./control_pipe");
 var BroadcastSender = require("./broadcast_sender");
 log.info("Loaded.");
 
+if (config.simulator) {
+	log.info("Loading debug simulator...");
+	require("./bone").listen();
+}
+else
+	require("bonescript");
+
 ControlPipe.setPort(config.port.pipe);
 BroadcastSender.setPort(config.port.bcast);
 log.info("Set ports.");

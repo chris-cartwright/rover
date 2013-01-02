@@ -31,37 +31,37 @@ Each message should have a 'name' property.
 	object itself. The name is required for proper deserialization in VDash.
 */
 
-module.exports.CommandNotFound = function (name) {
+module.exports.CommandNotFound = function(name) {
 	this.name = "CommandNotFoundError";
 	this.Command = name;
-}
+};
 
-module.exports.ParseFailed = function () {
+module.exports.ParseFailed = function() {
 	this.name = "ParseFailedError";
-}
+};
 
 // Thrown when client needs to login.
-module.exports.NoLogin = function () {
+module.exports.NoLogin = function() {
 	this.name = "NoLoginError";
-}
+};
 
 // Thrown when invalid credentials have been given.
-module.exports.InvalidLogin = function (triesLeft) {
+module.exports.InvalidLogin = function(triesLeft) {
 	this.name = "InvalidLoginError";
 	this.TriesLeft = triesLeft;
-}
+};
 
-module.exports.ConcurrentConnection = function () {
+module.exports.ConcurrentConnection = function() {
 	this.name = "ConcurrentConnectionError";
-}
+};
 
-module.exports.CommandFailed = function (name, err) {
+module.exports.CommandFailed = function(name, err) {
 	this.name = "CommandFailedError";
 	this.Command = name;
 	this.Error = err.name + ": " + err.message;
-}
+};
 
-module.exports.Unknown = function (err) {
+module.exports.Unknown = function(err) {
 	this.name = "UnknownError";
 	this.Exception = err.message;
-}
+};

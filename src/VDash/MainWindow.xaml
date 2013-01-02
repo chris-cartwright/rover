@@ -49,6 +49,11 @@
                                     <local:KeyStateControl x:Name="_keyState" />
                                 </avalonDock:LayoutDocument>
                             </avalonDock:LayoutDocumentPane>
+                            <avalonDock:LayoutDocumentPane>
+                                <avalonDock:LayoutDocument Title="Vehicle Key State">
+                                    <local:SensorControl x:Name="_sensors" />
+                                </avalonDock:LayoutDocument>
+                            </avalonDock:LayoutDocumentPane>
                         </avalonDock:LayoutPanel>
                         <avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocument Title="Video Feed">

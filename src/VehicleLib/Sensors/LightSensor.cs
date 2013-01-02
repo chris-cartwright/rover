@@ -23,15 +23,8 @@
 
 namespace VehicleLib.Sensors
 {
-    public class LightSensor : SensorInfo
+    public class LightSensor : Sensor
     {
         public byte Level;
-
-        public LightSensor() { }
-
-        public LightSensor(byte level)
-        {
-            this.Level = level;            
-        }
     }
 }

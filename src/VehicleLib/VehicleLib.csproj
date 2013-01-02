@@ -56,8 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Errors\CommandFailedError.cs" />
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\LoginSuccessEvent.cs" />
     <Compile Include="Exceptions\MalformedMessageException.cs" />
     <Compile Include="JsonLineProtocol.cs" />
+    <Compile Include="Queries\VoltageQuery.cs" />
+    <Compile Include="Sensors\VoltageSensor.cs" />
     <Compile Include="States\BackwardMoveState.cs" />
     <Compile Include="BroadcastListener.cs" />
     <Compile Include="States\ColourLightState.cs" />
@@ -77,10 +81,10 @@
     <Compile Include="Errors\NoLoginError.cs" />
     <Compile Include="Errors\ParseFailedError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query.cs" />
+    <Compile Include="Queries\Query.cs" />
     <Compile Include="States\RightTurnState.cs" />
     <Compile Include="Exceptions\SensorException.cs" />
-    <Compile Include="Sensors\SensorInfo.cs" />
+    <Compile Include="Sensors\Sensor.cs" />
     <Compile Include="States\State.cs" />
     <Compile Include="Sensors\TempSensor.cs" />
     <Compile Include="States\TurnState.cs" />

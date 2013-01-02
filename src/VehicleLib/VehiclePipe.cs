@@ -41,22 +41,63 @@ namespace VehicleLib
 	public class VehiclePipe
 	{
 		public delegate void ErrorHandler(Errors.Error err);
-		public delegate void SensorInfoHandler(Sensors.SensorInfo si);
+		public delegate void SensorHandler(Sensors.Sensor sensor);
 		public delegate void ExceptionHandler(Exception ex);
 
 		public event ErrorHandler OnError;
-		public event System.Action OnConnect;
-		public event System.Action OnDisconnect;
-		public event SensorInfoHandler OnSensorEvent;
+		public event Action OnConnect;
+		public event Action OnLogin;
+		public event Action OnDisconnect;
+		public event SensorHandler OnSensorEvent;
 		public event ExceptionHandler OnException;
 
+		// Encapsulates callback counter and dictionary logic
+		private class CallbackDictionary
+		{
+			private uint _counter;
+			private Dictionary<uint, SensorHandler> _callbacks;
+
+			public CallbackDictionary()
+			{
+				_counter = 0;
+				_callbacks = new Dictionary<uint, SensorHandler>();
+			}
+
+			public uint Add(SensorHandler cb)
+			{
+				if (_counter == UInt32.MaxValue)
+					_counter = 0;
+				else
+					_counter++;
+
+				_callbacks.Add(_counter, cb);
+				return _counter;
+			}
+
+			public void Remove(uint id)
+			{
+				_callbacks.Remove(_counter);
+			}
+
+			public void Clear()
+			{
+				_callbacks.Clear();
+			}
+
+			public SensorHandler this[uint key]
+			{
+				get { return _callbacks[key]; }
+			}
+		}
+
 		private Socket _socket;
-		private Dictionary<uint, SensorInfoHandler> _callbacks;
-		private uint _callbackCounter;
+		private CallbackDictionary _callbacks;
 		private Thread _thread;
 
 		public VehiclePipe()
 		{
+			_callbacks = new CallbackDictionary();
+
 			_thread = new Thread(delegate()
 			{
 				try
@@ -115,8 +156,6 @@ namespace VehicleLib
 				throw new ConnectionException("Could not connect to vehicle.");
 			}
 
-			_callbacks = new Dictionary<uint, SensorInfoHandler>();
-			_callbackCounter = 0;
 			_callbacks.Clear();
 
 			if (OnConnect != null)
@@ -155,12 +194,7 @@ namespace VehicleLib
 		/// Exceptions are allowed to bubble
 		public void Send(Query q)
 		{		
-			++_callbackCounter;
-			if (_callbackCounter > uint.MaxValue)
-				_callbackCounter = 0;
-
-			_callbacks.Add(_callbackCounter, q.Callback);
-			SendRaw(q, _callbackCounter, "Query");
+			SendRaw(q, _callbacks.Add(q.Callback), q.GetType().Name);
 		}
 
 		/// <summary>
@@ -169,7 +203,7 @@ namespace VehicleLib
 		/// perform an "instance movement" where the device stops once a state is reaches... think of an arm instructed to extend. 
 		/// Exceptions are allowed to bubble
 		/// </summary>
-		/// <param name="q">Action object to send to Rover</param>	
+		/// <param name="a">Action object to send to Rover</param>	
 		public void Send(States.State a) // might have to be careful here. There is a System.Action 
 		{
 			SendRaw(a, null, a.Cmd);
@@ -185,12 +219,12 @@ namespace VehicleLib
 		{
 			try
 			{
-				dynamic packet = new { cmd = cmd, data = o };
+				dynamic packet;
 
 				if (callbackID != null)
-				{
-					packet.id = callbackID;
-				}
+					packet = new { cmd = cmd, data = o, id = callbackID };
+				else
+					packet = new { cmd = cmd, data = o };
 
 				string s = JsonConvert.SerializeObject(packet) + "\r\n";
 				Encoding ASCII = Encoding.ASCII;
@@ -202,8 +236,9 @@ namespace VehicleLib
 				if (!_socket.Connected)
 				{
 					_socket = null;
+					OnDisconnect();
 				}
-				OnDisconnect();
+				
 				throw new ConnectionException("Failed to send data.", ex);
 			}
 		}
@@ -271,8 +306,10 @@ namespace VehicleLib
 				string cat = "";
 				if (packet.cmd.ToString().Contains("Error"))
 					cat = "Errors.";
-				else if (packet.cmd.ToString().Contains("SensorInfo"))
+				else if (packet.cmd.ToString().Contains("Sensor"))
 					cat = "Sensors.";
+				else if (packet.cmd.ToString().Contains("Event"))
+					cat = "Events.";
 
 				string finder = "VehicleLib." + cat + packet.cmd + ", VehicleLib";
 				Type t = Type.GetType(finder, true);
@@ -284,14 +321,6 @@ namespace VehicleLib
 				throw new MalformedMessageException() { Malformed = JsonConvert.SerializeObject(packet) };
 			}
 
-			SensorInfoHandler cb = null;
-			if(packet.id != null)
-			{
-				uint id = packet.id.ToObject<uint>();
-				cb = _callbacks[id];
-				_callbacks.Remove(id);
-			}
-
 			if (packet.cmd.ToString().Contains("Error"))
 			{
 				if (OnError != null)
@@ -301,16 +330,35 @@ namespace VehicleLib
 
 				return;
 			}
-			
-			Sensors.SensorInfo sens = (Sensors.SensorInfo)receivedObject;
-			if (cb != null)
-				cb(sens);
-			else
+
+			if (packet.cmd.ToString().Contains("Sensor"))
 			{
-				if (OnSensorEvent != null)
+				SensorHandler cb = null;
+				if (packet.id != null)
 				{
-					OnSensorEvent(sens);
+					uint id = packet.id.ToObject<uint>();
+					cb = _callbacks[id];
+					_callbacks.Remove(id);
 				}
+
+				Sensors.Sensor sens = (Sensors.Sensor)receivedObject;
+				if (cb != null)
+					cb(sens);
+				else
+				{
+					if (OnSensorEvent != null)
+					{
+						OnSensorEvent(sens);
+					}
+				}
+
+				return;
+			}
+
+			if (packet.cmd.ToString().Contains("Event"))
+			{
+				((Events.Event)receivedObject).Invoke();
+				return;
 			}
 		}
 

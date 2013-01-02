@@ -20,6 +20,31 @@ You should have received a copy of the GNU General Public License
 along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-module.exports.TempQuery = function (id) {
-	return { id: id, temp: 24 };
-};
+var log = new require("./logger").LabelledLogger("queries");
+var config = require("./config");
+var pins = require("./pins");
+var sensors = require("./sensors");
+
+// Calculate Vin from Vout, R1, R2 in a voltage divider
+function vdin(raw, r1, r2) {
+	// Vout = Vin * (R2 / (R1 + R2))
+	return raw * (r1 + r2) / r2;
+}
+
+module.exports.VoltageQuery = function (sensor) {
+	var min = 0;
+	var max = 0;
+	var current = 0;
+
+	switch (sensor) {
+		case "battery":
+			current = analogRead(bone[pins.sensor.battery]);
+			current = vdin(current, 4760, 980);
+			// Rechargeables used measured 1.4v after full charge
+			max = 8.4;
+			min = 6.0;
+			break;
+	}
+
+	return new sensors.Voltage(min, max, current);
+}

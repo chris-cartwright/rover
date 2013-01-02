@@ -20,11 +20,13 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 
 namespace VehicleLib.Sensors
 {
-    public class TempSensor : Sensor
+    public class Sensor
     {
-        public short Temp;
+        public string Id;
+        public DateTime Time;   
     }
 }

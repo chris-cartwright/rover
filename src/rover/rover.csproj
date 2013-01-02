@@ -53,8 +53,10 @@
     <Content Include="broadcast_sender.js" />
     <Content Include="logger.js" />
     <Content Include="main.js" />
+    <Content Include="events.js" />
     <Content Include="pins.js" />
     <Content Include="queries.js" />
+    <Content Include="sensors.js" />
     <Content Include="states.js" />
   </ItemGroup>
   <ItemGroup>

@@ -20,26 +20,11 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace VehicleLib
+namespace VehicleLib.Queries
 {
-	[Serializable]
-	public class Query
+	public class VoltageQuery : Query
 	{
-		public uint Id { get; set; }
-
-		public uint Sensor { get; set; } 
-
-		public VehiclePipe.SensorInfoHandler Callback;
-
-		// constructors
-		public Query() { }
-
-		public Query(uint id, uint sensor)
-		{
-			Id = id;
-			Sensor = sensor;
-		}
+		public VoltageQuery(string id) : base(id) { }
+		public VoltageQuery(string id, VehiclePipe.SensorHandler cb) : base(id, cb) { }
 	}
 }

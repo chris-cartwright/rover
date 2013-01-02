@@ -1,8 +1,5 @@
 ﻿/*
     Copyright (C) 2012 Christopher Cartwright
-    Copyright (C) 2012 Richard Payne
-    Copyright (C) 2012 Andrew Hill
-    Copyright (C) 2012 David Shirley
     
     This file is part of VDash.
 
@@ -20,22 +17,11 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 
-namespace VehicleLib.Sensors
+namespace VehicleLib.Events
 {
-    public class SensorInfo
-    {
-        public ushort Id;
-        public DateTime Time;
-
-        public SensorInfo() { }
-
-        public SensorInfo(ushort id, DateTime time)
-        {
-            this.Id = id;
-            this.Time = time;
-        }
-            
-    }
+	public abstract class Event
+	{
+		public abstract void Invoke();
+	}
 }

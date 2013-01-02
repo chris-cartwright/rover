@@ -20,11 +20,31 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using Newtonsoft.Json;
 
-namespace VehicleLib.Sensors
+namespace VehicleLib
 {
-    public class TempSensor : Sensor
-    {
-        public short Temp;
-    }
+	[Serializable]
+	public class Query
+	{
+		public string Sensor { get; set; }
+
+		[JsonIgnore]
+		public VehiclePipe.SensorHandler Callback;
+
+		// constructors
+		public Query() { }
+
+		public Query(string sensor)
+		{
+			Sensor = sensor;
+		}
+
+		public Query(string sensor, VehiclePipe.SensorHandler callback)
+		{
+			Sensor = sensor;
+			Callback = callback;
+		}
+	}
 }

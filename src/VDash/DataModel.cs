@@ -22,8 +22,12 @@
 
 using System;
 using System.ComponentModel;
+using System.Timers;
 using VehicleLib;
 using VehicleLib.Errors;
+using VehicleLib.Events;
+using VehicleLib.Queries;
+using VehicleLib.Sensors;
 using VehicleLib.States;
 
 namespace VDash
@@ -62,6 +66,11 @@ namespace VDash
 		///	It just would not make sense to notify on updates to these objects.
 		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Used to update sensors
+		/// </summary>
+		private Timer _timer;
 
 		public VehiclePipe Vehicle { get; private set; }
 		public BroadcastListener Listener { get; private set; }
@@ -148,6 +157,21 @@ namespace VDash
 			}
 		}
 
+		/// <summary>
+		/// Minimum voltage for the battery
+		/// </summary>
+		public float BatteryMin { get; private set; }
+
+		/// <summary>
+		/// Maximum voltage for the battery
+		/// </summary>
+		public float BatteryMax { get; private set; }
+
+		/// <summary>
+		/// Current voltage of the battery
+		/// </summary>
+		public float BatteryCurrent { get; private set; }
+
 		private string _key;
 		/// <summary>
 		/// Reports Last Key pressed 
@@ -225,6 +249,30 @@ namespace VDash
 			{
 				MainWindow.Invoke(() => LogControl.Error(err.ToString()));
 			};
+
+			LoginSuccessEvent.Invoked += delegate(LoginSuccessEvent evnt)
+			{
+				_timer.Start();
+
+				Vehicle.Send(new VoltageQuery("battery", delegate(Sensor sensor)
+				{
+					MainWindow.Invoke(() => BatteryUpdated(sensor));
+				}));
+			};
+
+			Vehicle.OnDisconnect += () => _timer.Stop();
+
+			_timer = new Timer(30000);
+			_timer.Elapsed += delegate(object sendor, ElapsedEventArgs e)
+			{
+				if (!Vehicle.Connected)
+					return;
+
+				Vehicle.Send(new VoltageQuery("battery", delegate(Sensor sensor)
+				{
+					MainWindow.Invoke(() => BatteryUpdated(sensor));
+				}));
+			};
 		}
 
 		/// <summary>
@@ -249,6 +297,23 @@ namespace VDash
 				return;
 
 			PropertyChanged(this, new PropertyChangedEventArgs(name));
+		}
+
+		/// <summary>
+		/// Handles the incoming battery sensor information and updates Battery*
+		/// </summary>
+		/// <param name="sensor">Sensor information from vehicle</param>
+		private void BatteryUpdated(Sensor sensor)
+		{
+			VoltageSensor vs = (VoltageSensor)sensor;
+
+			BatteryCurrent = vs.Current;
+			BatteryMax = vs.Max;
+			BatteryMin = vs.Min;
+
+			Notify("BatteryMin");
+			Notify("BatteryMax");
+			Notify("BatteryCurrent");
 		}
 	}
 }

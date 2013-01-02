@@ -1,8 +1,5 @@
 ﻿/*
     Copyright (C) 2012 Christopher Cartwright
-    Copyright (C) 2012 Richard Payne
-    Copyright (C) 2012 Andrew Hill
-    Copyright (C) 2012 David Shirley
     
     This file is part of VDash.
 
@@ -20,11 +17,12 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 namespace VehicleLib.Sensors
 {
-    public class TempSensor : Sensor
-    {
-        public short Temp;
-    }
+	public class VoltageSensor : Sensor
+	{
+		public float Min;
+		public float Max;
+		public float Current;
+	}
 }

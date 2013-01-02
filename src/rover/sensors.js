@@ -1,8 +1,5 @@
 ﻿/*
 Copyright (C) 2012 Christopher Cartwright
-Copyright (C) 2012 Richard Payne
-Copyright (C) 2012 Andrew Hill
-Copyright (C) 2012 David Shirley
     
 This file is part of VDash.
 
@@ -20,41 +17,10 @@ You should have received a copy of the GNU General Public License
 along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var pins = {
-	motor: {
-		forward_reverse: {
-			speed: "P9_14",
-			dir: "P9_25"
-		},
-		turn: {
-			speed: "P9_16",
-			dir: "P9_27"
-		}
-	},
-	light: {
-		head: {
-			pwm: true,
-			pin: "P8_13"
-		}
-	},
-	sensor: {
-		battery: "P9_40"
-	}
-	/*
-	Hookups that exist in hardware, but haven't been hooked up yet
-	light: {
-		larson_1: P9_,
-		larson_2: P9_,
-		larson_3: P9_
-	},
-	rgb_light: {
-		power: {
-			r: P9_,
-			g: P9_,
-			b: P9_
-		}
-	}
-	*/
+// Min and Max will be sent up with the XML file once implemented
+module.exports.Voltage = function (min, max, current) {
+	this.name = "VoltageSensor";
+	this.Min = min;
+	this.Max = max;
+	this.Current = current;
 };
-
-module.exports = pins;

@@ -1,8 +1,5 @@
 ﻿/*
     Copyright (C) 2012 Christopher Cartwright
-    Copyright (C) 2012 Richard Payne
-    Copyright (C) 2012 Andrew Hill
-    Copyright (C) 2012 David Shirley
     
     This file is part of VDash.
 
@@ -21,10 +18,18 @@
 */
 
 
-namespace VehicleLib.Sensors
+namespace VehicleLib.Events
 {
-    public class TempSensor : Sensor
-    {
-        public short Temp;
-    }
+	public class LoginSuccessEvent : Event
+	{
+		public delegate void EventHandler(LoginSuccessEvent evnt);
+
+		public static event EventHandler Invoked;
+
+		public override void Invoke()
+		{
+			if (Invoked != null)
+				Invoked(this);
+		}
+	}
 }
