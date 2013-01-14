@@ -172,7 +172,7 @@ namespace VDash
 			_dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
 			{
 				if (!VehiclesContains(name))
-					MainWindow.Invoke(() => _ds.Vehicles.Add(new Vehicle(name, ep)));
+					DataModel.Invoke(() => _ds.Vehicles.Add(new Vehicle(name, ep)));
 			};
 			
             InitializeComponent();

@@ -23,6 +23,7 @@
 using System;
 using System.ComponentModel;
 using System.Timers;
+using System.Windows;
 using VehicleLib;
 using VehicleLib.Errors;
 using VehicleLib.Events;
@@ -51,6 +52,15 @@ namespace VDash
 				_inst = new DataModel();
 
 			return _inst;
+		}
+
+		/// <summary>
+		/// Used to run an action on the GUI thread
+		/// </summary>
+		/// <param name="action">Action to run</param>
+		public static void Invoke(Action action)
+		{
+			Application.Current.Dispatcher.BeginInvoke(action);
 		}
 
 		/// <summary>
@@ -188,15 +198,17 @@ namespace VDash
 			}
 		}
 
+		private Uri _videoFeed;
+
 		/// <summary>
 		/// Reports when Video feed Uri is set
 		/// </summary>
 		public Uri VideoFeed
 		{
-			get { return VideoFeed; }
+			get { return _videoFeed; }
 			set
 			{
-				VideoFeed = value;
+				_videoFeed = value;
 				LogControl.Debug("Video feed Uri set: " + value);
 				Notify("VideoFeed");
 			}
@@ -242,12 +254,12 @@ namespace VDash
 
 			Vehicle.OnException += delegate(Exception ex)
 			{
-				MainWindow.Invoke(() => LogControl.Error(ex));
+				Invoke(() => LogControl.Error(ex));
 			};
 
 			Vehicle.OnError += delegate(Error err)
 			{
-				MainWindow.Invoke(() => LogControl.Error(err.ToString()));
+				Invoke(() => LogControl.Error(err.ToString()));
 			};
 
 			LoginSuccessEvent.Invoked += delegate(LoginSuccessEvent evnt)
@@ -256,7 +268,7 @@ namespace VDash
 
 				Vehicle.Send(new VoltageQuery("battery", delegate(Sensor sensor)
 				{
-					MainWindow.Invoke(() => BatteryUpdated(sensor));
+					Invoke(() => BatteryUpdated(sensor));
 				}));
 			};
 
@@ -270,7 +282,7 @@ namespace VDash
 
 				Vehicle.Send(new VoltageQuery("battery", delegate(Sensor sensor)
 				{
-					MainWindow.Invoke(() => BatteryUpdated(sensor));
+					Invoke(() => BatteryUpdated(sensor));
 				}));
 			};
 		}

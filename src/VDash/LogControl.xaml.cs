@@ -129,7 +129,7 @@ namespace VDash
 			if (OnLogReceived == null)
 				return;
 
-			MainWindow.Invoke(() => OnLogReceived(type, message));
+			DataModel.Invoke(() => OnLogReceived(type, message));
 		}
 
 		public static void Error(string msg)

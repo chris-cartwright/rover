@@ -35,14 +35,6 @@ namespace VDash
 		DataModel dm = DataModel.GetInstance();
 		public static Window Self { get; private set; }
 
-		public static void Invoke(Action act)
-		{
-			if (Self == null)
-				return;
-
-			Self.Dispatcher.Invoke(act);
-		}
-
 		public MainWindow()
         {
 			if (Self != null)
@@ -73,10 +65,6 @@ namespace VDash
 			{
 				dm.Vehicle.Disconnect();
 			}
-
-			// Make sure to null Self on window close
-			// Cross-thread events will hang otherwise
-			Self = null;
 		}
 
 		private void ApplicationClose(object sender, ExecutedRoutedEventArgs e)
