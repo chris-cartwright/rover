@@ -38,7 +38,8 @@ module.exports.VoltageQuery = function (sensor) {
 
 	switch (sensor) {
 		case "battery":
-			current = analogRead(bone[pins.sensor.battery]);
+			// analogRead returns a percentage
+			current = analogRead(bone[pins.sensor.battery]) * 1.8;
 			current = vdin(current, 4760, 980);
 			// Rechargeables used measured 1.4v after full charge
 			max = 8.4;

@@ -50,7 +50,7 @@
                                 </avalonDock:LayoutDocument>
                             </avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocumentPane>
-                                <avalonDock:LayoutDocument Title="Vehicle Key State">
+                                <avalonDock:LayoutDocument Title="Sensors">
                                     <local:SensorControl x:Name="_sensors" />
                                 </avalonDock:LayoutDocument>
                             </avalonDock:LayoutDocumentPane>
