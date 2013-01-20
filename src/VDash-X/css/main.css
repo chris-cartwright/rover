@@ -1,0 +1,235 @@
+/*
+Copyright (C) 2012 Christopher Cartwright
+    
+This file is part of VDash.
+
+VDash is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+VDash is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with VDash.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+body
+{
+	background: #112233;
+	color: #FFFFFF;
+	height: auto;
+	font-size: 16px;
+	font-family: Verdana,Arial,sans-serif;
+}
+
+h1
+{
+	padding-top: 20px;
+	text-align: center;
+	font-size: 3em;
+	font-family: Arial, sans;
+	font-weight: bold;
+}
+
+a
+{
+	color: #FF7F00;
+	text-decoration: none;
+}
+
+a:hover
+{
+	text-decoration: underline;
+}
+
+ul
+{
+	padding: 0px;
+	margin: 0px;
+}
+
+div.pane
+{
+	border: 1px solid #FFFFFF;
+	margin-left: 9px;
+	margin-right: 9px;
+	margin-bottom: 10px;
+}
+
+div.pane h2
+{
+	background: #99AABB;
+	padding: 5px;
+	color: #112233;
+	text-align: center;
+	font-weight: bold;
+}
+
+div.pane h2 a
+{
+	float: right;
+	border: 1px solid #FFFFFF;
+	background-color: #112233;
+	display: block;
+	width: 1em;
+	color: #FFFFFF;
+	margin-left: 3px;
+}
+
+div.pane h2 a:hover
+{
+	text-decoration: none;
+	background-color: #99AABB;
+	color: #112233;
+	border-color: #112233;
+}
+
+div.pane > div
+{
+	padding: 5px;
+}
+
+div.pane.focus
+{
+	border-color: #FF7F00;
+	background-color: #223344;
+}
+
+ul.vehicles li:after { 
+	content: " ";
+	display: block; 
+	height: 0; 
+	clear: both;
+}
+
+ul.vehicles li > a
+{
+	display: inline-block;
+	height: 21px;
+	padding-top: 5px;
+}
+
+ul.vehicles div
+{
+	clear: both;
+	display: none;
+	font-size: 0.8em;
+}
+
+ul.vehicles button
+{
+	float: right;
+	font-size: 0.8em;
+}
+
+#paneLog .header div
+{
+	background: #99AABB;
+	padding: 3px 5px;
+	display: inline-block;
+}
+
+#paneLog .header div:nth-child(3)
+{
+	width: 100%;
+}
+
+#paneLog table
+{
+	font-size: 0.8em;
+	width: 100%;
+}
+
+#paneLog table th
+{
+	background: #99AABB;
+	color: #112233;
+}
+
+#paneLog table td, table th
+{
+	padding: 5px;
+}
+
+#paneLog .list
+{
+	height: 150px;
+	overflow-x: hidden;
+}
+
+#paneLog table tr td:nth-child(1),
+#paneLog table tr td:nth-child(2),
+#paneLog table tr th:nth-child(1),
+#paneLog table tr th:nth-child(2)
+{
+	width: 150px;
+	text-align: center;
+}
+
+#paneLog table tr:hover
+{
+	background-color: #334455;
+}
+
+.clear
+{
+	clear: both;
+}
+
+dt
+{
+	display: block;
+	width: 20%;
+	clear: left;
+	float: left;
+	font-weight: bold;
+}
+
+dd
+{
+	display: block;
+	float: left;
+}
+
+.widgets div span
+{
+	display: inline-block;
+}
+
+.widgets div span:nth-child(1)
+{
+	width: 50%;
+}
+
+.widgets div span
+{
+	width: 23%;
+}
+
+#content
+{
+	border: 1px solid #334455;
+	padding: 10px 0px 0px 0px;
+	position: relative;
+}
+
+#logButtons
+{
+	margin-bottom: 5px;
+}
+
+#menu
+{
+	width: 150px;
+	position: absolute;
+	top: -36px;
+}
+
+#menu ul
+{
+	width: 150px;
+}

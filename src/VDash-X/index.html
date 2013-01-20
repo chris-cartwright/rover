@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<!--
+Copyright (C) 2012 Christopher Cartwright
+    
+This file is part of VDash.
+
+VDash is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+VDash is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with VDash.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<html>
+<head>
+<title>VDash</title>
+<link rel="stylesheet" href="css/reset.css" />
+<link rel="stylesheet" href="css/960.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="css/VDash/jquery-ui.custom.css" />
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui.custom.js"></script>
+<script type="text/javascript" src="js/jquery.pane.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+</head>
+
+<body>
+
+<h1>
+  VDash
+</h1>
+
+<div id="content" class="container_12">
+	<ul id="menu">
+		<li>
+			<a href="#">Menu</a>
+			<ul>
+				<li>
+					<a href="#">Windows</a>
+					<ul id="windows">
+					</ul>
+				</li>
+				<li><a href="#">Disconnect</a></li>					
+			</ul>
+		</li>
+	</ul>
+	<div class="grid_8 pane" data-title="Video Feed" data-collapsible="false">
+		<div style="background: #000; width: 512px; height: 384px; margin: 0px auto"></div>
+	</div>
+
+	<div class="grid_4 pane" data-title="Available Vehicles" data-direction="horizontal">
+		<ul class="vehicles">
+			<li>
+				<button>Connect</button>
+				<a href="#">Marvin</a>
+				<div>
+					<dl>
+						<dt>IP:</dt>
+						<dd>192.168.38.111</dd>
+						<dt>Port:</dt>
+						<dd>15000</dd>
+						<dt>Video:</dt>
+						<dd><a href="#">http://192.168.38.111:8080/feed.mjpg</a></dd>
+					</dl>
+				</div>
+			</li>
+			<li>
+				<button>Connect</button>
+				<a>Marvin</a>
+				<div>
+					<dl>
+						<dt>IP:</dt>
+						<dd>192.168.38.111</dd>
+						<dt>Port:</dt>
+						<dd>15000</dd>
+					</dl>
+				</div>
+			</li>
+		</ul>
+	</div>
+
+	<div class="grid_4 pane sensors widgets" data-title="Sensors">
+		<div>
+			<span>Battery Voltage:</span>
+			<span>7.35v</span>
+			<span>83%</span>
+		</div>
+		<div>
+			<span>Temperature:</span>
+			<span>23&deg;C</span>
+		</div>
+	</div>
+
+	<div class="grid_4 pane control widgets" data-title="Control">
+		<div>
+			<span>Speed:</span>
+			<span>80%</span>
+			<span><div class="slider" data-max="10"></div></span>
+		</div>
+		<div>
+			<span>Direction:</span>
+			<span>Straight</span>
+			<span><div class="slider" data-max="2"></div></span>
+		</div>
+	</div>
+
+	<div id="paneLog" class="grid_12 pane" data-title="Error Log">
+		<div id="logButtons">
+			<input type="radio" name="log" id="logAll" checked="checked" /><label for="logAll">All</label>
+			<input type="radio" name="log" id="logError" /><label for="logError">Error</label>
+			<input type="radio" name="log" id="logWarn" /><label for="logWarn">Warn</label>
+			<input type="radio" name="log" id="logInfo" /><label for="logInfo">Info</label>
+			<input type="radio" name="log" id="logDebug" /><label for="logDebug">Debug</label>
+		</div>
+		<div class="header">
+			<table>
+				<tr>
+					<th>Time</th>
+					<th>Level</th>
+					<th>Message</th>
+				</tr>
+			</table>
+		</div>
+		<div class="list">
+			<table>
+				<tr>
+					<td>19:34:45</td>
+					<td>Debug</td>
+					<td>Test message</td>
+				</tr>
+				<tr>
+					<td>19:34:45</td>
+					<td>Debug</td>
+					<td>Test message</td>
+				</tr>
+				<tr>
+					<td>19:34:45</td>
+					<td>Debug</td>
+					<td>Test message</td>
+				</tr>
+				<tr>
+					<td>19:34:45</td>
+					<td>Debug</td>
+					<td>Test message</td>
+				</tr>
+				<tr>
+					<td>19:34:45</td>
+					<td>Debug</td>
+					<td>Test message</td>
+				</tr>
+				<tr>
+					<td>19:34:45</td>
+					<td>Debug</td>
+					<td>Test message</td>
+				</tr>
+				<tr>
+					<td>19:34:45</td>
+					<td>Debug</td>
+					<td>Test message</td>
+				</tr>
+				<tr>
+					<td>19:34:45</td>
+					<td>Debug</td>
+					<td>Test message</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+</body>
+
+<script type="text/javascript" src="js/main.js" />
+<script type="text/javascript" src="js/jquery.min.js" />
+<script type="text/javascript" src="js/jquery-ui.min.js" />
+
+</htlm>
