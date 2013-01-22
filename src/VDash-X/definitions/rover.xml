@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<vehicle guid="b91fda7a-6448-11e2-bc5f-1c6f6540881c">
+    <input>
+    	<device id="battery" type="int">
+    	    <display>
+    	        <percent />
+    	        <number unit="v" />
+    	    </display>
+  	    </device>
+    </input>
+
+    <output>
+    	<device id="lcd" type="string" />
+
+    	<device id="drive" type="percent" display="slider">
+    	    <display>
+    	        <percent />
+    	        <slider />
+    	    </display>
+    	</device>
+
+    	<device id="turn" type="int">
+    	    <display>
+    	        <string list="turn" />
+    	        <slider list="turn" />
+    	    </display>
+    	</device>
+    </output>
+
+    <bidirectional>
+    </bidirectional>
+
+    <lists>
+        <list id="turn">
+            <item value="0" text="Left" />
+            <item value="1" text="None" default="true" />
+            <item value="2" text="Right" />
+        </list>
+    </lists>
+</vehicle>
