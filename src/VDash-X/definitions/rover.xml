@@ -4,7 +4,7 @@
     <input>
     	<device id="battery" type="int">
     	    <display>
-    	        <percent />
+    	        <percent min="6.6" max="8.4" />
     	        <number unit="v" />
     	    </display>
   	    </device>
@@ -13,7 +13,7 @@
     <output>
     	<device id="lcd" type="string" />
 
-    	<device id="drive" type="percent" display="slider">
+    	<device id="drive" type="percent">
     	    <display>
     	        <percent />
     	        <slider />
