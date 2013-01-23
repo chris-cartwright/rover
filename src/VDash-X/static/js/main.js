@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2012 Christopher Cartwright
-    
+Copyright (C) 2013 Christopher Cartwright
+
 This file is part of VDash.
 
 VDash is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
 $(function() {
 	$("button").button();
 	$("#logButtons").buttonset();

@@ -1,6 +1,6 @@
 /*
-Copyright (C) 2012 Christopher Cartwright
-    
+Copyright (C) 2013 Christopher Cartwright
+
 This file is part of VDash.
 
 VDash is free software: you can redistribute it and/or modify
@@ -99,10 +99,10 @@ div.pane.focus
 	background-color: #223344;
 }
 
-ul.vehicles li:after { 
+ul.vehicles li:after {
 	content: " ";
-	display: block; 
-	height: 0; 
+	display: block;
+	height: 0;
 	clear: both;
 }
 
