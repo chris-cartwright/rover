@@ -1,30 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<vehicle guid="b91fda7a-6448-11e2-bc5f-1c6f6540881c">
+<vehicle label="Rover" guid="b91fda7a-6448-11e2-bc5f-1c6f6540881c">
     <input>
-    	<device id="battery" type="int">
-    	    <display>
-    	        <percent min="6.6" max="8.4" />
-    	        <number unit="v" />
-    	    </display>
+    	<device label="Battery" id="battery" type="number">
+    	    <display plugin="voltage" min="6.6" max="8.4" unit="v" />
   	    </device>
     </input>
 
     <output>
-    	<device id="lcd" type="string" />
+    	<device label="Screen" id="lcd" type="string" />
+    	<device label="Drive Motor" id="drive" type="percent"  />
 
-    	<device id="drive" type="percent">
-    	    <display>
-    	        <percent />
-    	        <slider />
-    	    </display>
-    	</device>
-
-    	<device id="turn" type="int">
-    	    <display>
-    	        <string list="turn" />
-    	        <slider list="turn" />
-    	    </display>
+    	<device label="Direction" id="turn" type="number">
+    	    <display plugin="slider_list" list="turn" />
     	</device>
     </output>
 
