@@ -29,6 +29,11 @@ $(function() {
 		var s = $(this);
 		s.slider(s.data());
 	});
+	
+	$("[data-resizable='true']").each(function() {
+		var $this = $(this);
+		$this.resizable($this.data());
+	});
 
 	var windows = $("#windows");
 	$("div.pane").pane().each(function() {

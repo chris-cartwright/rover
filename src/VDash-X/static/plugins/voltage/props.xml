@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<plugin>
+    <author>
+        <name>Chris Cartwright</name>
+        <email>cartwright.christopher@gmail.com</email>
+        <website>http://www.chris-cartwright.com/</website>
+    </author>
+    <version>1.0</version>
+    <date>2012-01-22</date>
+
+    <handles>
+        <number />
+    </handles>
+</plugin>
