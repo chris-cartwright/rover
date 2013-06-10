@@ -1,0 +1,5 @@
+<div id="battery" ng-controller="VoltageCtrl" ng-init="init({ min: 6.6, max: 8.4, precision: 1})">
+	<span>Battery Voltage:</span>
+	<span>{{raw | number:precision}}v</span>
+	<span ng-style="{color: color}">{{percent | number:0}}%</span>
+</div>

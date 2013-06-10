@@ -51,3 +51,16 @@ $(function() {
 
 	$("#menu").menu();
 });
+
+angular.module("VDash", []).run(function($rootScope, $http, $compile, DataModel) {
+	$http({ method: "GET", url: "/static/plugins/voltage/voltage.html" }).
+	success(function(data, status, headers, config) {
+		$compile(data)($rootScope.$new(), function(clone, scope) {
+			$("#sensors > div").append(clone);
+		});
+	});
+	
+	$rootScope.voltage = 8;
+	$rootScope.$watch(function() { return DataModel.sensors.battery; }, function(value) { $rootScope.voltage = value; });
+	$rootScope.$watch(function() { return $rootScope.voltage; }, function(value) { DataModel.sensors.battery = value; });
+});
