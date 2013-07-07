@@ -1,5 +1,5 @@
 
-function VoltageCtrl($scope, $element, DataModel){
+function VoltageCtrl($scope, $element, DataModel) {
 	var _settings = {
 		min: 0,
 		max: 0,

@@ -138,6 +138,12 @@ ul.vehicles button
 	width: 100%;
 }
 
+#paneLog form
+{
+	display: block;
+	float: right;
+}
+
 #paneLog table
 {
 	font-size: 0.8em;
@@ -220,6 +226,11 @@ dd
 #logButtons
 {
 	margin-bottom: 5px;
+}
+
+#logButtons div
+{
+	display: inline;
 }
 
 #menu

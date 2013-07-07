@@ -36,6 +36,7 @@ along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Main files -->
 <script type="text/javascript" src="static/js/main.js"></script>
 <script type="text/javascript" src="static/js/services.js"></script>
+<script type="text/javascript" src="static/js/logger.js"></script>
 
 <!-- Plugins -->
 <script type="text/javascript" src="static/plugins/voltage/voltage.js"></script>
@@ -121,13 +122,21 @@ along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 	</div>
 
-	<div id="paneLog" class="grid_12 pane" data-title="Error Log">
+	<div id="paneLog" class="grid_12 pane" data-title="Error Log" ng-controller="LoggerCtrl">
+		<form ng-submit="addLog()">
+			<select ng-model="form.level">
+				<option ng-repeat="level in levels">{{level}}</option>
+			</select>
+			
+			<input type="text" ng-model="form.msg" />
+			
+			<button>Add Log</button>
+		</form>
 		<div id="logButtons">
-			<input type="radio" name="log" id="logAll" checked="checked" /><label for="logAll">All</label>
-			<input type="radio" name="log" id="logError" /><label for="logError">Error</label>
-			<input type="radio" name="log" id="logWarn" /><label for="logWarn">Warn</label>
-			<input type="radio" name="log" id="logInfo" /><label for="logInfo">Info</label>
-			<input type="radio" name="log" id="logDebug" /><label for="logDebug">Debug</label>
+			<input type="radio" name="log" id="logAll" ng-model="level" value="" /><label for="logAll">All</label>
+			<div ng-repeat="level in levels">
+				<input type="radio" name="log" id="log{{level}}" ng-model="$parent.level" value="{{level}}" /><label for="log{{level}}">{{level}}</label>
+			</div>
 		</div>
 		<div class="header">
 			<table>
@@ -140,45 +149,10 @@ along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 		<div class="list" data-resizable="true" data-handles="s">
 			<table>
-				<tr>
-					<td>19:34:45</td>
-					<td>Debug</td>
-					<td>Test message</td>
-				</tr>
-				<tr>
-					<td>19:34:45</td>
-					<td>Debug</td>
-					<td>Test message</td>
-				</tr>
-				<tr>
-					<td>19:34:45</td>
-					<td>Debug</td>
-					<td>Test message</td>
-				</tr>
-				<tr>
-					<td>19:34:45</td>
-					<td>Debug</td>
-					<td>Test message</td>
-				</tr>
-				<tr>
-					<td>19:34:45</td>
-					<td>Debug</td>
-					<td>Test message</td>
-				</tr>
-				<tr>
-					<td>19:34:45</td>
-					<td>Debug</td>
-					<td>Test message</td>
-				</tr>
-				<tr>
-					<td>19:34:45</td>
-					<td>Debug</td>
-					<td>Test message</td>
-				</tr>
-				<tr>
-					<td>19:34:45</td>
-					<td>Debug</td>
-					<td>Test message</td>
+				<tr ng-repeat="log in logs | filter:level | orderBy:timeInt:true">
+					<td>{{log.time | date:"yyyy-MM-dd HH:mm:ss"}}</td>
+					<td>{{log.level}}</td>
+					<td>{{log.message}}</td>
 				</tr>
 			</table>
 		</div>
