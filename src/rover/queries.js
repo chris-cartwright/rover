@@ -25,6 +25,12 @@ var config = require("./config");
 var pins = require("./pins");
 var sensors = require("./sensors");
 
+var bone;
+if (config.simulator)
+	bone = require("./bone");
+else
+	bone = require("bonescript");
+
 // Calculate Vin from Vout, R1, R2 in a voltage divider
 function vdin(raw, r1, r2) {
 	// Vout = Vin * (R2 / (R1 + R2))
@@ -39,7 +45,7 @@ module.exports.VoltageQuery = function (sensor) {
 	switch (sensor) {
 		case "battery":
 			// analogRead returns a percentage
-			current = analogRead(bone[pins.sensor.battery]) * 1.8;
+			current = bone.analogRead(pins.sensor.battery) * 1.8;
 			current = vdin(current, 4760, 980);
 			// Rechargeables used measured 1.4v after full charge
 			max = 8.4;

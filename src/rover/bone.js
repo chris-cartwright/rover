@@ -28,10 +28,10 @@ var net = require("net");
 var log = new require("./logger").LabelledLogger("bone");
 var pins = require("./pins");
 
-OUTPUT = exports.OUTPUT = "out";
-INPUT = exports.INPUT = "in";
-HIGH = exports.HIGH = 1;
-LOW = exports.LOW = 0;
+exports.OUTPUT = "output";
+exports.INPUT = "input";
+exports.HIGH = 1;
+exports.LOW = 0;
 
 var server = net.createServer();
 var clients = [];
@@ -79,8 +79,8 @@ function bcast(data) {
 }
 
 function validPin(pin) {
-	if (!bone.hasOwnProperty(pin.name))
-		log.error("Invalid pin: " + pin.name);
+	if (!bone.hasOwnProperty(pin))
+		log.error("Invalid pin: " + pin);
 }
 
 function validMode(mode) {
@@ -99,11 +99,11 @@ function validAnalog(value) {
 }
 
 function activePin(pin) {
-	if (!activePins.hasOwnProperty(pin.name))
-		log.error("Inactive pin used: " + pin.name);
+	if (!activePins.hasOwnProperty(pin))
+		log.error("Inactive pin used: " + pin);
 }
 
-bone = exports.bone = {
+var bone = exports.bone = {
 	P8_1: { name: "P8_1", value: LOW },
 	P8_2: { name: "P8_2", value: LOW },
 	P8_3: { name: "P8_3", value: LOW },
@@ -199,47 +199,47 @@ bone = exports.bone = {
 	P9_46: { name: "P9_46", value: LOW }
 };
 
-pinMode = exports.pinMode = function (pin, mode) {
+exports.pinMode = function (pin, mode) {
 	validPin(pin);
 	validMode(mode);
 
-	activePins.push(pin.name);
+	activePins.push(pin);
 
-	bcast({ cmd: "pinMode", pin: pin.name, mode: mode });
+	bcast({ cmd: "pinMode", pin: pin, mode: mode });
 };
 
-digitalWrite = exports.digitalWrite = function (pin, value) {
+exports.digitalWrite = function (pin, value) {
 	validPin(pin);
 	validBool(value);
 	activePin(pin);
 
-	bcast({ cmd: "digitalWrite", pin: pin.name, value: value });
-	pin.value = value;
+	bcast({ cmd: "digitalWrite", pin: pin, value: value });
+	bone[pin].value = value;
 };
 
-digitalRead = exports.digitalRead = function (pin) {
+exports.digitalRead = function (pin) {
 	validPin(pin);
 	activePin(pin);
 
-	bcast({ cmd: "digitalRead", pin: pin.name });
-	return pin.value;
+	bcast({ cmd: "digitalRead", pin: pin });
+	return bone[pin].value;
 };
 
-analogWrite = exports.analogWrite = function (pin, value) {
+exports.analogWrite = function (pin, value) {
 	validPin(pin);
 	validAnalog(value);
 	activePin(pin);
 
-	bcast({ cmd: "analogWrite", pin: pin.name, value: value });
-	pin.value = value;
+	bcast({ cmd: "analogWrite", pin: pin, value: value });
+	bone[pin].value = value;
 };
 
-analogRead = exports.analogRead = function (pin) {
+exports.analogRead = function (pin) {
 	validPin(pin);
 	activePin(pin);
 
-	bcast({ cmd: "analogRead", pin: pin.name });
-	return pin.value;
+	bcast({ cmd: "analogRead", pin: pin });
+	return bone[pin].value;
 };
 
 module.exports.listen = function () {

@@ -24,17 +24,18 @@ var log = new require("./logger").LabelledLogger("states");
 var config = require("./config");
 var pins = require("./pins");
 
+var bone;
 if (config.simulator)
-	require("./bone");
+	bone = require("./bone");
 else
-	require("bonescript");
+	bone = require("bonescript");
 
 // Hacky. It's just a band-aid until #49 is implemented
-pinMode(bone[pins.motor.forward_reverse.speed], OUTPUT);
-pinMode(bone[pins.motor.forward_reverse.dir], OUTPUT);
-pinMode(bone[pins.motor.turn.speed], OUTPUT);
-pinMode(bone[pins.motor.turn.dir], OUTPUT);
-pinMode(bone[pins.light.head.pin], OUTPUT);
+//bone.pinMode(pins.motor.forward_reverse.speed, bone.OUTPUT);
+bone.pinMode(pins.motor.forward_reverse.dir, bone.OUTPUT);
+//bone.pinMode(pins.motor.turn.speed, bone.OUTPUT);
+bone.pinMode(pins.motor.turn.dir, bone.OUTPUT);
+//bone.pinMode(pins.light.head.pin, bone.OUTPUT);
 
 module.exports.TurnState = function (data) {
 	log.info("TurnState", data);
@@ -42,16 +43,16 @@ module.exports.TurnState = function (data) {
 	var motor = pins.motor.turn;
 
 	if (data.Vector.Y == 0) {
-		analogWrite(bone[motor.speed], 0);
+		bone.analogWrite(motor.speed, 0);
 	}
 	else if (data.Vector.Y > 0) { // right turn
-		digitalWrite(bone[motor.dir], 1);
-		analogWrite(bone[motor.speed], 1.0);
+		bone.digitalWrite(motor.dir, 1);
+		bone.analogWrite(motor.speed, 1.0);
 		// analogWrite(bone[motor.speed], data.Vector.Y);
 	}
 	else {
-		digitalWrite(bone[motor.dir], 0);
-		analogWrite(bone[motor.speed], 1.0);
+		bone.digitalWrite(motor.dir, 0);
+		bone.analogWrite(motor.speed, 1.0);
 		// analogWrite(bone[motor.speed], data.Vector.Y);
 	}
 };
@@ -62,15 +63,15 @@ module.exports.MoveState = function (data) {
 	var motor = pins.motor.forward_reverse;
 
 	if (data.Vector.Z == 0) {
-		analogWrite(bone[motor.speed], 0);
+		bone.analogWrite(motor.speed, 0);
 	}
 	else if (data.Vector.Z > 0) {
-		digitalWrite(bone[motor.dir], 0);
-		analogWrite(bone[motor.speed], data.Vector.Z * 0.004 + 0.6);
+		bone.digitalWrite(motor.dir, 0);
+		bone.analogWrite(motor.speed, data.Vector.Z * 0.004 + 0.6);
 	}
 	else {
-		digitalWrite(bone[motor.dir], 1);
-		analogWrite(bone[motor.speed], data.Vector.Z * (-0.004) + 0.6);
+		bone.digitalWrite(motor.dir, 1);
+		bone.analogWrite(motor.speed, data.Vector.Z * (-0.004) + 0.6);
 	}
 };
 
@@ -83,7 +84,7 @@ module.exports.LightState = function (data) {
 	var light = pins.light[data.Id];
 
 	if (light.pwm)
-		analogWrite(bone[light.pin], data.Level * 0.01);
+		bone.analogWrite(light.pin, data.Level * 0.01);
 	else
-		digitalWrite(bone[light.pin], data.Level > 0);
-}
+		bone.digitalWrite(light.pin, data.Level > 0);
+};
