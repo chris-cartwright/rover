@@ -39,6 +39,12 @@ var pins = {
 	},
 	sensor: {
 		battery: "P9_40"
+	},
+	button: {
+		show_ip: "P8_4"
+	},
+	power: {
+		arduino: "P8_3"
 	}
 	/*
 	Hookups that exist in hardware, but haven't been hooked up yet

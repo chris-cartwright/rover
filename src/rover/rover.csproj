@@ -46,11 +46,14 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="arduino.js" />
     <Content Include="bone.js" />
+    <Content Include="config.js" />
     <Content Include="control_pipe.js" />
     <None Include="config.js.base" />
     <Content Include="errors.js" />
     <Content Include="broadcast_sender.js" />
+    <Content Include="local.js" />
     <Content Include="logger.js" />
     <Content Include="main.js" />
     <Content Include="events.js" />

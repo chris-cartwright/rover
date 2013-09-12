@@ -31,7 +31,12 @@ var config = {
 	passwd: "pwd",
 	debug: true,
 	name: "Rover",
-	simulator: true
+	simulator: true,
+	arduino: {
+		uart: 1,
+		baud: 9600,
+		interfaces: ["eth1", "wlan0"]
+	}
 };
 
 module.exports = config;

@@ -39,6 +39,9 @@ ControlPipe.setPort(config.port.pipe);
 BroadcastSender.setPort(config.port.bcast);
 log.info("Set ports.");
 
+log.info("Starting local services...");
+require("./local");
+
 ControlPipe.listen();
 
 log.info("Listening for connections...");

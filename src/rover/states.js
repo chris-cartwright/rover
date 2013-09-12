@@ -31,11 +31,11 @@ else
 	bone = require("bonescript");
 
 // Hacky. It's just a band-aid until #49 is implemented
-//bone.pinMode(pins.motor.forward_reverse.speed, bone.OUTPUT);
+// Don't set pinMode on PWM pins
 bone.pinMode(pins.motor.forward_reverse.dir, bone.OUTPUT);
-//bone.pinMode(pins.motor.turn.speed, bone.OUTPUT);
 bone.pinMode(pins.motor.turn.dir, bone.OUTPUT);
-//bone.pinMode(pins.light.head.pin, bone.OUTPUT);
+bone.pinMode(pins.power.arduino, bone.OUTPUT);
+bone.pinMode(pins.button.show_ip, bone.INPUT);
 
 module.exports.TurnState = function (data) {
 	log.info("TurnState", data);

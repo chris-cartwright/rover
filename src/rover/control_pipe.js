@@ -62,20 +62,21 @@ var ControlPipe = new function () {
 		_client.on("close", onDisconnect);
 		_validated = false;
 		_tries = 0;
-	};
+	}
 
 	function onData(data) {
 		log.info("Data received: " + data);
 		try {
 			_proto.feed(data);
-		} catch (e) {
+		}
+		catch (e) {
 			// This also catches error originating in onCommand
 			if (e.name == "SyntaxError")
 				_self.send(new err.ParseFailed());
 			else
 				_self.send(new err.Unknown(e.message));
 		}
-	};
+	}
 
 	function onCommand(obj) {
 		log.info("Command received: " + obj.cmd);
@@ -132,7 +133,7 @@ var ControlPipe = new function () {
 		}
 		else
 			_self.send(new err.CommandNotFound(obj.cmd));
-	};
+	}
 
 	function onDisconnect() {
 		log.info("Disconnected.");
@@ -140,16 +141,16 @@ var ControlPipe = new function () {
 		_client = null;
 		_validated = false;
 		_tries = 0;
-	};
+	}
 
 	function onError(e) {
 		if (e.code == "EADDRINUSE")
 			throw new Error("Address already in use.");
-	};
+	}
 
 	function onClientError(e) {
 		throw e;
-	};
+	}
 
 	function onListening() {
 		_listening = true;
@@ -192,6 +193,6 @@ var ControlPipe = new function () {
 	this.isListening = function () {
 		return _listening;
 	};
-}
+};
 
 module.exports = ControlPipe;
