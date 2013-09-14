@@ -1,10 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!--
-    Copyright (C) 2012 Christopher Cartwright
-    Copyright (C) 2012 Richard Payne
-    Copyright (C) 2012 Andrew Hill
-    Copyright (C) 2012 David Shirley
-
+﻿/*
+    Copyright (C) 2013 Christopher Cartwright
+    
     This file is part of VDash.
 
     VDash is free software: you can redistribute it and/or modify
@@ -19,8 +15,20 @@
 
     You should have received a copy of the GNU General Public License
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
--->
-<packages>
-  <package id="AvalonDock" version="2.0.1433" targetFramework="net40-Client" />
-  <package id="PostSharp" version="3.0.36" targetFramework="net40-Client" />
-</packages>
+*/
+
+using PostSharp.Extensibility;
+
+namespace Aspects
+{
+	/// <summary>
+	/// Extensions methods and global variables
+	/// </summary>
+	internal static class Statics
+	{
+		/// <summary>
+		/// Used to mark messages with VDash and load them from resx
+		/// </summary>
+		public static readonly MessageSource Message = new MessageSource("VDash", new MessageDispenser());
+	}
+}

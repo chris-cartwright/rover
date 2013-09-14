@@ -24,8 +24,9 @@ using System;
 using System.ComponentModel;
 using System.Timers;
 using System.Windows;
+using Aspects;
+using VDash.Properties;
 using VehicleLib;
-using VehicleLib.Errors;
 using VehicleLib.Events;
 using VehicleLib.Queries;
 using VehicleLib.Sensors;
@@ -34,28 +35,35 @@ using VehicleLib.States;
 namespace VDash
 {
 	/// <summary>
-	/// Represents the ViewModel for the car.
-	/// Any global information pertaining to the vehicle should be included.
+	///     Represents the ViewModel for the car.
+	///     Any global information pertaining to the vehicle should be included.
 	/// </summary>
-	internal class DataModel : INotifyPropertyChanged
+	internal class DataModel : NotifyPropertyChanged
 	{
+		/// <summary>
+		///     Represents the current state of the front wheels
+		/// </summary>
+		public enum TurnDirection
+		{
+			Left,
+			None,
+			Right
+		};
+
 		private static DataModel _inst;
 
 		/// <summary>
-		/// Returns the static instance of this.
-		/// Constructs object if required.
+		///     Returns the static instance of this.
+		///     Constructs object if required.
 		/// </summary>
 		/// <returns>Static instance</returns>
 		public static DataModel GetInstance()
 		{
-			if (_inst == null)
-				_inst = new DataModel();
-
-			return _inst;
+			return _inst ?? (_inst = new DataModel());
 		}
 
 		/// <summary>
-		/// Used to run an action on the GUI thread
+		///     Used to run an action on the GUI thread
 		/// </summary>
 		/// <param name="action">Action to run</param>
 		public static void Invoke(Action action)
@@ -64,32 +72,23 @@ namespace VDash
 		}
 
 		/// <summary>
-		/// Represents the current state of the front wheels
+		///     Used to update sensors
 		/// </summary>
-		public enum TurnDirection { Left, None, Right };
+		private readonly Timer _timer;
 
-		/// <summary>
-		/// Fired when a property changes.
-		/// Should cover all properties except:
-		///		Vehicle
-		///		Listener
-		///	It just would not make sense to notify on updates to these objects.
-		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		/// <summary>
-		/// Used to update sensors
-		/// </summary>
-		private Timer _timer;
+		private ushort _headlights;
+		private string _key;
+		private short _speed;
+		private TurnDirection _turn;
+		private Uri _videoFeed;
 
 		public VehiclePipe Vehicle { get; private set; }
 		public BroadcastListener Listener { get; private set; }
 
-		private TurnDirection _turn;
-
 		/// <summary>
-		/// Sets the direction of turn for the vehicle.
+		///     Sets the direction of turn for the vehicle.
 		/// </summary>
+		[Notify]
 		public TurnDirection Turn
 		{
 			get { return _turn; }
@@ -103,26 +102,29 @@ namespace VDash
 
 				LogControl.Debug("Turn set: " + value);
 
-				Notify("Turn");
+				if (!Vehicle.Connected)
+					return;
 
-				if (Vehicle.Connected)
+				switch (_turn)
 				{
-					if (_turn == TurnDirection.Left)
-						Vehicle.Send(new LeftTurnState());
-					else if (_turn == TurnDirection.Right)
-						Vehicle.Send(new RightTurnState());
-					else
-						Vehicle.Send(new TurnState());
+				case TurnDirection.Left:
+					Vehicle.Send(new LeftTurnState());
+					break;
+				case TurnDirection.Right:
+					Vehicle.Send(new RightTurnState());
+					break;
+				default:
+					Vehicle.Send(new TurnState());
+					break;
 				}
 			}
 		}
 
-		private short _speed;
-
 		/// <summary>
-		/// Controls the speed of the vehicle.
-		/// Accepts a range of +100 to -100.
+		///     Controls the speed of the vehicle.
+		///     Accepts a range of +100 to -100.
 		/// </summary>
+		[Notify]
 		public short Speed
 		{
 			get { return _speed; }
@@ -137,18 +139,17 @@ namespace VDash
 				LogControl.Debug("Speed set: " + value);
 
 				_speed = value;
-				Notify("Speed");
 
 				if (Vehicle.Connected)
 					Vehicle.Send(new MoveState(0, 0, _speed));
 			}
 		}
 
-		private ushort _headlights;
 		/// <summary>
-		/// Controls the brightness of the headlights.
-		/// Set to 0 to turn off.
+		///     Controls the brightness of the headlights.
+		///     Set to 0 to turn off.
 		/// </summary>
+		[Notify]
 		public ushort Headlights
 		{
 			get { return _headlights; }
@@ -160,7 +161,6 @@ namespace VDash
 				LogControl.Debug("Headlights set: " + value);
 
 				_headlights = value;
-				Notify("Headlights");
 
 				if (Vehicle.Connected)
 					Vehicle.Send(new HeadLightState(_headlights));
@@ -168,24 +168,27 @@ namespace VDash
 		}
 
 		/// <summary>
-		/// Minimum voltage for the battery
+		///     Minimum voltage for the battery
 		/// </summary>
+		[Notify]
 		public float BatteryMin { get; private set; }
 
 		/// <summary>
-		/// Maximum voltage for the battery
+		///     Maximum voltage for the battery
 		/// </summary>
+		[Notify]
 		public float BatteryMax { get; private set; }
 
 		/// <summary>
-		/// Current voltage of the battery
+		///     Current voltage of the battery
 		/// </summary>
+		[Notify]
 		public float BatteryCurrent { get; private set; }
 
-		private string _key;
 		/// <summary>
-		/// Reports Last Key pressed 
+		///     Reports Last Key pressed
 		/// </summary>
+		[Notify]
 		public string Key
 		{
 			get { return _key; }
@@ -194,15 +197,13 @@ namespace VDash
 				LogControl.Debug("Key pressed: " + value);
 
 				_key = value;
-				Notify("Key");
 			}
 		}
 
-		private Uri _videoFeed;
-
 		/// <summary>
-		/// Reports when Video feed Uri is set
+		///     Reports when Video feed Uri is set
 		/// </summary>
+		[Notify]
 		public Uri VideoFeed
 		{
 			get { return _videoFeed; }
@@ -210,38 +211,11 @@ namespace VDash
 			{
 				_videoFeed = value;
 				LogControl.Debug("Video feed Uri set: " + value);
-				Notify("VideoFeed");
 			}
 		}
 
 		/// <summary>
-		///  Event handler to responging to internal property changes
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == "Key")
-			{
-				if (Key == Properties.Settings.Default.KeyForward)
-					Speed += 10;
-				else if (Key == Properties.Settings.Default.KeyBackward)
-					Speed -= 10;
-				else if (Key == Properties.Settings.Default.KeyLeft)
-					Turn--;
-				else if (Key == Properties.Settings.Default.KeyRight)
-					Turn++;
-				else if (Key == Properties.Settings.Default.KeyStop)
-				{
-					Speed = 0;
-					Turn = DataModel.TurnDirection.None;
-				}
-			}
-		}
-
-
-		/// <summary>
-		/// Constructor. Sets default values for properties.
+		///     Constructor. Sets default values for properties.
 		/// </summary>
 		private DataModel()
 		{
@@ -250,47 +224,57 @@ namespace VDash
 
 			_turn = TurnDirection.None;
 
-			PropertyChanged += new PropertyChangedEventHandler(dm_PropertyChanged);
+			PropertyChanged += dm_PropertyChanged;
+			Vehicle.OnException += ex => Invoke(() => LogControl.Error(ex));
+			Vehicle.OnError += err => Invoke(() => LogControl.Error(err.ToString()));
+			Vehicle.OnDisconnect += () => _timer.Stop();
 
-			Vehicle.OnException += delegate(Exception ex)
-			{
-				Invoke(() => LogControl.Error(ex));
-			};
-
-			Vehicle.OnError += delegate(Error err)
-			{
-				Invoke(() => LogControl.Error(err.ToString()));
-			};
-
-			LoginSuccessEvent.Invoked += delegate(LoginSuccessEvent evnt)
+			LoginSuccessEvent.Invoked += delegate
 			{
 				_timer.Start();
 
-				Vehicle.Send(new VoltageQuery("battery", delegate(Sensor sensor)
-				{
-					Invoke(() => BatteryUpdated(sensor));
-				}));
+				Vehicle.Send(new VoltageQuery("battery", sensor => Invoke(() => BatteryUpdated(sensor))));
 			};
 
-			Vehicle.OnDisconnect += () => _timer.Stop();
-
 			_timer = new Timer(30000);
-			_timer.Elapsed += delegate(object sendor, ElapsedEventArgs e)
+			_timer.Elapsed += delegate
 			{
 				if (!Vehicle.Connected)
 					return;
 
-				Vehicle.Send(new VoltageQuery("battery", delegate(Sensor sensor)
-				{
-					Invoke(() => BatteryUpdated(sensor));
-				}));
+				Vehicle.Send(new VoltageQuery("battery", sensor => Invoke(() => BatteryUpdated(sensor))));
 			};
 		}
 
 		/// <summary>
-		/// Shuts down all network connections and cleans up an resources.
-		/// Should only be called on application exit. Behaviour is underfined if
-		/// properties are accessed after this has been called.
+		///     Event handler to responging to internal property changes
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName != "Key")
+				return;
+
+			if (Key == Settings.Default.KeyForward)
+				Speed += 10;
+			else if (Key == Settings.Default.KeyBackward)
+				Speed -= 10;
+			else if (Key == Settings.Default.KeyLeft)
+				Turn--;
+			else if (Key == Settings.Default.KeyRight)
+				Turn++;
+			else if (Key == Settings.Default.KeyStop)
+			{
+				Speed = 0;
+				Turn = TurnDirection.None;
+			}
+		}
+
+		/// <summary>
+		///     Shuts down all network connections and cleans up an resources.
+		///     Should only be called on application exit. Behaviour is underfined if
+		///     properties are accessed after this has been called.
 		/// </summary>
 		public void Shutdown()
 		{
@@ -300,32 +284,16 @@ namespace VDash
 		}
 
 		/// <summary>
-		/// Notifies any listeners that a property has changed.
-		/// </summary>
-		/// <param name="name">Name of the property that changed.</param>
-		private void Notify(string name)
-		{
-			if (PropertyChanged == null)
-				return;
-
-			PropertyChanged(this, new PropertyChangedEventArgs(name));
-		}
-
-		/// <summary>
-		/// Handles the incoming battery sensor information and updates Battery*
+		///     Handles the incoming battery sensor information and updates Battery*
 		/// </summary>
 		/// <param name="sensor">Sensor information from vehicle</param>
 		private void BatteryUpdated(Sensor sensor)
 		{
-			VoltageSensor vs = (VoltageSensor)sensor;
+			var vs = (VoltageSensor) sensor;
 
 			BatteryCurrent = vs.Current;
 			BatteryMax = vs.Max;
 			BatteryMin = vs.Min;
-
-			Notify("BatteryMin");
-			Notify("BatteryMax");
-			Notify("BatteryCurrent");
 		}
 	}
 }

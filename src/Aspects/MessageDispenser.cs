@@ -1,10 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!--
-    Copyright (C) 2012 Christopher Cartwright
-    Copyright (C) 2012 Richard Payne
-    Copyright (C) 2012 Andrew Hill
-    Copyright (C) 2012 David Shirley
-
+﻿/*
+    Copyright (C) 2013 Christopher Cartwright
+    
     This file is part of VDash.
 
     VDash is free software: you can redistribute it and/or modify
@@ -19,8 +15,29 @@
 
     You should have received a copy of the GNU General Public License
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
--->
-<packages>
-  <package id="AvalonDock" version="2.0.1433" targetFramework="net40-Client" />
-  <package id="PostSharp" version="3.0.36" targetFramework="net40-Client" />
-</packages>
+*/
+
+using System.Reflection;
+using System.Resources;
+using PostSharp.Extensibility;
+
+namespace Aspects
+{
+	/// <summary>
+	/// Loads messages from Messages.resx
+	/// </summary>
+	internal class MessageDispenser : IMessageDispenser
+	{
+		private readonly ResourceManager _manager;
+
+		public MessageDispenser()
+		{
+			_manager = new ResourceManager("Aspects.Messages", Assembly.GetExecutingAssembly());
+		}
+
+		public string GetMessage(string key)
+		{
+			return _manager.GetString(key);
+		}
+	}
+}
