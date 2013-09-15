@@ -27,7 +27,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace VDash
+namespace VDash.Controls
 {
     /// <summary>
     /// Interaction logic for VehicleKeyState.xaml

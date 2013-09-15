@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Controls;
 
-namespace VDash
+namespace VDash.Controls
 {
 	/// <summary>
 	/// Interaction logic for SensorControl.xaml

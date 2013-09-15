@@ -33,7 +33,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using VehicleLib;
 
-namespace VDash
+namespace VDash.Controls
 {
     /// <summary>
     /// Interaction logic for VehicleAvailability.xaml

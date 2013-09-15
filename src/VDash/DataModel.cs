@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Timers;
 using System.Windows;
 using Aspects;
+using VDash.Controls;
 using VDash.Properties;
 using VehicleLib;
 using VehicleLib.Events;

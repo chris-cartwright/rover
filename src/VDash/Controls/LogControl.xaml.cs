@@ -28,7 +28,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace VDash
+namespace VDash.Controls
 {
 	/// <summary>
 	/// Hosts all log output. Static functions are available to insert logs into the control.

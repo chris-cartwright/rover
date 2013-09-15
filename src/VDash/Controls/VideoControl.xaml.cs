@@ -20,40 +20,21 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using System.Windows.Controls;
 
-namespace VDash
+namespace VDash.Controls
 {
     /// <summary>
-    /// Interaction logic for MenuControl.xaml
+    /// Interaction logic for VehicleVideo.xaml
     /// </summary>
-    public partial class MenuControl : UserControl
+    public partial class VideoControl : UserControl
     {
-        public MenuControl()
+		DataModel dm = DataModel.GetInstance();
+		public VideoControl()
         {
+			this.DataContext = dm;
+
             InitializeComponent();
         }
-
-		private void KeyBindings_Click(object sender, RoutedEventArgs e)
-		{
-			KeyBindingsWindow kbw = new KeyBindingsWindow();
-			kbw.Owner = Window.GetWindow(this);
-			kbw.Show();
-		}
-
-		private void About_Click(object sender, RoutedEventArgs e)
-		{
-			AboutWindow aw = new AboutWindow();
-			aw.Owner = Window.GetWindow(this);
-			aw.Show();
-		}
-
-		private void Help_Click(object sender, RoutedEventArgs e)
-		{
-			HelpWindow hw = new HelpWindow();
-			hw.Owner = Window.GetWindow(this);
-			hw.Show();
-		}
     }
 }
