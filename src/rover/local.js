@@ -23,11 +23,7 @@ var pins = require("./pins");
 var arduino = require("./arduino");
 var os = require("os");
 
-var bone;
-if (config.simulator)
-	bone = require("./bone");
-else
-	bone = require("bonescript");
+var bone = require.main.exports.bone;
 
 arduino.connect();
 

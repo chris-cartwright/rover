@@ -22,11 +22,7 @@ var config = require("./config");
 var serial = require("serialport");
 var pins = require("./pins");
 
-var bone;
-if (config.simulator)
-	bone = require("./bone");
-else
-	bone = require("bonescript");
+var bone = require.main.exports.bone;
 
 var connected = false;
 var locked = false;

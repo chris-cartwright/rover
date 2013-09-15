@@ -24,11 +24,7 @@ var log = new require("./logger").LabelledLogger("states");
 var config = require("./config");
 var pins = require("./pins");
 
-var bone;
-if (config.simulator)
-	bone = require("./bone");
-else
-	bone = require("bonescript");
+var bone = require.main.exports.bone;
 
 // Hacky. It's just a band-aid until #49 is implemented
 // Don't set pinMode on PWM pins

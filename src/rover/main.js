@@ -23,17 +23,19 @@ along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 var config = require("./config");
 var log = new require("./logger").LabelledLogger("main");
 
+// module.exports.bone should be set up before other includes try to use it
+if (config.simulator) {
+	log.info("Loading debug simulator...");
+	module.exports.bone = require("./bone");
+	module.exports.bone.listen();
+}
+else
+	module.exports.bone = require("bonescript");
+
 log.info("Loading local libraries...");
 var ControlPipe = require("./control_pipe");
 var BroadcastSender = require("./broadcast_sender");
 log.info("Loaded.");
-
-if (config.simulator) {
-	log.info("Loading debug simulator...");
-	require("./bone").listen();
-}
-else
-	require("bonescript");
 
 ControlPipe.setPort(config.port.pipe);
 BroadcastSender.setPort(config.port.bcast);

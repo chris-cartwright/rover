@@ -25,11 +25,7 @@ var config = require("./config");
 var pins = require("./pins");
 var sensors = require("./sensors");
 
-var bone;
-if (config.simulator)
-	bone = require("./bone");
-else
-	bone = require("bonescript");
+var bone = require.main.exports.bone;
 
 // Calculate Vin from Vout, R1, R2 in a voltage divider
 function vdin(raw, r1, r2) {
