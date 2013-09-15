@@ -25,7 +25,7 @@ using System;
 namespace VehicleLib.Exceptions
 {
 	[Serializable]
-	public class VehicleException : System.Exception
+	public class VehicleException : Exception
 	{
 		public VehicleException () { }
 
@@ -33,5 +33,5 @@ namespace VehicleLib.Exceptions
 
 		public VehicleException(string message, Exception innerException) : base(message, innerException) { }
 
-	}// end VehicleException class
-}// end namespace
+	}
+}

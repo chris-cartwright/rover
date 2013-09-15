@@ -30,37 +30,38 @@ using System.Threading;
 using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using VehicleLib.Errors;
+using VehicleLib.Events;
 using VehicleLib.Exceptions;
+using VehicleLib.Queries;
+using VehicleLib.Sensors;
+using VehicleLib.States;
 
 namespace VehicleLib
 {
 	/// <summary>
-	/// class VehiclePipe
-	/// Library to connect, send commands to and recieve signals from a vehicle.
+	///     class VehiclePipe
+	///     Library to connect, send commands to and recieve signals from a vehicle.
 	/// </summary>
 	public class VehiclePipe
 	{
-		public delegate void ErrorHandler(Errors.Error err);
-		public delegate void SensorHandler(Sensors.Sensor sensor);
-		public delegate void ExceptionHandler(Exception ex);
-
-		public event ErrorHandler OnError;
-		public event Action OnConnect;
-		public event Action OnLogin;
-		public event Action OnDisconnect;
-		public event SensorHandler OnSensorEvent;
-		public event ExceptionHandler OnException;
-
-		// Encapsulates callback counter and dictionary logic
-		private class CallbackDictionary
+		private class CallbackDictionary : Dictionary<uint, SensorHandler>
 		{
 			private uint _counter;
-			private Dictionary<uint, SensorHandler> _callbacks;
+
+			public new SensorHandler this[uint key]
+			{
+				get { return base[key]; }
+			}
+
+			private new void Add(uint id, SensorHandler cb)
+			{
+				base.Add(id, cb);
+			}
 
 			public CallbackDictionary()
 			{
 				_counter = 0;
-				_callbacks = new Dictionary<uint, SensorHandler>();
 			}
 
 			public uint Add(SensorHandler cb)
@@ -70,183 +71,68 @@ namespace VehicleLib
 				else
 					_counter++;
 
-				_callbacks.Add(_counter, cb);
+				Add(_counter, cb);
 				return _counter;
 			}
-
-			public void Remove(uint id)
-			{
-				_callbacks.Remove(_counter);
-			}
-
-			public void Clear()
-			{
-				_callbacks.Clear();
-			}
-
-			public SensorHandler this[uint key]
-			{
-				get { return _callbacks[key]; }
-			}
 		}
 
-		private Socket _socket;
-		private CallbackDictionary _callbacks;
-		private Thread _thread;
+		public delegate void ErrorHandler(Error err);
+		public delegate void ExceptionHandler(Exception ex);
+		public delegate void SensorHandler(Sensor sensor);
 
-		public VehiclePipe()
+		private readonly CallbackDictionary _callbacks;
+		private readonly Thread _thread;
+		public Socket Socket { get; private set; }
+
+		public bool Connected
 		{
-			_callbacks = new CallbackDictionary();
-
-			_thread = new Thread(delegate()
-			{
-				try
-				{
-					while(true)
-						Recv();
-				}
-				catch (SocketException ex)
-				{
-					// Thread was killed
-					if (ex.ErrorCode == 10004)
-						return;
-
-					if (OnException != null)
-						OnException(ex);
-				}
-				catch (Exception ex)
-				{
-					if (OnException != null)
-						OnException(ex);
-				}
-			});
+			get { return Socket != null && Socket.Connected; }
 		}
 
-		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
-		/// <summary>
-		/// Connects to a vehicle on a supplied ip and port
-		/// Clears callback functions
-		/// Zeros out callback counter
-		/// Registers a callback for the login
-		/// This starts a thread for received data.
-		/// </summary>
-		/// <param name="vehicleIPEndPoint">Socket for vehicle</param>
-		/// <param name="password">Credentials used to authenticate connection</param>
-		public void Connect(IPEndPoint vehicleIPEndPoint, Login login)
-		{
-			if (_socket != null)
-			{
-				throw new Exceptions.ConnectionException("Device already controlled/connected to a client.");
-			}
-
-			_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-			try
-			{
-				_socket.Connect(vehicleIPEndPoint);
-			}
-			catch (SocketException ex)
-			{
-				throw new ConnectionException("Could not connect to vehicle.", ex);
-			}
-
-			if (!_socket.Connected)
-			{
-				_socket = null;
-				throw new ConnectionException("Could not connect to vehicle.");
-			}
-
-			_callbacks.Clear();
-
-			if (OnConnect != null)
-			{
-				OnConnect();
-			}
-
-			_thread.Start();
-
-			Login(login);
-		}
+		public event ErrorHandler OnError;
+		public event Action OnConnect;
+		public event Action OnDisconnect;
+		public event SensorHandler OnSensorEvent;
+		public event ExceptionHandler OnException;
 
 		/// <summary>
-		/// Disconnects from a vehicle.
-		/// </summary>
-		public void Disconnect()
-		{
-			try
-			{
-				_socket.Close();
-			}
-			catch { }
-
-			_socket = null;
-
-			if(OnDisconnect != null)
-				OnDisconnect();
-		}
-
-		/// <summary>
-		/// Sends a query to a vehicle requesting a sensor value.
-		/// Adds a callback to the callback Dictionary
-		/// Non-blocking, the order the Queries are sent will not neccessarily be the order the Quiers are returned.
-		/// </summary>
-		/// <param name="q">Query object to send to Rover</param>
-		/// Exceptions are allowed to bubble
-		public void Send(Query q)
-		{		
-			SendRaw(q, _callbacks.Add(q.Callback), q.GetType().Name);
-		}
-
-		/// <summary>
-		/// Different actions have different functionality.
-		/// Some Actions may persist a device state until a new state is set, while others may cause a device to 
-		/// perform an "instance movement" where the device stops once a state is reaches... think of an arm instructed to extend. 
-		/// Exceptions are allowed to bubble
-		/// </summary>
-		/// <param name="a">Action object to send to Rover</param>	
-		public void Send(States.State a) // might have to be careful here. There is a System.Action 
-		{
-			SendRaw(a, null, a.Cmd);
-		}
-
-		/// <summary>
-		/// Send any Serializable oject to a vehicle.
-		/// Oject is serialized using JSON JsonConvert.SerializeObject.
+		///     Send any Serializable oject to a vehicle.
+		///     Oject is serialized using JSON JsonConvert.SerializeObject.
 		/// </summary>
 		/// <param name="o">ojbect to send</param>
-		/// <param name="callbackID">Optional parameter, used when sending an object that expects an object to be returned from the vehicle.</param>
-		private void SendRaw(object o, uint? callbackID, string cmd)
+		/// <param name="callbackId">Optional parameter, used when sending an object that expects an object to be returned from the vehicle.</param>
+		/// <param name="cmd">Command to execute on the vehicle</param>
+		private void SendRaw(object o, uint? callbackId, string cmd)
 		{
 			try
 			{
 				dynamic packet;
 
-				if (callbackID != null)
-					packet = new { cmd = cmd, data = o, id = callbackID };
+				if (callbackId != null)
+					packet = new { cmd, data = o, id = callbackId };
 				else
-					packet = new { cmd = cmd, data = o };
+					packet = new { cmd, data = o };
 
 				string s = JsonConvert.SerializeObject(packet) + "\r\n";
-				Encoding ASCII = Encoding.ASCII;
-				Byte[] ByteGet = ASCII.GetBytes(s);
-				_socket.Send(ByteGet, ByteGet.Length, 0);
+				Byte[] byteGet = Encoding.ASCII.GetBytes(s);
+				Socket.Send(byteGet, byteGet.Length, 0);
 			}
 			catch (Exception ex)
 			{
-				if (!_socket.Connected)
+				if (!Socket.Connected)
 				{
-					_socket = null;
+					Socket = null;
 					OnDisconnect();
 				}
-				
+
 				throw new ConnectionException("Failed to send data.", ex);
 			}
 		}
 
 		/// <summary>
-		/// Single attempt login to a vehicle
-		/// Sends special Login packet to vehicle using SendRaw
-		/// No callback created, assumed connected as TCP pipe used
+		///     Single attempt login to a vehicle
+		///     Sends special Login packet to vehicle using SendRaw
+		///     No callback created, assumed connected as TCP pipe used
 		/// </summary>
 		/// <param name="login">Credentials used for authentication</param>
 		private void Login(Login login)
@@ -255,38 +141,38 @@ namespace VehicleLib
 		}
 
 		/// <summary>
-		/// Handles incoming data on the pipe.
-		/// Feeds the data into an instance of JsonLineProtocol.
-		/// Loops over any packets that were decoded and sends them to Command
+		///     Handles incoming data on the pipe.
+		///     Feeds the data into an instance of JsonLineProtocol.
+		///     Loops over any packets that were decoded and sends them to Command
 		/// </summary>
 		private void Recv()
 		{
-			Byte[] RecvBytes = new Byte[256];
-			JsonLineProtocol proto = new JsonLineProtocol();
-			_socket.Receive(RecvBytes);
-			
-			dynamic[] msgs = proto.Feed(Encoding.ASCII.GetString(RecvBytes));
+			var recvBytes = new byte[256];
+			var proto = new JsonLineProtocol();
+			Socket.Receive(recvBytes);
 
-			foreach(dynamic packet in msgs)
+			dynamic[] msgs = proto.Feed(Encoding.ASCII.GetString(recvBytes));
+
+			foreach (dynamic packet in msgs)
 			{
 				try
 				{
 					Command(packet);
 				}
-				catch (TimeoutException ex)
+				catch (TimeoutException)
 				{
-					_socket = null;
+					Socket = null;
 
-					if(OnDisconnect != null)
+					if (OnDisconnect != null)
 						OnDisconnect();
 
-					throw ex;
+					throw;
 				}
 				catch (SocketException ex)
 				{
-					_socket = null;
+					Socket = null;
 
-					if(OnDisconnect != null)
+					if (OnDisconnect != null)
 						OnDisconnect();
 
 					throw new ConnectionException("Connection is in an error state.", ex);
@@ -295,7 +181,7 @@ namespace VehicleLib
 		}
 
 		/// <summary>
-		/// Accepts a dynamic packet. packet must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd] 
+		///     Accepts a dynamic packet. packet must contain a [NameSpace.][packet.cmd]. ex. "VDash." + [packet.cmd]
 		/// </summary>
 		/// <param name="packet">An unknon object received from a vehicle.</param>
 		private void Command(dynamic packet)
@@ -313,7 +199,7 @@ namespace VehicleLib
 
 				string finder = "VehicleLib." + cat + packet.cmd + ", VehicleLib";
 				Type t = Type.GetType(finder, true);
-				MethodInfo cast = typeof(JToken).GetMethod("ToObject", new Type[] {}).MakeGenericMethod(t);
+				MethodInfo cast = typeof(JToken).GetMethod("ToObject", new Type[] { }).MakeGenericMethod(t);
 				receivedObject = cast.Invoke(packet.data, null);
 			}
 			catch (RuntimeBinderException)
@@ -325,7 +211,7 @@ namespace VehicleLib
 			{
 				if (OnError != null)
 				{
-					OnError((Errors.Error)receivedObject);
+					OnError((Error)receivedObject);
 				}
 
 				return;
@@ -341,7 +227,7 @@ namespace VehicleLib
 					_callbacks.Remove(id);
 				}
 
-				Sensors.Sensor sens = (Sensors.Sensor)receivedObject;
+				var sens = (Sensor)receivedObject;
 				if (cb != null)
 					cb(sens);
 				else
@@ -357,32 +243,144 @@ namespace VehicleLib
 
 			if (packet.cmd.ToString().Contains("Event"))
 			{
-				((Events.Event)receivedObject).Invoke();
-				return;
+				((Event)receivedObject).Invoke();
 			}
 		}
 
 		/// <summary>
-		/// Kills the underlying thread.
+		/// Thread that handles receiving communications from the vehicle
+		/// </summary>
+		private void Runner()
+		{
+			try
+			{
+				while (true)
+					Recv();
+			}
+			catch (SocketException ex)
+			{
+				// Thread was killed
+				if (ex.ErrorCode == 10004)
+					return;
+
+				if (OnException != null)
+					OnException(ex);
+			}
+			catch (Exception ex)
+			{
+				if (OnException != null)
+					OnException(ex);
+			}
+		}
+
+		public VehiclePipe()
+		{
+			_callbacks = new CallbackDictionary();
+			_thread = new Thread(Runner);
+		}
+
+		// http://msdn.microsoft.com/en-us/library/system.net.sockets.addressfamily.aspx
+		/// <summary>
+		///     Connects to a vehicle on a supplied ip and port
+		///     Clears callback functions
+		///     Zeros out callback counter
+		///     Registers a callback for the login
+		///     This starts a thread for received data.
+		/// </summary>
+		/// <param name="vehicleIpEndPoint">Socket for vehicle</param>
+		/// <param name="login">Login information</param>
+		public void Connect(IPEndPoint vehicleIpEndPoint, Login login)
+		{
+			if (Socket != null)
+			{
+				throw new ConnectionException("Device already controlled/connected to a client.");
+			}
+
+			Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+			try
+			{
+				Socket.Connect(vehicleIpEndPoint);
+			}
+			catch (SocketException ex)
+			{
+				throw new ConnectionException("Could not connect to vehicle.", ex);
+			}
+
+			if (!Socket.Connected)
+			{
+				Socket = null;
+				throw new ConnectionException("Could not connect to vehicle.");
+			}
+
+			_callbacks.Clear();
+
+			if (OnConnect != null)
+			{
+				OnConnect();
+			}
+
+			_thread.Start();
+
+			Login(login);
+		}
+
+		/// <summary>
+		///     Disconnects from a vehicle.
+		/// </summary>
+		public void Disconnect()
+		{
+			try
+			{
+				Socket.Close();
+			}
+			catch (Exception ex)
+			{
+				throw new ConnectionException("Failed to close socket", ex);
+			}
+			finally
+			{
+				Socket = null;
+
+				if (OnDisconnect != null)
+					OnDisconnect();
+			}
+		}
+
+		/// <summary>
+		///     Sends a query to a vehicle requesting a sensor value.
+		///     Adds a callback to the callback Dictionary
+		///     Non-blocking, the order the Queries are sent will not neccessarily be the order the Quiers are returned.
+		/// </summary>
+		/// <param name="q">Query object to send to Rover</param>
+		/// Exceptions are allowed to bubble
+		public void Send(Query q)
+		{
+			SendRaw(q, _callbacks.Add(q.Callback), q.GetType().Name);
+		}
+
+		/// <summary>
+		///     Different actions have different functionality.
+		///     Some Actions may persist a device state until a new state is set, while others may cause a device to
+		///     perform an "instance movement" where the device stops once a state is reaches... think of an arm instructed to extend.
+		///     Exceptions are allowed to bubble
+		/// </summary>
+		/// <param name="a">Action object to send to Rover</param>
+		public void Send(State a) // might have to be careful here. There is a System.Action 
+		{
+			SendRaw(a, null, a.Cmd);
+		}
+
+		/// <summary>
+		///     Kills the underlying thread.
 		/// </summary>
 		public void Shutdown()
 		{
-			if(_socket != null)
-				_socket.Close();
+			if (Socket != null)
+				Socket.Close();
 
-			if(_thread.ThreadState == ThreadState.Running)
+			if (_thread.ThreadState == ThreadState.Running)
 				_thread.Join();
 		}
-
-		// Properties - getters only
-		public Socket Socket
-		{
-			get { return _socket; }
-		}
-
-		public bool Connected
-		{
-			get { return _socket == null ? false : _socket.Connected; }
-		}
-	} // end class VehiclePipe
-} // end namespace
+	}
+}

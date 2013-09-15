@@ -20,19 +20,18 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Controls;
-
 namespace VDash.Controls
 {
     /// <summary>
     /// Interaction logic for VehicleVideo.xaml
     /// </summary>
-    public partial class VideoControl : UserControl
+    public partial class VideoControl
     {
-		DataModel dm = DataModel.GetInstance();
+	    readonly DataModel _dm = DataModel.GetInstance();
+
 		public VideoControl()
         {
-			this.DataContext = dm;
+			DataContext = _dm;
 
             InitializeComponent();
         }

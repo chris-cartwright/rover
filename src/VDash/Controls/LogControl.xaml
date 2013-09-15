@@ -25,21 +25,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converters="clr-namespace:VDash.Converters"
-             xmlns:me="clr-namespace:VDash"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <converters:DateTimeToTimeStringConverter x:Key="timeConverter" />
-        <converters:EnumRadioButtonConverter x:Key="enumConverter" />
-        <converters:ProxyMultiConverter x:Key="visibleConverter" ClassName="Controls.LogControl+LogVisibleConverter" />
+        <converters:DateTimeToTimeStringConverter x:Key="TimeConverter" />
+        <converters:EnumRadioButtonConverter x:Key="EnumConverter" />
+        <converters:ProxyMultiConverter x:Key="VisibleConverter" ClassName="Controls.LogControl+LogVisibleConverter" />
         <Style TargetType="ListBoxItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Padding" Value="5,3,3,3" />
             <Setter Property="Margin" Value="0,0,0,2" />
             <Setter Property="Visibility">
                 <Setter.Value>
-                    <MultiBinding Converter="{StaticResource visibleConverter}">
-                        <Binding RelativeSource="{RelativeSource AncestorType=ListBox}" Path="DataContext.Type" />
+                    <MultiBinding Converter="{StaticResource VisibleConverter}">
+                        <Binding RelativeSource="{RelativeSource AncestorType=ListBox}">
+                            <Binding.Path>DataContext.Type</Binding.Path>
+                        </Binding>
                         <Binding Path="Type" />
                     </MultiBinding>
                 </Setter.Value>
@@ -56,28 +57,29 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="ToggleRadio" TargetType="{x:Type ToggleButton}" />
     </UserControl.Resources>
     <Grid>
         <DockPanel>
             <DockPanel Height="35" DockPanel.Dock="Top">
                 <DockPanel.Resources>
-                    <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                    <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource ToggleRadio}">
                         <Setter Property="Padding" Value="5" />
                         <Setter Property="Margin" Value="0,0,5,0" />
                     </Style>
                 </DockPanel.Resources>
-                <RadioButton GroupName="LogShown" Content="All" IsChecked="{Binding Type,Converter={StaticResource enumConverter},ConverterParameter=All}" />
-                <RadioButton GroupName="LogShown" Content="Error" IsChecked="{Binding Type,Converter={StaticResource enumConverter},ConverterParameter=Error}" />
-                <RadioButton GroupName="LogShown" Content="Warning" IsChecked="{Binding Type,Converter={StaticResource enumConverter},ConverterParameter=Warning}" />
-                <RadioButton GroupName="LogShown" Content="Info" IsChecked="{Binding Type,Converter={StaticResource enumConverter},ConverterParameter=Info}" />
-                <RadioButton GroupName="LogShown" Content="Debug" IsChecked="{Binding Type,Converter={StaticResource enumConverter},ConverterParameter=Debug}" />
+                <RadioButton GroupName="LogShown" Content="All" IsChecked="{Binding Type,Converter={StaticResource EnumConverter},ConverterParameter=All}" />
+                <RadioButton GroupName="LogShown" Content="Error" IsChecked="{Binding Type,Converter={StaticResource EnumConverter},ConverterParameter=Error}" />
+                <RadioButton GroupName="LogShown" Content="Warning" IsChecked="{Binding Type,Converter={StaticResource EnumConverter},ConverterParameter=Warning}" />
+                <RadioButton GroupName="LogShown" Content="Info" IsChecked="{Binding Type,Converter={StaticResource EnumConverter},ConverterParameter=Info}" />
+                <RadioButton GroupName="LogShown" Content="Debug" IsChecked="{Binding Type,Converter={StaticResource EnumConverter},ConverterParameter=Debug}" />
                 <Button Content="Clear" HorizontalAlignment="Right" Click="Clear_Click" Padding="5" />
             </DockPanel>
-            <ListBox Name="listBoxLogs" Margin="0,5,0,0" ItemsSource="{Binding Logs}">
+            <ListBox Name="ListBoxLogs" Margin="0,5,0,0" ItemsSource="{Binding Logs}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel LastChildFill="False">
-                            <TextBlock Text="{Binding Time,Converter={StaticResource timeConverter}}" />
+                            <TextBlock Text="{Binding Time,Converter={StaticResource TimeConverter}}" />
                             <TextBlock Text="{Binding Message}" />
                         </DockPanel>
                     </DataTemplate>

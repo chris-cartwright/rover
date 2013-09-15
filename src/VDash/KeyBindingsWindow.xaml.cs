@@ -29,7 +29,7 @@ namespace VDash
 	/// <summary>
 	/// Interaction logic for KeyBindingsWindow.xaml
 	/// </summary>
-	public partial class KeyBindingsWindow : Window
+	public partial class KeyBindingsWindow
 	{
 		private class DataSource : INotifyPropertyChanged
 		{
@@ -72,12 +72,12 @@ namespace VDash
 			}
 		}
 
-		private DataSource _dataSource;
+		private readonly DataSource _dataSource;
 
 		public KeyBindingsWindow()
 		{
 			_dataSource = new DataSource();
-			this.DataContext = _dataSource;
+			DataContext = _dataSource;
 
 			_dataSource.MoveForward = Properties.Settings.Default.KeyForward;
 			_dataSource.MoveBackward = Properties.Settings.Default.KeyBackward;

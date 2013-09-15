@@ -33,7 +33,7 @@ namespace VehicleLib.Errors
 	{
 		public string Message { get; protected set; }
 
-		public Error()
+		protected Error()
 		{
 			Message = "An unknown error occured.";
 		}
@@ -45,7 +45,7 @@ namespace VehicleLib.Errors
 
 		public override string ToString()
 		{
-			return this.GetType().Name + ": " + Message;
+			return GetType().Name + ": " + Message;
 		}
 	}
 }

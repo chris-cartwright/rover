@@ -25,135 +25,98 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace VDash.Controls
 {
     /// <summary>
     /// Interaction logic for VehicleKeyState.xaml
     /// </summary>
-    public partial class KeyStateControl : UserControl
+    public partial class KeyStateControl
     {
-		DataModel dm = DataModel.GetInstance();
-        double timeOffset = 0.0;
-        DateTime currentTime = DateTime.Now;
-        DateTime lastCmdTime;
-        List<Record> records = new List<Record>();
+	    private readonly DataModel _dm = DataModel.GetInstance();
+		private readonly List<Record> _records = new List<Record>();
+
+		private double _timeOffset;
+		private DateTime _currentTime = DateTime.Now;
+		private DateTime _lastCmdTime;
+
         public KeyStateControl()
         {
-			this.DataContext = dm;
-
-			dm.PropertyChanged += new PropertyChangedEventHandler(dm_PropertyChanged);
+			DataContext = _dm;
+			_dm.PropertyChanged += dm_PropertyChanged;
 
 			InitializeComponent();
         }
 
 		void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-            // if you are recording
-            if (cbRecord.IsChecked.Value)
+			// if you are recording
+            if (CbRecord.IsChecked != null && CbRecord.IsChecked.Value)
             {
-                lastCmdTime = currentTime;
-                currentTime = DateTime.Now;
+                _lastCmdTime = _currentTime;
+                _currentTime = DateTime.Now;
                 Record rec = new Record();
-                PropertyInfo pi = dm.GetType().GetProperty(e.PropertyName);
-                rec.setValue(pi.GetValue(dm, null));
-                rec.setName(e.PropertyName);
-                if (timeOffset == 0.0)
+                PropertyInfo pi = _dm.GetType().GetProperty(e.PropertyName);
+                rec.Value = pi.GetValue(_dm, null);
+                rec.Name = e.PropertyName;
+                if (_timeOffset < Single.Epsilon)
                 {
-                    rec.setTimeOffset(timeOffset);
-                    timeOffset = 1.0;  //just random number so that it doesn't enter this if after the first run
+                    rec.TimeOffset = _timeOffset;
+                    _timeOffset = 1.0;  //just random number so that it doesn't enter this if after the first run
                 }
                 else
                 {
-                    TimeSpan diff = currentTime.Subtract(lastCmdTime);
-                    timeOffset = diff.Seconds + diff.Milliseconds;
+                    TimeSpan diff = _currentTime.Subtract(_lastCmdTime);
+                    _timeOffset = diff.Seconds + diff.Milliseconds;
                 }
-                records.Add(rec);
+
+                _records.Add(rec);
             }
 
-			if (e.PropertyName == "Speed")
+			switch (e.PropertyName)
 			{
-				if (dm.Speed > 0)
+			case "Speed":
+				if (_dm.Speed > 0)
 				{
-					label2.Content = "Moving Forward";
+					LabelState.Content = "Moving Forward";
 				}
-				else if (dm.Speed < 0)
+				else if (_dm.Speed < 0)
 				{
-					label2.Content = "Moving Backwards";
+					LabelState.Content = "Moving Backwards";
 				}
 				else
 				{
-					label2.Content = "Stopped";
+					LabelState.Content = "Stopped";
 				}
-			}
-			else if (e.PropertyName == "Turn")
-			{
-				if (dm.Turn == DataModel.TurnDirection.Left)
+
+				break;
+
+			case "Turn":
+				switch (_dm.Turn)
 				{
-					label4.Content = "Turning Left";
+				case DataModel.TurnDirection.Left:
+					LabelTurn.Content = "Turning Left";
+					break;
+				case DataModel.TurnDirection.Right:
+					LabelTurn.Content = "Turning Right";
+					break;
+				default:
+					LabelTurn.Content = "Straight";
+					break;
 				}
-				else if (dm.Turn == DataModel.TurnDirection.Right)
-				{
-					label4.Content = "Turning Right";
-				}
-				else
-				{
-					label4.Content = "Straight";
-				}
+
+				break;
 			}
 		}
 
-        private void cbRecord_Checked(object sender, RoutedEventArgs e)
+	    private void cbRecord_Checked(object sender, RoutedEventArgs e)
         {
-            btnSaveRecord.IsEnabled = true;
+            BtnSaveRecord.IsEnabled = true;
         }
 
         private void btnSaveRecord_Click(object sender, RoutedEventArgs e)
         {
             //write the Record List to an xml file
         }
-
-		//private void OnKeyDownHandler(object sender, KeyEventArgs e)
-		//{
-		//    DataModel dm = DataModel.GetInstance();
-
-		//    if (dm.Speed > 0)
-		//    {
-		//        label2.Content = "Moving Forward";
-		//    }
-		//    else if (dm.Speed < 0)
-		//    {
-		//        label2.Content = "Moving Backwards";
-		//    }
-		//    else 
-		//    {
-		//        label2.Content = "Stopped";
-		//    }
-
-		//    if (e.Key.ToString().Equals(Properties.Settings.Default.KeyForward.ToString(), StringComparison.InvariantCultureIgnoreCase))
-		//    {
-		//        textBox1.Text = "";
-		//    }
-		//    else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyBackward.ToString(), StringComparison.InvariantCultureIgnoreCase))
-		//    {               
-		//        textBox1.Text = "";
-		//    }
-		//    else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyLeft.ToString(), StringComparison.InvariantCultureIgnoreCase))
-		//    {
-		//        label2.Content = "Turning Left";
-		//        textBox1.Text = "";
-		//    }
-		//    else if (e.Key.ToString().Equals(Properties.Settings.Default.KeyRight.ToString(), StringComparison.InvariantCultureIgnoreCase))
-		//    {
-		//        label2.Content = "Turning Right";
-		//        textBox1.Text = "";
-		//    }
-		//    else
-		//    {
-		//        label2.Content = "Invalid Movement Key";
-		//        textBox1.Text = "";
-		//    }
-		//}
     }
 }

@@ -17,6 +17,7 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Net;
 
 namespace VehicleLib.Events
 {
@@ -25,6 +26,13 @@ namespace VehicleLib.Events
 		public delegate void EventHandler(LoginSuccessEvent evnt);
 
 		public static event EventHandler Invoked;
+
+		public IPAddress IpAddress { get; private set; }
+
+		public LoginSuccessEvent(IPAddress addr)
+		{
+			IpAddress = addr;
+		}
 
 		public override void Invoke()
 		{

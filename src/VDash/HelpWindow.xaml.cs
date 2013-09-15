@@ -20,14 +20,12 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-
 namespace VDash
 {
 	/// <summary>
 	/// Interaction logic for HelpWindow.xaml
 	/// </summary>
-	public partial class HelpWindow : Window
+	public partial class HelpWindow
 	{
 		public HelpWindow()
 		{

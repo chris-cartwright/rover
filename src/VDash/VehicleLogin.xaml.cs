@@ -27,31 +27,25 @@ namespace VDash
 	/// <summary>
 	/// Interaction logic for VehicleLogin.xaml
 	/// </summary>
-	public partial class VehicleLogin : Window
+	public partial class VehicleLogin
 	{
-		private string _password;
+		public string Password { get; set; }
 
-		public string Password
+		public VehicleLogin()
 		{
-			get { return _password; }
-			set { _password = value; }
-		}
-
-		public VehicleLogin(string Vehicle)
-		{
-			_password = null;
+			Password = null;
 			InitializeComponent();
 		}
 
 		private void btnCancel_Click(object sender, RoutedEventArgs e)
 		{		
-			this.Close();
+			Close();
 		}
 
 		private void btnLogin_Click(object sender, RoutedEventArgs e)
 		{
-			_password = textBoxPassword.Text;
-			this.Close();
+			Password = TextBoxPassword.Text;
+			Close();
 		}
 	}
 }

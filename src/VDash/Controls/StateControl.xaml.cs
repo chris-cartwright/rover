@@ -21,18 +21,17 @@
 */
 
 using System.Windows;
-using System.Windows.Controls;
 
 namespace VDash.Controls
 {
     /// <summary>
     /// Interaction logic for VehicleStateControl.xaml
     /// </summary>
-    public partial class StateControl : UserControl
+    public partial class StateControl
     {
 		public StateControl()
 		{
-			this.DataContext = DataModel.GetInstance();
+			DataContext = DataModel.GetInstance();
 
 			InitializeComponent();
 		}

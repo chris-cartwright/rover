@@ -21,14 +21,13 @@
 */
 
 using System.Windows;
-using System.Windows.Controls;
 
 namespace VDash.Controls
 {
     /// <summary>
     /// Interaction logic for MenuControl.xaml
     /// </summary>
-    public partial class MenuControl : UserControl
+    public partial class MenuControl
     {
         public MenuControl()
         {
@@ -37,22 +36,19 @@ namespace VDash.Controls
 
 		private void KeyBindings_Click(object sender, RoutedEventArgs e)
 		{
-			KeyBindingsWindow kbw = new KeyBindingsWindow();
-			kbw.Owner = Window.GetWindow(this);
+			KeyBindingsWindow kbw = new KeyBindingsWindow {Owner = Window.GetWindow(this)};
 			kbw.Show();
 		}
 
 		private void About_Click(object sender, RoutedEventArgs e)
 		{
-			AboutWindow aw = new AboutWindow();
-			aw.Owner = Window.GetWindow(this);
+			AboutWindow aw = new AboutWindow {Owner = Window.GetWindow(this)};
 			aw.Show();
 		}
 
 		private void Help_Click(object sender, RoutedEventArgs e)
 		{
-			HelpWindow hw = new HelpWindow();
-			hw.Owner = Window.GetWindow(this);
+			HelpWindow hw = new HelpWindow {Owner = Window.GetWindow(this)};
 			hw.Show();
 		}
     }

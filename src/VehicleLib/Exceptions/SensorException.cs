@@ -28,7 +28,7 @@ namespace VehicleLib.Exceptions
 	public class SensorException : VehicleException
 	{
 		// private members
-		private uint _id;
+		private readonly uint _id;
 
 		// constructors
 		public SensorException() { }
@@ -44,7 +44,7 @@ namespace VehicleLib.Exceptions
 		}
 
 		// Properties - getters only
-		public float GetID()
+		public float GetId()
 		{
 			return _id;
 		}

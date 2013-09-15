@@ -68,10 +68,7 @@ namespace VehicleLib
 		/// </summary>
 		public Vector3()
 		{
-			Validator = delegate(T t)
-			{
-				return t;
-			};
+			Validator = t => t;
 		}
 
 		/// <summary>
@@ -116,7 +113,9 @@ namespace VehicleLib
 		/// <param name="axis">Axis whose value to set.</param>
 		/// <param name="value">Value to set axis to.</param>
 		/// <returns>Value axis was actually set to. Will depend on Validator</returns>
-		/// <exception cref="AgumentOutOfRangeException">Thrown when axis is not valid.</exception>
+		/// <exception>Thrown when axis is not valid.
+		///     <cref>AgumentOutOfRangeException</cref>
+		/// </exception>
 		public T SetAxis(Axis axis, T value)
 		{
 			switch (axis)

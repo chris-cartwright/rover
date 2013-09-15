@@ -49,6 +49,8 @@ namespace Aspects
 	{
 		private MethodInfo _event;
 
+		public bool IgnoreDuplicate;
+
 		public override bool CompileTimeValidate(PostSharp.Reflection.LocationInfo locationInfo)
 		{
 			if (!base.CompileTimeValidate(locationInfo))
@@ -68,7 +70,13 @@ namespace Aspects
 
 		public override void OnSetValue(LocationInterceptionArgs args)
 		{
+			object old = args.GetCurrentValue();
+
 			base.OnSetValue(args);
+			
+			if (args.Value.Equals(old) && IgnoreDuplicate)
+				return;
+
 			_event.Invoke(args.Instance, new object[] { args.LocationName });
 		}
 	}

@@ -30,7 +30,5 @@ namespace VehicleLib.States
     {
 		[JsonIgnore]
 		public abstract string Cmd { get; }
-
-        public State() { }
     }
 }

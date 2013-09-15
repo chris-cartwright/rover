@@ -31,9 +31,9 @@ namespace VDash
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow
 	{
-		DataModel dm = DataModel.GetInstance();
+		private readonly DataModel _dm = DataModel.GetInstance();
 		public static Window Self { get; private set; }
 
 		public MainWindow()
@@ -45,26 +45,20 @@ namespace VDash
 
 			InitializeComponent();
 
-			Closed += new EventHandler(delegate(object sender, EventArgs e)
-			{
-				dm.Shutdown();
-			});
+			Closed += (sender, args) => _dm.Shutdown();
 
-			AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
-			{
-				LogControl.Error(e.ExceptionObject as Exception);
-			};
+			AppDomain.CurrentDomain.UnhandledException += (sender, e) => LogControl.Error(e.ExceptionObject as Exception);
 
-			this.PreviewKeyDown += (s, e) => dm.Key = e.Key.ToString().ToLower();
-			this.ContentRendered += (s, e) => Focus();
-			this.Closing += new CancelEventHandler(MainWindow_Closing);
+			PreviewKeyDown += (s, e) => _dm.Key = e.Key.ToString().ToLower();
+			ContentRendered += (s, e) => Focus();
+			Closing += MainWindow_Closing;
         }
 
 		void MainWindow_Closing(object sender, CancelEventArgs e)
 		{
-			if (dm.Vehicle.Connected)
+			if (_dm.Vehicle.Connected)
 			{
-				dm.Vehicle.Disconnect();
+				_dm.Vehicle.Disconnect();
 			}
 		}
 

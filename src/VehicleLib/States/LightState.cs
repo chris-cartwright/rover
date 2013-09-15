@@ -34,8 +34,8 @@ namespace VehicleLib.States
 
         public LightState(string id, ushort level)
         {
-            this.Id = id;
-            this.Level = level;
+            Id = id;
+            Level = level;
         }
 
 		public override string Cmd

@@ -19,14 +19,13 @@
 
 using System;
 using System.ComponentModel;
-using System.Windows.Controls;
 
 namespace VDash.Controls
 {
 	/// <summary>
 	/// Interaction logic for SensorControl.xaml
 	/// </summary>
-	public partial class SensorControl : UserControl
+	public partial class SensorControl
 	{
 		private class DataSource : INotifyPropertyChanged
 		{
@@ -66,12 +65,12 @@ namespace VDash.Controls
 			}
 		}
 
-		private DataSource _ds;
+		private readonly DataSource _ds;
 
 		public SensorControl()
 		{
 			_ds = new DataSource();
-			this.DataContext = _ds;
+			DataContext = _ds;
 
 			InitializeComponent();
 		}

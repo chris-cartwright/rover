@@ -34,7 +34,7 @@ namespace VDash.Controls
 	/// Hosts all log output. Static functions are available to insert logs into the control.
 	/// Any log submitted will be posted to every instance of LogControl.
 	/// </summary>
-	public partial class LogControl : UserControl
+	public partial class LogControl
 	{
 		/// <summary>
 		/// Log level of the message.
@@ -157,12 +157,12 @@ namespace VDash.Controls
 			SendOnLogReceived(MessageType.Debug, msg);
 		}
 
-		private DataSource ds;
+		private readonly DataSource _ds;
 
 		public LogControl()
 		{
-			ds = new DataSource();
-			this.DataContext = ds;
+			_ds = new DataSource();
+			DataContext = _ds;
 
 			InitializeComponent();
 
@@ -171,7 +171,7 @@ namespace VDash.Controls
 
 		private void Clear_Click(object sender, RoutedEventArgs e)
 		{
-			ds.Logs.Clear();
+			_ds.Logs.Clear();
 		}
 
 		private void LogReceived(MessageType type, string message)
@@ -179,11 +179,11 @@ namespace VDash.Controls
 			ScrollViewer sv = GetScrollViewer();
 			bool scroll = false;
 			if(sv != null)
-				scroll = sv.VerticalOffset == sv.ScrollableHeight;
+				scroll = sv.VerticalOffset.Within(sv.ScrollableHeight);
 
-			ds.Logs.Add(new LogItem() { Type = type, Message = message });
-			if (ds.Logs.Count > 100)
-				ds.Logs.RemoveAt(0);
+			_ds.Logs.Add(new LogItem() { Type = type, Message = message });
+			if (_ds.Logs.Count > 100)
+				_ds.Logs.RemoveAt(0);
 
 			if (scroll)
 				sv.ScrollToBottom();
@@ -194,11 +194,11 @@ namespace VDash.Controls
 			try
 			{
 				int idx = 0;
-				object obj = null;
+				object obj;
 
 				do
 				{
-					obj = VisualTreeHelper.GetChild(listBoxLogs, idx);
+					obj = VisualTreeHelper.GetChild(ListBoxLogs, idx);
 					idx++;
 				}
 				while (obj != null && obj.GetType() != typeof(Border));

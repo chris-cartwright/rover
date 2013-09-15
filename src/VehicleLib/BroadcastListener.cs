@@ -34,7 +34,7 @@ namespace VehicleLib
 
 		public event VehicleBroadcastHandler OnBroadcastReceived;
 
-		private JsonLineProtocol _proto = new JsonLineProtocol();
+		private readonly JsonLineProtocol _proto = new JsonLineProtocol();
 		private Thread _thread;
 		private UdpClient _listener;
 
@@ -44,7 +44,7 @@ namespace VehicleLib
 		/// <param name="ep">IP address of interface and port to listen on.</param>
 		public void Start(IPEndPoint ep)
 		{
-			_thread = new Thread(delegate(object o) { Run((IPEndPoint)o); });
+			_thread = new Thread(o => Run((IPEndPoint) o));
 			_thread.Start(ep);
 		}
 
@@ -57,32 +57,27 @@ namespace VehicleLib
 		public void Run(IPEndPoint ep)
 		{
 			_listener = new UdpClient(ep);
-			IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, ep.Port);
-			Encoding ASCII = Encoding.ASCII;
+			IPEndPoint groupEp = new IPEndPoint(IPAddress.Any, ep.Port);
+
 			try
 			{
 				while (true)
 				{
 					// Waiting for broadcast
-					byte[] bytes = _listener.Receive(ref groupEP);
-
+					byte[] bytes = _listener.Receive(ref groupEp);
 					dynamic[] msgs = _proto.Feed(Encoding.ASCII.GetString(bytes));
-
-					// add to event
-					string name = "";
-					ushort connectionPort;
 
 					foreach (dynamic received in msgs)
 					{
 						try
 						{
-							name = received.name;
-							connectionPort = received.port;
+							string name = received.name;
+							ushort connectionPort = received.port;
 
-							IPEndPoint vehicleIPEndPoint = new IPEndPoint(groupEP.Address, connectionPort);
+							IPEndPoint vehicleIpEndPoint = new IPEndPoint(groupEp.Address, connectionPort);
 
 							if(OnBroadcastReceived != null)
-								OnBroadcastReceived(name, vehicleIPEndPoint);
+								OnBroadcastReceived(name, vehicleIpEndPoint);
 						}
 						catch (RuntimeBinderException) { } // caught a broadcast that is not formatted correctly (not from a vehicle)
 					}

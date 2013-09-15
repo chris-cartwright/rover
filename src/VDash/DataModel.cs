@@ -150,7 +150,7 @@ namespace VDash
 		///     Controls the brightness of the headlights.
 		///     Set to 0 to turn off.
 		/// </summary>
-		[Notify]
+		[Notify(IgnoreDuplicate = true)]
 		public ushort Headlights
 		{
 			get { return _headlights; }
@@ -159,12 +159,7 @@ namespace VDash
 				if (value > 100)
 					value = 100;
 
-				LogControl.Debug("Headlights set: " + value);
-
 				_headlights = value;
-
-				if (Vehicle.Connected)
-					Vehicle.Send(new HeadLightState(_headlights));
 			}
 		}
 
@@ -232,6 +227,8 @@ namespace VDash
 
 			LoginSuccessEvent.Invoked += delegate
 			{
+				LogControl.Info("Connected.");
+
 				_timer.Start();
 
 				Vehicle.Send(new VoltageQuery("battery", sensor => Invoke(() => BatteryUpdated(sensor))));
@@ -254,21 +251,31 @@ namespace VDash
 		/// <param name="e"></param>
 		private void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName != "Key")
-				return;
-
-			if (Key == Settings.Default.KeyForward)
-				Speed += 10;
-			else if (Key == Settings.Default.KeyBackward)
-				Speed -= 10;
-			else if (Key == Settings.Default.KeyLeft)
-				Turn--;
-			else if (Key == Settings.Default.KeyRight)
-				Turn++;
-			else if (Key == Settings.Default.KeyStop)
+			switch (e.PropertyName)
 			{
-				Speed = 0;
-				Turn = TurnDirection.None;
+			case "Key":
+				if (Key == Settings.Default.KeyForward)
+					Speed += 10;
+				else if (Key == Settings.Default.KeyBackward)
+					Speed -= 10;
+				else if (Key == Settings.Default.KeyLeft)
+					Turn--;
+				else if (Key == Settings.Default.KeyRight)
+					Turn++;
+				else if (Key == Settings.Default.KeyStop)
+				{
+					Speed = 0;
+					Turn = TurnDirection.None;
+				}
+
+				break;
+
+			case "Headlights":
+				LogControl.Debug("Headlights set: " + Headlights);
+				if (Vehicle.Connected)
+					Vehicle.Send(new HeadLightState(Headlights));
+
+				break;
 			}
 		}
 

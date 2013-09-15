@@ -22,7 +22,6 @@
 <Window x:Class="VDash.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:VDash"
         xmlns:avalonDock="http://avalondock.codeplex.com" xmlns:controls="clr-namespace:VDash.Controls"
         Title="Vehicle Dashboard" Height="649" Width="847" WindowState="Maximized">
     <Window.CommandBindings>
@@ -33,7 +32,7 @@
             <RowDefinition Height="24" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:MenuControl x:Name="menu" Grid.Row="0" Grid.ColumnSpan="10" />
+        <controls:MenuControl x:Name="Menu" Grid.Row="0" Grid.ColumnSpan="10" />
         <avalonDock:DockingManager Grid.Row="1">
             <avalonDock:LayoutRoot>
                 <avalonDock:LayoutPanel Orientation="Vertical">
@@ -41,30 +40,30 @@
                         <avalonDock:LayoutPanel Orientation="Vertical">
                             <avalonDock:LayoutDocumentPane>
                                 <avalonDock:LayoutDocument Title="Vehicle State">
-                                    <controls:StateControl x:Name="_state" FlowDirection="LeftToRight" />
+                                    <controls:StateControl x:Name="State" FlowDirection="LeftToRight" />
                                 </avalonDock:LayoutDocument>
                             </avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocumentPane>
                                 <avalonDock:LayoutDocument Title="Vehicle Key State">
-                                    <controls:KeyStateControl x:Name="_keyState" />
+                                    <controls:KeyStateControl x:Name="KeyState" />
                                 </avalonDock:LayoutDocument>
                             </avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocumentPane>
                                 <avalonDock:LayoutDocument Title="Sensors">
-                                    <controls:SensorControl x:Name="_sensors" />
+                                    <controls:SensorControl x:Name="Sensors" />
                                 </avalonDock:LayoutDocument>
                             </avalonDock:LayoutDocumentPane>
                         </avalonDock:LayoutPanel>
                         <avalonDock:LayoutDocumentPane>
                             <avalonDock:LayoutDocument Title="Video Feed">
-                                <controls:VideoControl x:Name="_video" />
+                                <controls:VideoControl x:Name="Video" />
                             </avalonDock:LayoutDocument>
                         </avalonDock:LayoutDocumentPane>
                     </avalonDock:LayoutPanel>
                     <avalonDock:LayoutAnchorablePaneGroup DockHeight="300">
                         <avalonDock:LayoutAnchorablePane>
                             <avalonDock:LayoutAnchorable Title="Logs" AutoHideHeight="300">
-                                <controls:LogControl x:Name="_logs" />
+                                <controls:LogControl x:Name="Logs" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
                     </avalonDock:LayoutAnchorablePaneGroup>
@@ -73,7 +72,7 @@
                     <avalonDock:LayoutAnchorSide>
                         <avalonDock:LayoutAnchorGroup>
                             <avalonDock:LayoutAnchorable Title="Available Vehicles" AutoHideWidth="274">
-                                <controls:AvailabilityControl x:Name="_availability" />
+                                <controls:AvailabilityControl x:Name="Availability" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorGroup>
                     </avalonDock:LayoutAnchorSide>

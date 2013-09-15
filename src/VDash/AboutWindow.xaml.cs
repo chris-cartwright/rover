@@ -20,7 +20,6 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using System.Windows.Input;
 
 namespace VDash
@@ -28,7 +27,7 @@ namespace VDash
 	/// <summary>
 	/// Interaction logic for AboutWindow.xaml
 	/// </summary>
-	public partial class AboutWindow : Window
+	public partial class AboutWindow
 	{
 		public string AboutText { get; set; }
 

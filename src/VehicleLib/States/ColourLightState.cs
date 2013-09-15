@@ -32,12 +32,14 @@ namespace VehicleLib.States
         public byte Blue;
 
         public ColourLightState() { }
+
         public ColourLightState(byte bytRed, byte bytGreen, byte bytBlue)
         {
-            this.Red = bytRed;
-            this.Green = bytGreen;
-            this.Blue = bytBlue;
+            Red = bytRed;
+            Green = bytGreen;
+            Blue = bytBlue;
         }
+
 		public override string Cmd
 		{
 			get { return "ColourLightState"; }

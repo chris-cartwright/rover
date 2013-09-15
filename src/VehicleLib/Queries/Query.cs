@@ -23,7 +23,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace VehicleLib
+namespace VehicleLib.Queries
 {
 	[Serializable]
 	public class Query

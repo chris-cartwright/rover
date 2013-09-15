@@ -25,116 +25,61 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
+using Aspects;
+using Aspects.Annotations;
+using VDash.Properties;
 using VehicleLib;
+using VehicleLib.Events;
 
 namespace VDash.Controls
 {
-    /// <summary>
-    /// Interaction logic for VehicleAvailability.xaml
-    /// </summary>
-    public partial class AvailabilityControl : UserControl
-    {
-		private class Vehicle {
-			private string _name;
-			private IPEndPoint _ip;
-			private bool _connected;
-
-			public string Name
-			{
-				get { return _name; }
-				set { _name = value; Notify("Name"); }
-				
-			}
-			public IPEndPoint Ip
-			{
-				get { return _ip; }
-				set { _ip = value; Notify("Ip"); }
-			}
-			public bool Connected
-			{
-				get { return _connected; }
-				set { _connected = value; Notify("Connected"); }
-			}
-			public event PropertyChangedEventHandler PropertyChanged;
-
-			public Vehicle(string name, IPEndPoint ip)
-			{
-				Name = name;
-				Ip = ip;
-				Connected = false;
-			}
-
-			public Vehicle(string name, IPEndPoint ip, bool connected)
-			{
-				Name = name;
-				Ip = ip;
-				Connected = connected;
-			}
-
-			public override string ToString()
-			{
-				return Name.ToString();
-			}
-
-			private void Notify(string name)
-			{
-				if (PropertyChanged == null)
-					return;
-
-				PropertyChanged(this, new PropertyChangedEventArgs(name));
-			}
-
-		}// end class Vehicle
-
-		private class DataSource : INotifyPropertyChanged
+	/// <summary>
+	///     Interaction logic for VehicleAvailability.xaml
+	/// </summary>
+	public partial class AvailabilityControl
+	{
+		private class DataSource : NotifyPropertyChanged
 		{
-			public event PropertyChangedEventHandler PropertyChanged;
+			private readonly DataModel _dm = DataModel.GetInstance();
 
-			private DataModel _dm = DataModel.GetInstance();
+			private ObservableCollection<IPAddress> _ipAddresses;
+			private IPAddress _listenAddress;
 
-			private ObservableCollection<Vehicle> _vehicles;
-			public ObservableCollection<Vehicle> Vehicles
+			[Notify]
+			public ObservableCollection<Vehicle> Vehicles { get; set; }
+
+			[Notify]
+			public ObservableCollection<IPAddress> IpAddresses
 			{
-				get { return _vehicles; }
-				set
-				{
-					_vehicles = value;
-					Notify("Vehicles");
-				}
-			}
-
-			private IPAddress[] _ipAddresses;
-			public IPAddress[] IPAddresses
-			{
+				[UsedImplicitly]
 				get { return _ipAddresses; }
 				set
 				{
 					_ipAddresses = value;
-					Notify("IPAddresses");
 
-					if (_listenAddress == null && value.Length > 0)
+					if (_listenAddress == null && value.Count > 0)
 						ListenAddress = value[0];
 				}
 			}
 
-			private IPAddress _listenAddress;
+			[Notify]
 			public IPAddress ListenAddress
 			{
+				[UsedImplicitly]
 				get { return _listenAddress; }
 				set
 				{
-					if (_listenAddress == value)
+					if (Equals(_listenAddress, value))
 						return;
 
 					_listenAddress = value;
 
-					IPEndPoint ep = new IPEndPoint(value, Properties.Settings.Default.ListenPort);
+					var ep = new IPEndPoint(value, Settings.Default.ListenPort);
 					_dm.Listener.Shutdown();
 					_dm.Listener.Start(ep);
 					LogControl.Info(String.Format("Starting listener on {0}", ep));
@@ -145,69 +90,84 @@ namespace VDash.Controls
 
 			public DataSource()
 			{
-				_vehicles = new ObservableCollection<Vehicle>();
-			}
-
-			private void Notify(string name)
-			{
-				if (PropertyChanged == null)
-					return;
-
-				PropertyChanged(this, new PropertyChangedEventArgs(name));
+				Vehicles = new ObservableCollection<Vehicle>();
 			}
 		}
 
+		private class Vehicle : NotifyPropertyChanged
+		{
+			[Notify]
+			public string Name { get; private set; }
+
+			[Notify]
+			public IPEndPoint Ip { get; private set; }
+
+			[Notify]
+			public bool Connected { get; set; }
+
+			public Vehicle(string name, IPEndPoint ip)
+			{
+				Name = name;
+				Ip = ip;
+				Connected = false;
+			}
+
+			public override string ToString()
+			{
+				return Name;
+			}
+		}
+
+		private readonly DataModel _dm = DataModel.GetInstance();
+		private readonly DataSource _ds;
 		private VehicleLogin _login;
-		private DataModel _dm = DataModel.GetInstance();
 		private string _password;
 		private Vehicle _selVehicle;
-		private DataSource _ds;
 
-		public AvailabilityControl()
-        {
-			_ds = new DataSource();
-			DataContext = _ds;
-			_ds.IPAddresses = GetIPAddresses();
-
-			_dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
+		/// <summary>
+		///     Returns all IP addresses associated with this machine.
+		///     Filters out IPv6 and 169.254.* addresses.
+		/// </summary>
+		/// <returns>List of associated IP addresses.</returns>
+		private static IPAddress[] GetIpAddresses()
+		{
+			var ips = new List<IPAddress>();
+			foreach (
+				NetworkInterface iface in
+					NetworkInterface.GetAllNetworkInterfaces().Where(iface => iface.OperationalStatus != OperationalStatus.Down))
 			{
-				if (!VehiclesContains(name))
-					DataModel.Invoke(() => _ds.Vehicles.Add(new Vehicle(name, ep)));
-			};
-			
-            InitializeComponent();
-        }
+				ips.AddRange(from uni in iface.GetIPProperties().UnicastAddresses
+							 where uni.Address.AddressFamily != AddressFamily.InterNetworkV6
+							 where uni.IsDnsEligible
+							 select uni.Address);
+			}
+
+			ips.Add(new IPAddress(new byte[] { 127, 0, 0, 1 }));
+
+			return ips.ToArray();
+		}
 
 		private bool VehiclesContains(string name)
 		{
-			foreach (Vehicle v in _ds.Vehicles)
-			{
-				if (v.Name.Equals(name)) {
-					return true;
-				}
-			}
-
-			return false;
+			return _ds.Vehicles.Any(v => v.Name.Equals(name));
 		}
 
 		private void buttonConnect_Click(object sender, RoutedEventArgs e)
 		{
-			if (listViewVehicles.SelectedItems.Count < 1)
+			if (ListViewVehicles.SelectedItems.Count < 1)
 			{
 				MessageBox.Show("Please select a vehicle to connect to.");
 				return;
 			}
 
-			var selItem = (Vehicle)listViewVehicles.SelectedItems[0];
-			_selVehicle = selItem;
+			_selVehicle = (Vehicle)ListViewVehicles.SelectedItems[0];
 
-			_login = new VehicleLogin(_selVehicle.Name);
-			_login.Owner = MainWindow.Self;
-				
+			_login = new VehicleLogin() { Owner = MainWindow.Self };
+
 			if (!_dm.Vehicle.Connected)
-				_login.Closing += new CancelEventHandler(login_Closing);
+				_login.Closing += login_Closing;
 
-			_login.ShowDialog();			
+			_login.ShowDialog();
 		}
 
 		private void login_Closing(object sender, CancelEventArgs e)
@@ -217,35 +177,25 @@ namespace VDash.Controls
 			_dm.Vehicle.Connect(_selVehicle.Ip, new Login(_password));
 		}
 
-		/// <summary>
-		/// Returns all IP addresses associated with this machine.
-		/// Filters out IPv6 and 169.254.* addresses.
-		/// </summary>
-		/// <returns>List of associated IP addresses.</returns>
-		private IPAddress[] GetIPAddresses()
+		public AvailabilityControl()
 		{
-			List<IPAddress> ips = new List<IPAddress>();
-			foreach (NetworkInterface iface in NetworkInterface.GetAllNetworkInterfaces())
+			_ds = new DataSource();
+			DataContext = _ds;
+
+			_ds.IpAddresses = new ObservableCollection<IPAddress>();
+
+			foreach (IPAddress addr in GetIpAddresses())
+				_ds.IpAddresses.Add(addr);
+
+			_dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
 			{
-				if (iface.OperationalStatus == OperationalStatus.Down)
-					continue;
+				if (!VehiclesContains(name))
+					DataModel.Invoke(() => _ds.Vehicles.Add(new Vehicle(name, ep)));
+			};
 
-				foreach (UnicastIPAddressInformation uni in iface.GetIPProperties().UnicastAddresses)
-				{
-					if (uni.Address.AddressFamily == AddressFamily.InterNetworkV6)
-						continue;
+			LoginSuccessEvent.Invoked += evnt => _selVehicle.Connected = true;
 
-					// Filter out 169.254.*
-					if (!uni.IsDnsEligible)
-						continue;
-
-					ips.Add(uni.Address);
-				}
-			}
-
-			ips.Add(new IPAddress(new byte[] { 127, 0, 0, 1 }));
-
-			return ips.ToArray();
+			InitializeComponent();
 		}
-    }
+	}
 }
