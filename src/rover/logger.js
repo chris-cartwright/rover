@@ -37,10 +37,31 @@ winston.add(winston.transports.File, {
 	level: config.debug ? 'info' : 'warn'
 });
 
-if(config.debug)
+winston.remove(winston.transports.Console);
+
+if (config.debug) {
+	winston.add(winston.transports.Console, {
+		timestamp: function () {
+			var _now = new Date();
+			var _hours = _now.getHours();
+			var _minutes = _now.getMinutes();
+			var _seconds = _now.getSeconds();
+			var _milli = _now.getMilliseconds();
+
+			if (_hours < 10)
+				_hours = "0" + _hours;
+
+			if (_minutes < 10)
+				_minutes = "0" + _minutes;
+
+			if (_seconds < 10)
+				_seconds = "0" + _seconds;
+
+			return _hours.toString() + ":" + _minutes.toString() + ":" + _seconds.toString() + "." + _milli.toString();
+		}
+	});
 	winston.handleExceptions(new winston.transports.Console({ colorize: true, json: true }));
-else
-	winston.remove(winston.transports.Console);
+}
 
 module.exports = winston;
 
