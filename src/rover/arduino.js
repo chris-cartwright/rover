@@ -139,19 +139,19 @@ var lcd = {
 
 		locked = true;
 		return function () {
-			var used = false;
+			var _used = false;
 
 			// Double closure to make sure the user
 			// can only release once
 			return function () {
 				log.info("unlock");
 
-				if (used) {
+				if (_used) {
 					log.info("already used");
 					return;
 				}
 
-				used = true;
+				_used = true;
 				locked = false;
 			};
 		}();
@@ -166,14 +166,14 @@ for (var prop in lcd) {
 	}
 
 	(function () {
-		var p = prop;
-		module.exports.lcd[p] = function () {
+		var _p = prop;
+		module.exports.lcd[_p] = function () {
 			if (locked) {
 				log.info("locked");
 				return null;
 			}
 
-			return lcd[p].apply(this, arguments);
+			return lcd[_p].apply(this, arguments);
 		};
 	})();
 }

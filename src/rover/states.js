@@ -23,6 +23,7 @@ along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 var log = new require("./logger").LabelledLogger("states");
 var config = require("./config");
 var pins = require("./pins");
+var arduino = require("./arduino");
 
 var bone = require.main.exports.bone;
 
@@ -36,19 +37,19 @@ bone.pinMode(pins.button.show_ip, bone.INPUT);
 module.exports.TurnState = function (data) {
 	log.info("TurnState", data);
 
-	var motor = pins.motor.turn;
+	var _motor = pins.motor.turn;
 
 	if (data.Vector.Y == 0) {
-		bone.analogWrite(motor.speed, 0);
+		bone.analogWrite(_motor.speed, 0);
 	}
 	else if (data.Vector.Y > 0) { // right turn
-		bone.digitalWrite(motor.dir, 1);
-		bone.analogWrite(motor.speed, 1.0);
+		bone.digitalWrite(_motor.dir, 1);
+		bone.analogWrite(_motor.speed, 1.0);
 		// analogWrite(bone[motor.speed], data.Vector.Y);
 	}
 	else {
-		bone.digitalWrite(motor.dir, 0);
-		bone.analogWrite(motor.speed, 1.0);
+		bone.digitalWrite(_motor.dir, 0);
+		bone.analogWrite(_motor.speed, 1.0);
 		// analogWrite(bone[motor.speed], data.Vector.Y);
 	}
 };
@@ -56,18 +57,18 @@ module.exports.TurnState = function (data) {
 module.exports.MoveState = function (data) {
 	log.info("MoveState", data);
 
-	var motor = pins.motor.forward_reverse;
+	var _motor = pins.motor.forward_reverse;
 
 	if (data.Vector.Z == 0) {
-		bone.analogWrite(motor.speed, 0);
+		bone.analogWrite(_motor.speed, 0);
 	}
 	else if (data.Vector.Z > 0) {
-		bone.digitalWrite(motor.dir, 0);
-		bone.analogWrite(motor.speed, data.Vector.Z * 0.004 + 0.6);
+		bone.digitalWrite(_motor.dir, 0);
+		bone.analogWrite(_motor.speed, data.Vector.Z * 0.004 + 0.6);
 	}
 	else {
-		bone.digitalWrite(motor.dir, 1);
-		bone.analogWrite(motor.speed, data.Vector.Z * (-0.004) + 0.6);
+		bone.digitalWrite(_motor.dir, 1);
+		bone.analogWrite(_motor.speed, data.Vector.Z * (-0.004) + 0.6);
 	}
 };
 
@@ -77,10 +78,17 @@ module.exports.LightState = function (data) {
 	if (!pins.light.hasOwnProperty(data.Id))
 		throw new Error("Light does not exist.");
 
-	var light = pins.light[data.Id];
+	var _light = pins.light[data.Id];
 
-	if (light.pwm)
-		bone.analogWrite(light.pin, data.Level * 0.01);
+	if (_light.pwm)
+		bone.analogWrite(_light.pin, data.Level * 0.01);
 	else
-		bone.digitalWrite(light.pin, data.Level > 0);
+		bone.digitalWrite(_light.pin, data.Level > 0);
 };
+
+module.exports.ScreenState = function(data) {
+	log.info("ScreenState", data);
+
+	arduino.lcd.clear();
+	arduino.lcd.write(data.Text);
+}
