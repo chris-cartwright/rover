@@ -85,6 +85,9 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ScreenControl.xaml.cs">
+      <DependentUpon>ScreenControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\DateTimeToTimeStringConverter.cs" />
     <Compile Include="Converters\EnumRadioButtonConverter.cs" />
     <Compile Include="Converters\EnumIntConverter.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="Controls\KeyStateControl.xaml.cs">
       <DependentUpon>KeyStateControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ObservableSquareArray.cs" />
     <Compile Include="Record.cs" />
     <Compile Include="RequiresPostSharp.cs" />
     <Compile Include="Controls\SensorControl.xaml.cs">
@@ -121,6 +125,10 @@
       <DependentUpon>VideoControl.xaml</DependentUpon>
     </Compile>
     <Page Include="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ScreenControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -82,6 +82,7 @@ namespace VDash
 		private short _speed;
 		private TurnDirection _turn;
 		private Uri _videoFeed;
+		private string _text;
 
 		public VehiclePipe Vehicle { get; private set; }
 		public BroadcastListener Listener { get; private set; }
@@ -207,6 +208,21 @@ namespace VDash
 			{
 				_videoFeed = value;
 				LogControl.Debug("Video feed Uri set: " + value);
+			}
+		}
+
+		[Notify]
+		public string ScreenText
+		{
+			get { return _text; }
+			set
+			{
+				if (value.Length != 32)
+					throw new FormatException("Length of string must be 32 characters");
+
+				_text = value;
+				if (Vehicle.Connected)
+					Vehicle.Send(new ScreenState(_text));
 			}
 		}
 

@@ -89,6 +89,7 @@
     <Compile Include="States\RightTurnState.cs" />
     <Compile Include="Exceptions\SensorException.cs" />
     <Compile Include="Sensors\Sensor.cs" />
+    <Compile Include="States\ScreenState.cs" />
     <Compile Include="States\State.cs" />
     <Compile Include="Sensors\TempSensor.cs" />
     <Compile Include="States\TurnState.cs" />
