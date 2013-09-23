@@ -30,7 +30,7 @@ namespace VehicleLib
 {
 	public class BroadcastListener
 	{
-		public delegate void VehicleBroadcastHandler(string name, IPEndPoint ipEndPoint);
+		public delegate void VehicleBroadcastHandler(Broadcast bcast);
 
 		public event VehicleBroadcastHandler OnBroadcastReceived;
 
@@ -73,11 +73,12 @@ namespace VehicleLib
 						{
 							string name = received.name;
 							ushort connectionPort = received.port;
+							string video = received.video;
 
 							IPEndPoint vehicleIpEndPoint = new IPEndPoint(groupEp.Address, connectionPort);
 
 							if(OnBroadcastReceived != null)
-								OnBroadcastReceived(name, vehicleIpEndPoint);
+								OnBroadcastReceived(new Broadcast(vehicleIpEndPoint, name, video));
 						}
 						catch (RuntimeBinderException) { } // caught a broadcast that is not formatted correctly (not from a vehicle)
 					}

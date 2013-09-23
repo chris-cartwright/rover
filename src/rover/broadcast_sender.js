@@ -38,67 +38,74 @@ var BroadcastSender = new function () {
 
 		_server.bind(0);
 		_server.setBroadcast(true);
-		_setup = true;
 
 		getInterfaces(function (list) {
-			var im = null;
+			var _im;
 			if (list.length == 0) {
-				im = { ip: "127.0.0.1", mask: "255.255.255.0" };
+				_im = { ip: "127.0.0.1", mask: "255.255.255.0" };
 			}
 			else {
-				im = list[0];
-				if (im['ip'] == "127.0.0.1" && list.length > 1)
-					im = list[1];
+				_im = list[0];
+				if (_im['ip'] == "127.0.0.1" && list.length > 1)
+					_im = list[1];
 			}
 
-			var block = new nm(im['ip'] + "/" + im['mask']);
-			_addr = block.broadcast;
+			var _block = new nm(_im['ip'] + "/" + _im['mask']);
+			_addr = _block.broadcast;
 			log.info("Addr: " + _addr);
+
+			var _bcast = {
+				name: config.name,
+				port: config.port.pipe,
+				video: config.bcast.video.replace("{IP_ADDRESS}", _im.ip)
+			};
+			_buffer = new Buffer(JSON.stringify(_bcast) + "\r\n");
+
 			_ready = true;
 		});
 	};
 
 	function getInterfaces(cb) {
-		var clean = [/^169/];
+		var _clean = [/^169/];
 
-		var cmd = "";
-		var sr = "";
+		var _cmd;
+		var _sr;
 		switch (process.platform) {
 			case "win32":
 			case "win64":
-				cmd = "ipconfig";
-				sr = /\bIPv4.*: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\r?\n?.*Subnet Mask.*: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/mg;
+				_cmd = "ipconfig";
+				_sr = /\bIPv4.*: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\r?\n?.*Subnet Mask.*: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/mg;
 				break;
 
 			default:
-				cmd = "ifconfig";
-				sr = /\binet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*?Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g;
+				_cmd = "ifconfig";
+				_sr = /\binet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*?Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g;
 				break;
 		}
 
-		var isClean = function (ip) {
-			for (var i = 0; i < clean.length; i++) {
-				if (clean[i].test(ip))
+		var _isClean = function (ip) {
+			for (var _i = 0; _i < _clean.length; _i++) {
+				if (_clean[_i].test(ip))
 					return false;
 			}
 
 			return true;
 		};
 
-		exec(cmd, function (error, stdout, stderr) {
-			var list = [];
-			var matches = stdout.match(sr) || [];
-			for (var i = 0; i < matches.length; i++) {
-				var ip = matches[i].replace(sr, "$1");
-				var mask = matches[i].replace(sr, "$2");
+		exec(_cmd, function (error, stdout) {
+			var _list = [];
+			var _matches = stdout.match(_sr) || [];
+			for (var _i = 0; _i < _matches.length; _i++) {
+				var _ip = _matches[_i].replace(_sr, "$1");
+				var _mask = _matches[_i].replace(_sr, "$2");
 
-				if (!isClean(ip))
+				if (!_isClean(_ip))
 					continue;
 
-				list.push({ ip: ip, mask: mask });
+				_list.push({ ip: _ip, mask: _mask });
 			}
 
-			cb(list);
+			cb(_list);
 		});
 	};
 
@@ -106,7 +113,6 @@ var BroadcastSender = new function () {
 		log.info("port: " + port);
 
 		_port = port;
-		_buffer = new Buffer(JSON.stringify({ name: config.name, port: config.port.pipe }) + "\r\n");
 		setup();
 	};
 

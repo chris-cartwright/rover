@@ -31,8 +31,8 @@
         <ListView ItemsSource="{Binding Vehicles}" Margin="0,29" Name="ListViewVehicles" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Name}" Width="100" />
-                        <GridViewColumn Header="IP Address" DisplayMemberBinding="{Binding Path=Ip}" Width="100" />
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=Broadcast.Name}" Width="100" />
+                        <GridViewColumn Header="IP Address" DisplayMemberBinding="{Binding Path=Broadcast.Endpoint}" Width="100" />
                         <GridViewColumn Header="Connected" DisplayMemberBinding="{Binding Path=Connected}" Width="100" />
                     </GridView>
                 </ListView.View>

@@ -96,25 +96,20 @@ namespace VDash.Controls
 
 		private class Vehicle : NotifyPropertyChanged
 		{
-			[Notify]
-			public string Name { get; private set; }
-
-			[Notify]
-			public IPEndPoint Ip { get; private set; }
+			public Broadcast Broadcast { get; private set; }
 
 			[Notify]
 			public bool Connected { get; set; }
 
-			public Vehicle(string name, IPEndPoint ip)
+			public Vehicle(Broadcast bcast)
 			{
-				Name = name;
-				Ip = ip;
+				Broadcast = bcast;
 				Connected = false;
 			}
 
 			public override string ToString()
 			{
-				return Name;
+				return Broadcast.Name;
 			}
 		}
 
@@ -149,7 +144,7 @@ namespace VDash.Controls
 
 		private bool VehiclesContains(string name)
 		{
-			return _ds.Vehicles.Any(v => v.Name.Equals(name));
+			return _ds.Vehicles.Any(v => v.Broadcast.Name.Equals(name));
 		}
 
 		private void buttonConnect_Click(object sender, RoutedEventArgs e)
@@ -173,8 +168,8 @@ namespace VDash.Controls
 		private void login_Closing(object sender, CancelEventArgs e)
 		{
 			_password = _login.Password;
-			LogControl.Info("Attempting connection to " + _selVehicle.Name);
-			_dm.Vehicle.Connect(_selVehicle.Ip, new Login(_password));
+			LogControl.Info("Attempting connection to " + _selVehicle.Broadcast.Name);
+			_dm.Vehicle.Connect(_selVehicle.Broadcast, new Login(_password));
 		}
 
 		public AvailabilityControl()
@@ -187,10 +182,10 @@ namespace VDash.Controls
 			foreach (IPAddress addr in GetIpAddresses())
 				_ds.IpAddresses.Add(addr);
 
-			_dm.Listener.OnBroadcastReceived += delegate(string name, IPEndPoint ep)
+			_dm.Listener.OnBroadcastReceived += delegate(Broadcast bcast)
 			{
-				if (!VehiclesContains(name))
-					DataModel.Invoke(() => _ds.Vehicles.Add(new Vehicle(name, ep)));
+				if (!VehiclesContains(bcast.Name))
+					DataModel.Invoke(() => _ds.Vehicles.Add(new Vehicle(bcast)));
 			};
 
 			LoginSuccessEvent.Invoked += evnt => _selVehicle.Connected = true;

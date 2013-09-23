@@ -239,6 +239,7 @@ namespace VDash
 			PropertyChanged += dm_PropertyChanged;
 			Vehicle.OnException += ex => Invoke(() => LogControl.Error(ex));
 			Vehicle.OnError += err => Invoke(() => LogControl.Error(err.ToString()));
+			Vehicle.OnConnect += bcast => VideoFeed = new Uri(bcast.VideoFeed);
 			Vehicle.OnDisconnect += () => _timer.Stop();
 
 			LoginSuccessEvent.Invoked += delegate

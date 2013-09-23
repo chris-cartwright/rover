@@ -79,6 +79,7 @@ namespace VehicleLib
 		public delegate void ErrorHandler(Error err);
 		public delegate void ExceptionHandler(Exception ex);
 		public delegate void SensorHandler(Sensor sensor);
+		public delegate void ConnectHandler(Broadcast bcast);
 
 		private readonly CallbackDictionary _callbacks;
 		private readonly Thread _thread;
@@ -90,7 +91,7 @@ namespace VehicleLib
 		}
 
 		public event ErrorHandler OnError;
-		public event Action OnConnect;
+		public event ConnectHandler OnConnect;
 		public event Action OnDisconnect;
 		public event SensorHandler OnSensorEvent;
 		public event ExceptionHandler OnException;
@@ -289,7 +290,7 @@ namespace VehicleLib
 		/// </summary>
 		/// <param name="vehicleIpEndPoint">Socket for vehicle</param>
 		/// <param name="login">Login information</param>
-		public void Connect(IPEndPoint vehicleIpEndPoint, Login login)
+		public void Connect(Broadcast bcast, Login login)
 		{
 			if (Socket != null)
 			{
@@ -300,7 +301,7 @@ namespace VehicleLib
 
 			try
 			{
-				Socket.Connect(vehicleIpEndPoint);
+				Socket.Connect(bcast.Endpoint);
 			}
 			catch (SocketException ex)
 			{
@@ -317,7 +318,7 @@ namespace VehicleLib
 
 			if (OnConnect != null)
 			{
-				OnConnect();
+				OnConnect(bcast);
 			}
 
 			_thread.Start();

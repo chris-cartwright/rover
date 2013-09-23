@@ -25,7 +25,7 @@ namespace VDash.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("w")]
+        [global::System.Configuration.DefaultSettingValueAttribute("up")]
         public string KeyForward {
             get {
                 return ((string)(this["KeyForward"]));
@@ -37,7 +37,7 @@ namespace VDash.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("s")]
+        [global::System.Configuration.DefaultSettingValueAttribute("down")]
         public string KeyBackward {
             get {
                 return ((string)(this["KeyBackward"]));
@@ -49,7 +49,7 @@ namespace VDash.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("a")]
+        [global::System.Configuration.DefaultSettingValueAttribute("left")]
         public string KeyLeft {
             get {
                 return ((string)(this["KeyLeft"]));
@@ -61,7 +61,7 @@ namespace VDash.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("d")]
+        [global::System.Configuration.DefaultSettingValueAttribute("right")]
         public string KeyRight {
             get {
                 return ((string)(this["KeyRight"]));
@@ -82,7 +82,7 @@ namespace VDash.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("space")]
+        [global::System.Configuration.DefaultSettingValueAttribute("numpad0")]
         public string KeyStop {
             get {
                 return ((string)(this["KeyStop"]));

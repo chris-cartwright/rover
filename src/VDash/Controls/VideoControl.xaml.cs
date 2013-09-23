@@ -20,6 +20,10 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel;
+using MjpegProcessor;
+
 namespace VDash.Controls
 {
     /// <summary>
@@ -27,13 +31,37 @@ namespace VDash.Controls
     /// </summary>
     public partial class VideoControl
     {
-	    readonly DataModel _dm = DataModel.GetInstance();
+	    private readonly DataModel _dm = DataModel.GetInstance();
+	    private readonly MjpegDecoder mjpeg;
+
+	    private bool streaming;
 
 		public VideoControl()
         {
 			DataContext = _dm;
+			_dm.PropertyChanged += DataModelOnPropertyChanged;
 
             InitializeComponent();
+
+			mjpeg = new MjpegDecoder();
+			mjpeg.FrameReady += MjpegOnFrameReady;
         }
+
+	    private void DataModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+	    {
+		    if (e.PropertyName != "VideoFeed")
+			    return;
+
+		    if (streaming)
+			    mjpeg.StopStream();
+
+		    streaming = true;
+			mjpeg.ParseStream(_dm.VideoFeed);
+	    }
+
+	    private void MjpegOnFrameReady(object sender, FrameReadyEventArgs e)
+	    {
+		    Image.Source = e.BitmapImage;
+	    }
     }
 }
