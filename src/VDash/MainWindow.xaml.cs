@@ -33,7 +33,7 @@ namespace VDash
 	/// </summary>
 	public partial class MainWindow
 	{
-		private readonly DataModel _dm = DataModel.GetInstance();
+		private readonly DataModel _dm = DataModel.Instance;
 		public static Window Self { get; private set; }
 
 		public MainWindow()

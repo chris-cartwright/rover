@@ -153,7 +153,7 @@ namespace VDash.Controls
 					text += String.IsNullOrEmpty(_ds.Screen[x, y]) ? " " : _ds.Screen[x, y];
 			}
 
-			DataModel.GetInstance().ScreenText = text;
+			DataModel.Instance.ScreenText = text;
 		}
 	}
 }

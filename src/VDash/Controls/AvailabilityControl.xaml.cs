@@ -45,7 +45,7 @@ namespace VDash.Controls
 	{
 		private class DataSource : NotifyPropertyChanged
 		{
-			private readonly DataModel _dm = DataModel.GetInstance();
+			private readonly DataModel _dm = DataModel.Instance;
 
 			private ObservableCollection<IPAddress> _ipAddresses;
 			private IPAddress _listenAddress;
@@ -113,7 +113,7 @@ namespace VDash.Controls
 			}
 		}
 
-		private readonly DataModel _dm = DataModel.GetInstance();
+		private readonly DataModel _dm = DataModel.Instance;
 		private readonly DataSource _ds;
 		private VehicleLogin _login;
 		private string _password;

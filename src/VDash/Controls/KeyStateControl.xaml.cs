@@ -33,7 +33,7 @@ namespace VDash.Controls
     /// </summary>
     public partial class KeyStateControl
     {
-	    private readonly DataModel _dm = DataModel.GetInstance();
+	    private readonly DataModel _dm = DataModel.Instance;
 		private readonly List<Record> _records = new List<Record>();
 
 		private double _timeOffset;

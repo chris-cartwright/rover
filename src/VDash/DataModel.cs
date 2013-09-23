@@ -57,10 +57,10 @@ namespace VDash
 		///     Returns the static instance of this.
 		///     Constructs object if required.
 		/// </summary>
-		/// <returns>Static instance</returns>
-		public static DataModel GetInstance()
+		/// <value>Static instance</value>
+		public static DataModel Instance
 		{
-			return _inst ?? (_inst = new DataModel());
+			get { return _inst ?? (_inst = new DataModel()); }
 		}
 
 		/// <summary>

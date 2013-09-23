@@ -47,7 +47,7 @@ namespace VDash.Controls
 
 			public DataSource()
 			{
-				DataModel dm = DataModel.GetInstance();
+				DataModel dm = DataModel.Instance;
 				dm.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
 				{
 					if (e.PropertyName != "BatteryCurrent")

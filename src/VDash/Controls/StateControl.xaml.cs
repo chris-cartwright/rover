@@ -31,14 +31,14 @@ namespace VDash.Controls
     {
 		public StateControl()
 		{
-			DataContext = DataModel.GetInstance();
+			DataContext = DataModel.Instance;
 
 			InitializeComponent();
 		}
 
 		private void Stop_Click(object sender, RoutedEventArgs e)
 		{
-			DataModel dm = DataModel.GetInstance();
+			DataModel dm = DataModel.Instance;
 			dm.Speed = 0;
 			dm.Turn = DataModel.TurnDirection.None;
 		}

@@ -31,7 +31,7 @@ namespace VDash.Controls
     /// </summary>
     public partial class VideoControl
     {
-	    private readonly DataModel _dm = DataModel.GetInstance();
+	    private readonly DataModel _dm = DataModel.Instance;
 	    private readonly MjpegDecoder mjpeg;
 
 	    private bool streaming;
