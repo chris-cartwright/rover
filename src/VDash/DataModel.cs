@@ -26,7 +26,6 @@ using System.Timers;
 using System.Windows;
 using Aspects;
 using VDash.Controls;
-using VDash.Properties;
 using VehicleLib;
 using VehicleLib.Events;
 using VehicleLib.Queries;
@@ -78,7 +77,6 @@ namespace VDash
 		private readonly Timer _timer;
 
 		private ushort _headlights;
-		private string _key;
 		private short _speed;
 		private TurnDirection _turn;
 		private Uri _videoFeed;
@@ -185,17 +183,8 @@ namespace VDash
 		/// <summary>
 		///     Reports Last Key pressed
 		/// </summary>
-		[Notify]
-		public string Key
-		{
-			get { return _key; }
-			set
-			{
-				LogControl.Debug("Key pressed: " + value);
-
-				_key = value;
-			}
-		}
+		[Notify(IgnoreDuplicate = true)]
+		public string Key { get; set; }
 
 		/// <summary>
 		///     Reports when Video feed Uri is set
@@ -270,23 +259,6 @@ namespace VDash
 		{
 			switch (e.PropertyName)
 			{
-			case "Key":
-				if (Key == Settings.Default.KeyForward)
-					Speed += 10;
-				else if (Key == Settings.Default.KeyBackward)
-					Speed -= 10;
-				else if (Key == Settings.Default.KeyLeft)
-					Turn--;
-				else if (Key == Settings.Default.KeyRight)
-					Turn++;
-				else if (Key == Settings.Default.KeyStop)
-				{
-					Speed = 0;
-					Turn = TurnDirection.None;
-				}
-
-				break;
-
 			case "Headlights":
 				LogControl.Debug("Headlights set: " + Headlights);
 				if (Vehicle.Connected)

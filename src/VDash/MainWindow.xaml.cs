@@ -49,7 +49,8 @@ namespace VDash
 
 			AppDomain.CurrentDomain.UnhandledException += (sender, e) => LogControl.Error(e.ExceptionObject as Exception);
 
-			PreviewKeyDown += (s, e) => _dm.Key = e.Key.ToString().ToLower();
+			KeyDown += (s, e) => _dm.Key = e.Key.ToString().ToLower();
+			KeyUp += (s, e) => _dm.Key = String.Empty;
 			ContentRendered += (s, e) => Focus();
 			Closing += MainWindow_Closing;
         }

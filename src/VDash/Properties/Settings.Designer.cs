@@ -91,5 +91,17 @@ namespace VDash.Properties {
                 this["KeyStop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("leftctrl")]
+        public string KeyRamping {
+            get {
+                return ((string)(this["KeyRamping"]));
+            }
+            set {
+                this["KeyRamping"] = value;
+            }
+        }
     }
 }

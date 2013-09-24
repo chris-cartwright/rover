@@ -20,5 +20,8 @@
     <Setting Name="KeyStop" Type="System.String" Scope="User">
       <Value Profile="(Default)">numpad0</Value>
     </Setting>
+    <Setting Name="KeyRamping" Type="System.String" Scope="User">
+      <Value Profile="(Default)">leftctrl</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
