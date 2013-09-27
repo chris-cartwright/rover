@@ -138,6 +138,11 @@ var ControlPipe = new function () {
 	function onDisconnect() {
 		log.info("Disconnected.");
 
+		states.TurnState({ Vector: { Y: 0 } });
+		states.MoveState({ Vector: { Z: 0 } });
+		states.LightState({ Id: "head", Level: 0 });
+		states.ScreenState({ Text: "      Lost         Connection   " });
+
 		_client = null;
 		_validated = false;
 		_tries = 0;

@@ -26,7 +26,8 @@ var config = {
 		bcast: 15001
 	},
 	bcast: {
-		interval: 5000
+		interval: 5000,
+		video: "http://{IP_ADDRESS}:8080/?action=stream"
 	},
 	passwd: "pwd",
 	debug: true,
@@ -36,7 +37,8 @@ var config = {
 		uart: 1,
 		baud: 9600,
 		interfaces: ["eth1", "wlan0"]
-	}
+	},
+	heartbeat: 3000
 };
 
 module.exports = config;

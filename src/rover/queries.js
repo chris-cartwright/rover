@@ -30,24 +30,24 @@ var bone = require.main.exports.bone;
 // Calculate Vin from Vout, R1, R2 in a voltage divider
 function vdin(raw, r1, r2) {
 	// Vout = Vin * (R2 / (R1 + R2))
-	return raw * (r1 + r2) / r2;
+	return raw / (r2 / (r1 + r2));
 }
 
-module.exports.VoltageQuery = function(sensor) {
-    var min = 0;
-    var max = 0;
-    var current = 0;
+module.exports.VoltageQuery = function (sensor) {
+	var min = 0;
+	var max = 0;
+	var current = 0;
 
-    switch (sensor) {
-    case "battery":
-        // analogRead returns a percentage
-        current = bone.analogRead(pins.sensor.battery) * 1.8;
-        current = vdin(current, 4760, 980);
-        // Rechargeables used measured 1.4v after full charge
-        max = 8.4;
-        min = 6.0;
-        break;
-    }
+	switch (sensor) {
+		case "battery":
+			// analogRead returns a percentage
+			current = bone.analogRead(pins.sensor.battery) * 1.8;
+			current = vdin(current, 4780, 980);
+			// Rechargeables used measured 1.4v after full charge
+			max = 8.4;
+			min = 6.0;
+			break;
+	}
 
-    return new sensors.Voltage(min, max, current);
+	return new sensors.Voltage(min, max, current);
 };

@@ -61,6 +61,7 @@ var BroadcastSender = new function () {
 			};
 			_buffer = new Buffer(JSON.stringify(_bcast) + "\r\n");
 
+			log.info("Final broadcast", _bcast);
 			_ready = true;
 		});
 	};
