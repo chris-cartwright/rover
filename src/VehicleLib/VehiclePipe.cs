@@ -190,6 +190,12 @@ namespace VehicleLib
 			object receivedObject;
 			try
 			{
+				if (packet.cmd == "Heartbeat")
+				{
+					SendRaw(null, null, "Heartbeat");
+					return;
+				}
+
 				string cat = "";
 				if (packet.cmd.ToString().Contains("Error"))
 					cat = "Errors.";

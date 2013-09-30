@@ -28,6 +28,7 @@ var queries = require("./queries");
 var err = require("./errors");
 var log = new require("./logger").LabelledLogger("control_pipe");
 var events = require("./events");
+var heartbeat = require("./heartbeat");
 
 var ControlPipe = new function () {
 	var _self = this;
@@ -101,10 +102,14 @@ var ControlPipe = new function () {
 
 			_validated = true;
 			_self.send(new events.LoginSuccess());
+			heartbeat.start();
 			return;
 		}
 
-		if (obj.cmd.indexOf("State") != -1) {
+		if (obj.cmd == "Heartbeat") {
+			heartbeat.beat();
+		}
+		else if (obj.cmd.indexOf("State") != -1) {
 			if (!states.hasOwnProperty(obj.cmd)) {
 				_self.send(new err.CommandNotFound(obj.cmd));
 				return;
@@ -143,6 +148,7 @@ var ControlPipe = new function () {
 		states.LightState({ Id: "head", Level: 0 });
 		states.ScreenState({ Text: "      Lost         Connection   " });
 
+		heartbeat.stop();
 		_client = null;
 		_validated = false;
 		_tries = 0;
@@ -175,7 +181,10 @@ var ControlPipe = new function () {
 		_server.listen(_port);
 	};
 
-	this.send = function (obj, id, socket) {
+	this.send = function (obj, id) {
+		if (_client == null)
+			return;
+
 		log.info("Data sent: ", JSON.stringify({ object: obj, id: id }));
 
 		var name = obj.name;
@@ -189,10 +198,17 @@ var ControlPipe = new function () {
 			d.id = id;
 
 		var msg = JSON.stringify(d) + "\r\n";
-		if (typeof (socket) != "undefined")
-			socket.write(msg);
-		else
+		try {
 			_client.write(msg);
+		}
+		catch (e) {
+			log.error(e);
+		}
+	};
+
+	this.close = function () {
+		if(_client != null)
+			 _client.end();
 	};
 
 	this.isListening = function () {

@@ -53,6 +53,7 @@
     <None Include="config.js.base" />
     <Content Include="errors.js" />
     <Content Include="broadcast_sender.js" />
+    <Content Include="heartbeat.js" />
     <Content Include="local.js" />
     <Content Include="logger.js" />
     <Content Include="main.js" />
