@@ -23,6 +23,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:avalonDock="http://avalondock.codeplex.com" xmlns:controls="clr-namespace:VDash.Controls"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         Title="Vehicle Dashboard" Height="800" Width="1200" WindowState="Maximized">
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Close" Executed="ApplicationClose" />
@@ -33,58 +34,58 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <controls:MenuControl x:Name="Menu" Grid.Row="0" Grid.ColumnSpan="10" />
-        <avalonDock:DockingManager Grid.Row="1">
-            <avalonDock:LayoutRoot>
-                <avalonDock:LayoutPanel Orientation="Vertical">
-                    <avalonDock:LayoutPanel Orientation="Horizontal">
-                        <avalonDock:LayoutPanel Orientation="Vertical">
-                            <avalonDock:LayoutPanel Orientation="Horizontal">
-                                <avalonDock:LayoutDocumentPane>
-                                    <avalonDock:LayoutDocument Title="Vehicle State">
+        <xcad:DockingManager Grid.Row="1">
+            <xcad:LayoutRoot>
+                <xcad:LayoutPanel Orientation="Vertical">
+                    <xcad:LayoutPanel Orientation="Horizontal">
+                        <xcad:LayoutPanel Orientation="Vertical">
+                            <xcad:LayoutPanel Orientation="Horizontal">
+                                <xcad:LayoutDocumentPane>
+                                    <xcad:LayoutDocument Title="Vehicle State">
                                         <controls:StateControl x:Name="State" FlowDirection="LeftToRight" />
-                                    </avalonDock:LayoutDocument>
-                                </avalonDock:LayoutDocumentPane>
-                                <avalonDock:LayoutDocumentPane>
-                                    <avalonDock:LayoutDocument Title="Screen State">
+                                    </xcad:LayoutDocument>
+                                </xcad:LayoutDocumentPane>
+                                <xcad:LayoutDocumentPane>
+                                    <xcad:LayoutDocument Title="Screen State">
                                         <controls:ScreenControl x:Name="Screen" FlowDirection="LeftToRight" />
-                                    </avalonDock:LayoutDocument>
-                                </avalonDock:LayoutDocumentPane>
-                            </avalonDock:LayoutPanel>
-                            <avalonDock:LayoutDocumentPane>
-                                <avalonDock:LayoutDocument Title="Vehicle Key State">
+                                    </xcad:LayoutDocument>
+                                </xcad:LayoutDocumentPane>
+                            </xcad:LayoutPanel>
+                            <xcad:LayoutDocumentPane>
+                                <xcad:LayoutDocument Title="Vehicle Key State">
                                     <controls:KeyStateControl x:Name="KeyState" />
-                                </avalonDock:LayoutDocument>
-                            </avalonDock:LayoutDocumentPane>
-                            <avalonDock:LayoutDocumentPane>
-                                <avalonDock:LayoutDocument Title="Sensors">
+                                </xcad:LayoutDocument>
+                            </xcad:LayoutDocumentPane>
+                            <xcad:LayoutDocumentPane>
+                                <xcad:LayoutDocument Title="Sensors">
                                     <controls:SensorControl x:Name="Sensors" />
-                                </avalonDock:LayoutDocument>
-                            </avalonDock:LayoutDocumentPane>
-                        </avalonDock:LayoutPanel>
-                        <avalonDock:LayoutDocumentPane>
-                            <avalonDock:LayoutDocument Title="Video Feed">
+                                </xcad:LayoutDocument>
+                            </xcad:LayoutDocumentPane>
+                        </xcad:LayoutPanel>
+                        <xcad:LayoutDocumentPane>
+                            <xcad:LayoutDocument Title="Video Feed">
                                 <controls:VideoControl x:Name="Video" />
-                            </avalonDock:LayoutDocument>
-                        </avalonDock:LayoutDocumentPane>
-                    </avalonDock:LayoutPanel>
-                    <avalonDock:LayoutAnchorablePaneGroup DockHeight="300">
-                        <avalonDock:LayoutAnchorablePane>
-                            <avalonDock:LayoutAnchorable Title="Logs" AutoHideHeight="300">
+                            </xcad:LayoutDocument>
+                        </xcad:LayoutDocumentPane>
+                    </xcad:LayoutPanel>
+                    <xcad:LayoutAnchorablePaneGroup DockHeight="300">
+                        <xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorable Title="Logs" AutoHideHeight="300">
                                 <controls:LogControl x:Name="Logs" />
-                            </avalonDock:LayoutAnchorable>
-                        </avalonDock:LayoutAnchorablePane>
-                    </avalonDock:LayoutAnchorablePaneGroup>
-                </avalonDock:LayoutPanel>
-                <avalonDock:LayoutRoot.RightSide>
-                    <avalonDock:LayoutAnchorSide>
-                        <avalonDock:LayoutAnchorGroup>
-                            <avalonDock:LayoutAnchorable Title="Available Vehicles" AutoHideWidth="274">
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutAnchorablePane>
+                    </xcad:LayoutAnchorablePaneGroup>
+                </xcad:LayoutPanel>
+                <xcad:LayoutRoot.RightSide>
+                    <xcad:LayoutAnchorSide>
+                        <xcad:LayoutAnchorGroup>
+                            <xcad:LayoutAnchorable Title="Available Vehicles" AutoHideWidth="274">
                                 <controls:AvailabilityControl x:Name="Availability" />
-                            </avalonDock:LayoutAnchorable>
-                        </avalonDock:LayoutAnchorGroup>
-                    </avalonDock:LayoutAnchorSide>
-                </avalonDock:LayoutRoot.RightSide>
-            </avalonDock:LayoutRoot>
-        </avalonDock:DockingManager>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutAnchorGroup>
+                    </xcad:LayoutAnchorSide>
+                </xcad:LayoutRoot.RightSide>
+            </xcad:LayoutRoot>
+        </xcad:DockingManager>
     </Grid>
 </Window>
