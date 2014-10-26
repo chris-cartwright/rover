@@ -27,7 +27,11 @@ var config = {
 	},
 	bcast: {
 		interval: 5000,
-		video: "http://{IP_ADDRESS}:8080/?action=stream"
+		video: "http://{IP_ADDRESS}:8080/?action=stream",
+		iface: {
+			ip: "192.168.1.0",
+			mask: "255.255.255.0"
+		}
 	},
 	passwd: "pwd",
 	debug: true,
