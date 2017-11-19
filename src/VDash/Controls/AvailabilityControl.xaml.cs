@@ -30,8 +30,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Windows;
-using Aspects;
-using Aspects.Annotations;
 using VDash.Properties;
 using VehicleLib;
 using VehicleLib.Events;
@@ -43,41 +41,41 @@ namespace VDash.Controls
 	/// </summary>
 	public partial class AvailabilityControl
 	{
-		private class DataSource : NotifyPropertyChanged
+		private class DataSource : DataModelBase
 		{
 			private readonly DataModel _dm = DataModel.Instance;
 
 			private ObservableCollection<IPAddress> _ipAddresses;
 			private IPAddress _listenAddress;
+			private ObservableCollection<Vehicle> _vehicles;
 
-			[Notify]
-			public ObservableCollection<Vehicle> Vehicles { get; set; }
+			public ObservableCollection<Vehicle> Vehicles
+			{
+				get => _vehicles;
+				set => SetField(ref _vehicles, value);
+			}
 
-			[Notify]
 			public ObservableCollection<IPAddress> IpAddresses
 			{
-				[UsedImplicitly]
-				get { return _ipAddresses; }
+				get => _ipAddresses;
 				set
 				{
-					_ipAddresses = value;
+					SetField(ref _ipAddresses, value);
 
 					if (_listenAddress == null && value.Count > 0)
 						ListenAddress = value[0];
 				}
 			}
 
-			[Notify]
 			public IPAddress ListenAddress
 			{
-				[UsedImplicitly]
-				get { return _listenAddress; }
+				get => _listenAddress;
 				set
 				{
 					if (Equals(_listenAddress, value))
 						return;
 
-					_listenAddress = value;
+					SetField(ref _listenAddress, value);
 
 					var ep = new IPEndPoint(value, Settings.Default.ListenPort);
 					_dm.Listener.Shutdown();
@@ -94,12 +92,17 @@ namespace VDash.Controls
 			}
 		}
 
-		private class Vehicle : NotifyPropertyChanged
+		private class Vehicle : DataModelBase
 		{
+			private bool _connected;
+
 			public Broadcast Broadcast { get; private set; }
 
-			[Notify]
-			public bool Connected { get; set; }
+			public bool Connected
+			{
+				get => _connected;
+				set => SetField(ref _connected, value);
+			}
 
 			public Vehicle(Broadcast bcast)
 			{

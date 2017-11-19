@@ -24,7 +24,6 @@ using System;
 using System.ComponentModel;
 using System.Timers;
 using System.Windows;
-using Aspects;
 using VDash.Controls;
 using VehicleLib;
 using VehicleLib.Events;
@@ -38,7 +37,7 @@ namespace VDash
 	///     Represents the ViewModel for the car.
 	///     Any global information pertaining to the vehicle should be included.
 	/// </summary>
-	internal class DataModel : NotifyPropertyChanged
+	internal class DataModel : DataModelBase
 	{
 		/// <summary>
 		///     Represents the current state of the front wheels
@@ -57,10 +56,7 @@ namespace VDash
 		///     Constructs object if required.
 		/// </summary>
 		/// <value>Static instance</value>
-		public static DataModel Instance
-		{
-			get { return _inst ?? (_inst = new DataModel()); }
-		}
+		public static DataModel Instance => _inst ?? (_inst = new DataModel());
 
 		/// <summary>
 		///     Used to run an action on the GUI thread
@@ -81,6 +77,10 @@ namespace VDash
 		private TurnDirection _turn;
 		private Uri _videoFeed;
 		private string _text;
+		private float _batteryMin;
+		private float _batteryMax;
+		private float _batteryCurrent;
+		private string _key;
 
 		public VehiclePipe Vehicle { get; private set; }
 		public BroadcastListener Listener { get; private set; }
@@ -88,13 +88,12 @@ namespace VDash
 		/// <summary>
 		///     Sets the direction of turn for the vehicle.
 		/// </summary>
-		[Notify]
 		public TurnDirection Turn
 		{
-			get { return _turn; }
+			get => _turn;
 			set
 			{
-				_turn = value;
+				SetField(ref _turn, value);
 				if (_turn < TurnDirection.Left)
 					_turn = TurnDirection.Left;
 				else if (_turn > TurnDirection.Right)
@@ -107,15 +106,15 @@ namespace VDash
 
 				switch (_turn)
 				{
-				case TurnDirection.Left:
-					Vehicle.Send(new LeftTurnState());
-					break;
-				case TurnDirection.Right:
-					Vehicle.Send(new RightTurnState());
-					break;
-				default:
-					Vehicle.Send(new TurnState());
-					break;
+					case TurnDirection.Left:
+						Vehicle.Send(new LeftTurnState());
+						break;
+					case TurnDirection.Right:
+						Vehicle.Send(new RightTurnState());
+						break;
+					default:
+						Vehicle.Send(new TurnState());
+						break;
 				}
 			}
 		}
@@ -124,10 +123,9 @@ namespace VDash
 		///     Controls the speed of the vehicle.
 		///     Accepts a range of +100 to -100.
 		/// </summary>
-		[Notify]
 		public short Speed
 		{
-			get { return _speed; }
+			get => _speed;
 			set
 			{
 				if (value < -100)
@@ -138,7 +136,7 @@ namespace VDash
 
 				LogControl.Debug("Speed set: " + value);
 
-				_speed = value;
+				SetField(ref _speed, value);
 
 				if (Vehicle.Connected)
 					Vehicle.Send(new MoveState(0, 0, _speed));
@@ -149,67 +147,76 @@ namespace VDash
 		///     Controls the brightness of the headlights.
 		///     Set to 0 to turn off.
 		/// </summary>
-		[Notify(IgnoreDuplicate = true)]
 		public ushort Headlights
 		{
-			get { return _headlights; }
+			get => _headlights;
 			set
 			{
 				if (value > 100)
 					value = 100;
 
-				_headlights = value;
+				SetField(ref _headlights, value);
 			}
 		}
 
 		/// <summary>
 		///     Minimum voltage for the battery
 		/// </summary>
-		[Notify]
-		public float BatteryMin { get; private set; }
+		public float BatteryMin
+		{
+			get => _batteryMin;
+			private set => SetField(ref _batteryMin, value);
+		}
 
 		/// <summary>
 		///     Maximum voltage for the battery
 		/// </summary>
-		[Notify]
-		public float BatteryMax { get; private set; }
+		public float BatteryMax
+		{
+			get => _batteryMax;
+			private set => SetField(ref _batteryMax, value);
+		}
 
 		/// <summary>
 		///     Current voltage of the battery
 		/// </summary>
-		[Notify]
-		public float BatteryCurrent { get; private set; }
+		public float BatteryCurrent
+		{
+			get => _batteryCurrent;
+			private set => SetField(ref _batteryCurrent, value);
+		}
 
 		/// <summary>
 		///     Reports Last Key pressed
 		/// </summary>
-		[Notify(IgnoreDuplicate = true)]
-		public string Key { get; set; }
+		public string Key
+		{
+			get => _key;
+			set => SetField(ref _key, value);
+		}
 
 		/// <summary>
 		///     Reports when Video feed Uri is set
 		/// </summary>
-		[Notify]
 		public Uri VideoFeed
 		{
-			get { return _videoFeed; }
+			get => _videoFeed;
 			set
 			{
-				_videoFeed = value;
+				SetField(ref _videoFeed, value);
 				LogControl.Debug("Video feed Uri set: " + value);
 			}
 		}
 
-		[Notify]
 		public string ScreenText
 		{
-			get { return _text; }
+			get => _text;
 			set
 			{
 				if (value.Length != 32)
 					throw new FormatException("Length of string must be 32 characters");
 
-				_text = value;
+				SetField(ref _text, value);
 				if (Vehicle.Connected)
 					Vehicle.Send(new ScreenState(_text));
 			}
@@ -259,12 +266,12 @@ namespace VDash
 		{
 			switch (e.PropertyName)
 			{
-			case "Headlights":
-				LogControl.Debug("Headlights set: " + Headlights);
-				if (Vehicle.Connected)
-					Vehicle.Send(new HeadLightState(Headlights));
+				case "Headlights":
+					LogControl.Debug("Headlights set: " + Headlights);
+					if (Vehicle.Connected)
+						Vehicle.Send(new HeadLightState(Headlights));
 
-				break;
+					break;
 			}
 		}
 
@@ -286,7 +293,7 @@ namespace VDash
 		/// <param name="sensor">Sensor information from vehicle</param>
 		private void BatteryUpdated(Sensor sensor)
 		{
-			var vs = (VoltageSensor) sensor;
+			var vs = (VoltageSensor)sensor;
 
 			BatteryCurrent = vs.Current;
 			BatteryMax = vs.Max;

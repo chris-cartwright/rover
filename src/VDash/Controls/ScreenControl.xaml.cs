@@ -21,7 +21,6 @@ using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
-using Aspects;
 using TextBox = System.Windows.Controls.TextBox;
 
 namespace VDash.Controls
@@ -37,10 +36,9 @@ namespace VDash.Controls
 			public int Row { get; set; }
 		}
 
-		private class DataSource : NotifyPropertyChanged
+		private class DataSource : DataModelBase
 		{
-			[Notify]
-			public ObservableSquareArray<string> Screen { get; private set; }
+			public ObservableSquareArray<string> Screen { get; }
 
 			public DataSource()
 			{
