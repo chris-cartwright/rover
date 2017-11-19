@@ -3,7 +3,7 @@ Copyright (C) 2012 Christopher Cartwright
 Copyright (C) 2012 Richard Payne
 Copyright (C) 2012 Andrew Hill
 Copyright (C) 2012 David Shirley
-    
+	
 This file is part of VDash.
 
 VDash is free software: you can redistribute it and/or modify
@@ -36,8 +36,9 @@ var BroadcastSender = new function () {
 	function setup() {
 		log.info("setup");
 
-		_server.bind(0);
-		_server.setBroadcast(true);
+		_server.bind(function() {
+		    _server.setBroadcast(true);
+		});
 
 		getInterfaces(function (list) {
 			var _im;
@@ -45,28 +46,28 @@ var BroadcastSender = new function () {
 				_im = { ip: "127.0.0.1", mask: "255.255.255.0" };
 			}
 			else {
-			    if (config.bcast.iface) {
-			        log.info("Looking for interface matching: " + JSON.stringify(config.iface));
-			        var _confBlock = new nm(config.bcast.iface.ip + "/" + config.bcast.iface.mask);
-			        for (var _i = 0; _i < list.length; _i++) {
-			            if (_confBlock.contains(list[_i].ip)) {
-			                _im = list[_i];
-			            }
-			        }
+				if (config.bcast.iface) {
+					log.info("Looking for interface matching: " + JSON.stringify(config.iface));
+					var _confBlock = new nm(config.bcast.iface.ip + "/" + config.bcast.iface.mask);
+					for (var _i = 0; _i < list.length; _i++) {
+						if (_confBlock.contains(list[_i].ip)) {
+							_im = list[_i];
+						}
+					}
 
-			        if (_im == null) {
-			            log.warn("Could not find applicable interface");
-			        }
-			    }
-			    else {
+					if (_im == null) {
+						log.warn("Could not find applicable interface");
+					}
+				}
+				else {
 				log.info("No broadcast interface specified");
-			    }
+				}
 
-			    if (_im == null) {
-			        _im = list[0];
-			        if (_im['ip'] == "127.0.0.1" && list.length > 1)
-			            _im = list[1];
-			    }
+				if (_im == null) {
+					_im = list[0];
+					if (_im['ip'] == "127.0.0.1" && list.length > 1)
+						_im = list[1];
+				}
 			}
 
 			var _block = new nm(_im['ip'] + "/" + _im['mask']);

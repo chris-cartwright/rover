@@ -1,6 +1,6 @@
 ﻿/*
 Copyright (C) 2013 Christopher Cartwright
-    
+	
 This file is part of VDash.
 
 VDash is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ var callbacks = [];
 var isOn = true;
 var enabled = false;
 
-var ser = new serial.SerialPort("/dev/ttyO" + config.arduino.uart, {
-	baudrate: config.arduino.baud,
-	parser: serial.parsers.readline("\r")
+var ser = new serial("/dev/ttyO" + config.arduino.uart, {
+	baudRate: config.arduino.baud,
+	parser: new serial.parsers.Readline({ delimiter: "\r" })
 });
 
 function onData(data) {
