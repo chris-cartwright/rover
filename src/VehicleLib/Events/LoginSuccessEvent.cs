@@ -36,8 +36,7 @@ namespace VehicleLib.Events
 
 		public override void Invoke()
 		{
-			if (Invoked != null)
-				Invoked(this);
+			Invoked?.Invoke(this);
 		}
 	}
 }

@@ -28,9 +28,6 @@ namespace VehicleLib.States
 			Text = text;
 		}
 
-		public override string Cmd
-		{
-			get { return "ScreenState"; }
-		}
+		public override string Cmd => "ScreenState";
 	}
 }

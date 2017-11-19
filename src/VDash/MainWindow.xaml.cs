@@ -39,7 +39,9 @@ namespace VDash
 		public MainWindow()
         {
 			if (Self != null)
+			{
 				throw new Exception("Cannot initialize more than one MainWindow.");
+			}
 
 			Self = this;
 
@@ -50,7 +52,7 @@ namespace VDash
 			AppDomain.CurrentDomain.UnhandledException += (sender, e) => LogControl.Error(e.ExceptionObject as Exception);
 
 			KeyDown += (s, e) => _dm.Key = e.Key.ToString().ToLower();
-			KeyUp += (s, e) => _dm.Key = String.Empty;
+			KeyUp += (s, e) => _dm.Key = string.Empty;
 			ContentRendered += (s, e) => Focus();
 			Closing += MainWindow_Closing;
         }

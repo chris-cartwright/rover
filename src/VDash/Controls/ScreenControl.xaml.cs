@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
@@ -74,24 +73,30 @@ namespace VDash.Controls
 		private void Screen_ItemChanged(object sender, ObservableSquareArray<string>.ItemChangedEventArgs e)
 		{
 			if (_setting)
+			{
 				return;
+			}
 
 			_boxes[e.Column, e.Row].Text = e.Value;
 		}
 
 		private void OnTextChanged(object o, TextChangedEventArgs e)
 		{
-			ArrayTextBox tb = (ArrayTextBox)o;
+			var tb = (ArrayTextBox)o;
 			_setting = true;
 			_ds.Screen[tb.Column, tb.Row] = tb.Text;
 			_setting = false;
 
-			if (String.IsNullOrEmpty(tb.Text))
+			if (string.IsNullOrEmpty(tb.Text))
+			{
 				return;
+			}
 
-			int idx = PanelCharacter.Children.IndexOf(tb);
+			var idx = PanelCharacter.Children.IndexOf(tb);
 			if (idx + 1 >= PanelCharacter.Children.Count)
+			{
 				return;
+			}
 
 			PanelCharacter.Children[idx + 1].Focus();
 		}
@@ -102,7 +107,7 @@ namespace VDash.Controls
 			{
 				for (short y = 0; y < MaxRows; y++)
 				{
-					_boxes[x, y] = new ArrayTextBox()
+					_boxes[x, y] = new ArrayTextBox
 					{
 						Width = PanelCharacter.ActualWidth / MaxColumns,
 						Height = PanelCharacter.ActualHeight / MaxRows,
@@ -126,11 +131,13 @@ namespace VDash.Controls
 		private void ScreenOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action != NotifyCollectionChangedAction.Reset)
-				return;
-
-			for (int x = 0; x < MaxColumns; x++)
 			{
-				for (int y = 0; y < MaxRows; y++)
+				return;
+			}
+
+			for (var x = 0; x < MaxColumns; x++)
+			{
+				for (var y = 0; y < MaxRows; y++)
 				{
 					_boxes[x, y].Text = _ds.Screen[x, y];
 				}
@@ -144,11 +151,13 @@ namespace VDash.Controls
 
 		private void ButtonSet_Click(object sender, RoutedEventArgs e)
 		{
-			string text = "";
-			for (int x = 0; x < MaxColumns; x++)
+			var text = "";
+			for (var x = 0; x < MaxColumns; x++)
 			{
-				for (int y = 0; y < MaxRows; y++)
-					text += String.IsNullOrEmpty(_ds.Screen[x, y]) ? " " : _ds.Screen[x, y];
+				for (var y = 0; y < MaxRows; y++)
+				{
+					text += string.IsNullOrEmpty(_ds.Screen[x, y]) ? " " : _ds.Screen[x, y];
+				}
 			}
 
 			DataModel.Instance.ScreenText = text;

@@ -57,17 +57,17 @@ namespace VehicleLib
 		public void Run(IPEndPoint ep)
 		{
 			_listener = new UdpClient(ep);
-			IPEndPoint groupEp = new IPEndPoint(IPAddress.Any, ep.Port);
+			var groupEp = new IPEndPoint(IPAddress.Any, ep.Port);
 
 			try
 			{
 				while (true)
 				{
 					// Waiting for broadcast
-					byte[] bytes = _listener.Receive(ref groupEp);
-					dynamic[] msgs = _proto.Feed(Encoding.ASCII.GetString(bytes));
+					var bytes = _listener.Receive(ref groupEp);
+					var msgs = _proto.Feed(Encoding.ASCII.GetString(bytes));
 
-					foreach (dynamic received in msgs)
+					foreach (var received in msgs)
 					{
 						try
 						{
@@ -75,10 +75,9 @@ namespace VehicleLib
 							ushort connectionPort = received.port;
 							string video = received.video;
 
-							IPEndPoint vehicleIpEndPoint = new IPEndPoint(groupEp.Address, connectionPort);
+							var vehicleIpEndPoint = new IPEndPoint(groupEp.Address, connectionPort);
 
-							if(OnBroadcastReceived != null)
-								OnBroadcastReceived(new Broadcast(vehicleIpEndPoint, name, video));
+							OnBroadcastReceived?.Invoke(new Broadcast(vehicleIpEndPoint, name, video));
 						}
 						catch (RuntimeBinderException) { } // caught a broadcast that is not formatted correctly (not from a vehicle)
 					}
@@ -88,7 +87,9 @@ namespace VehicleLib
 			{
 				// Thread was killed
 				if (ex.ErrorCode == 10004)
+				{
 					return;
+				}
 
 				throw new Exceptions.ConnectionException("Error in protocol.", ex);
 			}
@@ -100,13 +101,16 @@ namespace VehicleLib
 		public void Shutdown()
 		{
 			if (_listener == null)
+			{
 				return;
+			}
 
-			if(_listener.Client != null)
-				_listener.Client.Close();
+			_listener.Client?.Close();
 
-			if(_thread.ThreadState == ThreadState.Running)
+			if (_thread.ThreadState == ThreadState.Running)
+			{
 				_thread.Join();
+			}
 		}
 	}
 }

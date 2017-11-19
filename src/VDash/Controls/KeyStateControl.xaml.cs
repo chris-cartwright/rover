@@ -23,7 +23,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
@@ -50,11 +49,13 @@ namespace VDash.Controls
 
 			public bool Forward
 			{
-				get { return _forward; }
+				get => _forward;
 				set
 				{
 					if (_forward && value)
+					{
 						return;
+					}
 
 					_forward = value;
 					UpdateSpeed();
@@ -63,11 +64,13 @@ namespace VDash.Controls
 
 			public bool Reverse
 			{
-				get { return _reverse; }
+				get => _reverse;
 				set
 				{
 					if (_reverse && value)
+					{
 						return;
+					}
 
 					_reverse = value;
 					UpdateSpeed();
@@ -76,11 +79,13 @@ namespace VDash.Controls
 
 			public bool Left
 			{
-				get { return _left; }
+				get => _left;
 				set
 				{
 					if (_left && value)
+					{
 						return;
+					}
 
 					_left = value;
 					UpdateTurn();
@@ -89,11 +94,13 @@ namespace VDash.Controls
 
 			public bool Right
 			{
-				get { return _right; }
+				get => _right;
 				set
 				{
 					if (_right && value)
+					{
 						return;
+					}
 
 					_right = value;
 					UpdateTurn();
@@ -105,13 +112,21 @@ namespace VDash.Controls
 			private void UpdateSpeed()
 			{
 				if (_forward && _reverse)
+				{
 					_speed = 0;
+				}
 				else if (_forward)
+				{
 					_speed += 10;
+				}
 				else if (_reverse)
+				{
 					_speed -= 10;
+				}
 				else
+				{
 					_speed = 0;
+				}
 
 				DataModel.Instance.Speed = _speed;
 				_speedTimer.Enabled = _speed != 0;
@@ -120,13 +135,21 @@ namespace VDash.Controls
 			private void UpdateTurn()
 			{
 				if (_left && _right)
+				{
 					_turn = DataModel.TurnDirection.None;
+				}
 				else if(_left)
+				{
 					_turn = DataModel.TurnDirection.Left;
+				}
 				else if(_right)
+				{
 					_turn = DataModel.TurnDirection.Right;
+				}
 				else
+				{
 					_turn = DataModel.TurnDirection.None;
+				}
 
 				DataModel.Instance.Turn = _turn;
 			}
@@ -137,7 +160,9 @@ namespace VDash.Controls
 				_speedTimer.Elapsed += (sender, args) =>
 				{
 					if (Ramping)
+					{
 						UpdateSpeed();
+					}
 				};
 			}
 
@@ -178,43 +203,65 @@ namespace VDash.Controls
 
 		private void OnPreviewKeyUp(object sender, KeyEventArgs e)
 		{
-			string key = e.Key.ToString().ToLower();
+			var key = e.Key.ToString().ToLower();
 			if (key == Settings.Default.KeyForward)
+			{
 				_keys.Forward = false;
+			}
 
 			if (key == Settings.Default.KeyBackward)
+			{
 				_keys.Reverse = false;
+			}
 
 			if (key == Settings.Default.KeyLeft)
+			{
 				_keys.Left = false;
+			}
 
 			if (key == Settings.Default.KeyRight)
+			{
 				_keys.Right = false;
+			}
 
 			if (key == Settings.Default.KeyRamping)
+			{
 				_keys.Ramping = false;
+			}
 		}
 
 		private void OnPreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			string key = e.Key.ToString().ToLower();
+			var key = e.Key.ToString().ToLower();
 			if (key == Settings.Default.KeyForward)
+			{
 				_keys.Forward = true;
+			}
 
 			if (key == Settings.Default.KeyBackward)
+			{
 				_keys.Reverse = true;
+			}
 
 			if (key == Settings.Default.KeyLeft)
+			{
 				_keys.Left = true;
+			}
 
 			if (key == Settings.Default.KeyRight)
+			{
 				_keys.Right = true;
+			}
 
 			if (key == Settings.Default.KeyStop)
+			{
 				_keys.Stop();
+			}
 
 			if (key == Settings.Default.KeyRamping)
+			{
 				_keys.Ramping = true;
+			}
 		}
 
 		void dm_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -224,18 +271,18 @@ namespace VDash.Controls
 			{
 				_lastCmdTime = _currentTime;
 				_currentTime = DateTime.Now;
-				Record rec = new Record();
-				PropertyInfo pi = _dm.GetType().GetProperty(e.PropertyName);
+				var rec = new Record();
+				var pi = _dm.GetType().GetProperty(e.PropertyName);
 				rec.Value = pi.GetValue(_dm, null);
 				rec.Name = e.PropertyName;
-				if (_timeOffset < Single.Epsilon)
+				if (_timeOffset < float.Epsilon)
 				{
 					rec.TimeOffset = _timeOffset;
 					_timeOffset = 1.0;  //just random number so that it doesn't enter this if after the first run
 				}
 				else
 				{
-					TimeSpan diff = _currentTime.Subtract(_lastCmdTime);
+					var diff = _currentTime.Subtract(_lastCmdTime);
 					_timeOffset = diff.Seconds + diff.Milliseconds;
 				}
 

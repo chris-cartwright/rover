@@ -25,6 +25,6 @@ namespace VehicleLib.Sensors
 {
     public class TempSensor : Sensor
     {
-        public short Temp;
-    }
+        public short Temp { get; set; }
+	}
 }

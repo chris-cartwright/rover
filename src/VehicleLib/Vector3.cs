@@ -49,18 +49,18 @@ namespace VehicleLib
 		private T _z;
 		public T X
 		{
-			get { return _x; }
-			set { _x = Validator(value); }
+			get => _x;
+			set => _x = Validator(value);
 		}
 		public T Y
 		{
-			get { return _y; }
-			set { _y = Validator(value); }
+			get => _y;
+			set => _y = Validator(value);
 		}
 		public T Z
 		{
-			get { return _z; }
-			set { _z = Validator(value); }
+			get => _z;
+			set => _z = Validator(value);
 		}
 
 		/// <summary>
@@ -133,7 +133,7 @@ namespace VehicleLib
 				return Z;
 			}
 
-			throw new ArgumentOutOfRangeException("axis");
+			throw new ArgumentOutOfRangeException(nameof(axis));
 		}
 	}
 
@@ -147,10 +147,14 @@ namespace VehicleLib
 			Validator = delegate(short value)
 			{
 				if (value < -100)
+				{
 					value = -100;
+				}
 
 				if (value > 100)
+				{
 					value = 100;
+				}
 
 				return value;
 			};

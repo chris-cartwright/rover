@@ -71,14 +71,14 @@ namespace VDash.Controls
 			private ObservableCollection<LogItem> _logs;
 			public ObservableCollection<LogItem> Logs
 			{
-				get { return _logs; }
+				get => _logs;
 				set { _logs = value; Notify("Logs"); }
 			}
 
 			private MessageType _type = MessageType.All;
 			public MessageType Type
 			{
-				get { return _type; }
+				get => _type;
 				set { _type = value; Notify("Type"); }
 			}
 
@@ -90,7 +90,9 @@ namespace VDash.Controls
 			private void Notify(string name)
 			{
 				if (PropertyChanged == null)
+				{
 					return;
+				}
 
 				PropertyChanged(this, new PropertyChangedEventArgs(name));
 			}
@@ -105,10 +107,12 @@ namespace VDash.Controls
 			public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 			{
 				if (values.Length != 2)
+				{
 					return DependencyProperty.UnsetValue;
+				}
 
-				int setting = (int)values[0];
-				int self = (int)values[1];
+				var setting = (int)values[0];
+				var self = (int)values[1];
 
 				return (setting == (int)MessageType.All || setting == self ? Visibility.Visible : Visibility.Collapsed);
 			}
@@ -127,7 +131,9 @@ namespace VDash.Controls
 		private static void SendOnLogReceived(MessageType type, string message)
 		{
 			if (OnLogReceived == null)
+			{
 				return;
+			}
 
 			DataModel.Invoke(() => OnLogReceived(type, message));
 		}
@@ -176,24 +182,30 @@ namespace VDash.Controls
 
 		private void LogReceived(MessageType type, string message)
 		{
-			ScrollViewer sv = GetScrollViewer();
-			bool scroll = false;
+			var sv = GetScrollViewer();
+			var scroll = false;
 			if(sv != null)
+			{
 				scroll = sv.VerticalOffset.Within(sv.ScrollableHeight);
+			}
 
-			_ds.Logs.Add(new LogItem() { Type = type, Message = message });
+			_ds.Logs.Add(new LogItem { Type = type, Message = message });
 			if (_ds.Logs.Count > 100)
+			{
 				_ds.Logs.RemoveAt(0);
+			}
 
 			if (scroll)
+			{
 				sv.ScrollToBottom();
+			}
 		}
 
 		private ScrollViewer GetScrollViewer()
 		{
 			try
 			{
-				int idx = 0;
+				var idx = 0;
 				object obj;
 
 				do
@@ -204,7 +216,9 @@ namespace VDash.Controls
 				while (obj != null && obj.GetType() != typeof(Border));
 
 				if (obj == null)
+				{
 					return null;
+				}
 
 				return (ScrollViewer)((Border)obj).Child;
 			}

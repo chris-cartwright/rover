@@ -1,6 +1,6 @@
 ﻿/*
 Copyright (C) 2013 Christopher Cartwright
-    
+	
 This file is part of VDash.
 
 VDash is free software: you can redistribute it and/or modify
@@ -51,11 +51,13 @@ namespace VDash
 
 		public int Rows
 		{
-			get { return _rows; }
+			get => _rows;
 			set
 			{
 				if (_rows == value)
+				{
 					return;
+				}
 
 				_rows = value;
 				_collection = new T[Columns, Rows];
@@ -65,11 +67,13 @@ namespace VDash
 
 		public int Columns
 		{
-			get { return _columns; }
+			get => _columns;
 			set
 			{
 				if (_columns == value)
+				{
 					return;
+				}
 
 				_columns = value;
 				_collection = new T[Columns, Rows];
@@ -77,40 +81,35 @@ namespace VDash
 			}
 		}
 
-		public int Count
-		{
-			get { return Rows * Columns; }
-		}
+		public int Count => Rows * Columns;
 
 		public T this[int x, int y]
 		{
-			get { return _collection[x, y]; }
+			get => _collection[x, y];
 			set
 			{
-				T old = _collection[x, y];
+				var old = _collection[x, y];
 				_collection[x, y] = value;
 				Notify(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, old));
 
-				if (ItemChanged != null)
-					ItemChanged(this, new ItemChangedEventArgs(x, y, value));
+				ItemChanged?.Invoke(this, new ItemChangedEventArgs(x, y, value));
 			}
 		}
 
 		private void Iterate(Action<int, int> action)
 		{
-			for (int x = 0; x < Columns; x++)
+			for (var x = 0; x < Columns; x++)
 			{
-				for (int y = 0; y < Rows; y++)
+				for (var y = 0; y < Rows; y++)
+				{
 					action(x, y);
+				}
 			}
 		}
 
 		private void Notify(NotifyCollectionChangedEventArgs e)
 		{
-			if (CollectionChanged == null)
-				return;
-
-			CollectionChanged(this, e);
+			CollectionChanged?.Invoke(this, e);
 		}
 
 		public ObservableSquareArray()
@@ -144,11 +143,13 @@ namespace VDash
 
 		public IEnumerator<ICollection<T>> GetEnumerator()
 		{
-			for (int x = 0; x < Columns; x++)
+			for (var x = 0; x < Columns; x++)
 			{
-				List<T> row = new List<T>();
-				for (int y = 0; y < Rows; y++)
+				var row = new List<T>();
+				for (var y = 0; y < Rows; y++)
+				{
 					row.Add(_collection[x, y]);
+				}
 
 				yield return row;
 			}

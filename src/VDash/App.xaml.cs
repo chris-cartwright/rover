@@ -20,14 +20,12 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-
 namespace VDash
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
-    {
+    public partial class App
+	{
     }
 }

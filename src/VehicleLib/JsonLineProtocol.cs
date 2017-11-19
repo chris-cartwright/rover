@@ -20,7 +20,6 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -34,7 +33,7 @@ namespace VehicleLib
 		public delegate void MessageHandler(dynamic message);
 		public event MessageHandler OnMessage;
 
-		private string _data = String.Empty;
+		private string _data = string.Empty;
 
 		/// <summary>
 		/// Feeds data into the internal buffer and checks for line delimiter.
@@ -48,18 +47,17 @@ namespace VehicleLib
 		{
 			_data += str;
 
-			List<dynamic> ret = new List<dynamic>();
+			var ret = new List<dynamic>();
 
-			int index = _data.IndexOf("\r\n");
+			var index = _data.IndexOf("\r\n");
 			while (index != -1)
 			{
-				string command = _data.Substring(0, index);
+				var command = _data.Substring(0, index);
 				_data = _data.Remove(0, index + 2);
 
 				dynamic packet = JsonConvert.DeserializeObject(command.Trim());
 
-				if (OnMessage != null)
-					OnMessage(packet);
+				OnMessage?.Invoke(packet);
 
 				ret.Add(packet);
 

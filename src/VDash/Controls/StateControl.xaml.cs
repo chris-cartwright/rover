@@ -38,7 +38,7 @@ namespace VDash.Controls
 
 		private void Stop_Click(object sender, RoutedEventArgs e)
 		{
-			DataModel dm = DataModel.Instance;
+			var dm = DataModel.Instance;
 			dm.Speed = 0;
 			dm.Turn = DataModel.TurnDirection.None;
 		}

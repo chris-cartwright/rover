@@ -33,11 +33,13 @@ namespace VDash.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			if (value as DateTime? == null)
+			if (!(value is DateTime))
+			{
 				return "";
+			}
 
-			DateTime dt = (DateTime)value;
-			return String.Format("[{0:hh}:{0:mm}:{0:ss}] ", dt);
+			var dt = (DateTime)value;
+			return string.Format("[{0:hh}:{0:mm}:{0:ss}] ", dt);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

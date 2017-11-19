@@ -34,24 +34,26 @@ namespace VDash.Controls
 			private float _percent;
 			public float Percent
 			{
-				get { return _percent; }
+				get => _percent;
 				set { _percent = value; Notify("Percent"); }
 			}
 
 			private float _current;
 			public float Current
 			{
-				get { return _current; }
+				get => _current;
 				set { _current = value; Notify("Current"); }
 			}
 
 			public DataSource()
 			{
-				DataModel dm = DataModel.Instance;
+				var dm = DataModel.Instance;
 				dm.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
 				{
 					if (e.PropertyName != "BatteryCurrent")
+					{
 						return;
+					}
 
 					Percent = (float)Math.Round((dm.BatteryCurrent - dm.BatteryMin) / (dm.BatteryMax - dm.BatteryMin) * 100, 1);
 					Current = dm.BatteryCurrent;
@@ -61,7 +63,9 @@ namespace VDash.Controls
 			private void Notify(string name)
 			{
 				if (PropertyChanged != null)
+				{
 					PropertyChanged(this, new PropertyChangedEventArgs(name));
+				}
 			}
 		}
 

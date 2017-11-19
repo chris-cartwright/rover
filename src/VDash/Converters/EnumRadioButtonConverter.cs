@@ -35,21 +35,24 @@ namespace VDash.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			string param = parameter as string;
-			if (param == null)
+			if (!(parameter is string param))
+			{
 				return DependencyProperty.UnsetValue;
+			}
 
-			Type type = value.GetType();
+			var type = value.GetType();
 			if(!Enum.IsDefined(type, value))
+			{
 				return DependencyProperty.UnsetValue;
+			}
 
 			return Enum.Parse(type, param).Equals(value);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			string param = parameter as string;
-			bool bv = (bool)value;
+			var param = parameter as string;
+			var bv = (bool)value;
 
 			if (param == null || !bv)
 			{

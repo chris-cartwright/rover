@@ -22,9 +22,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using Microsoft.CSharp.RuntimeBinder;
@@ -49,10 +47,7 @@ namespace VehicleLib
 		{
 			private uint _counter;
 
-			public new SensorHandler this[uint key]
-			{
-				get { return base[key]; }
-			}
+			public new SensorHandler this[uint key] => base[key];
 
 			private new void Add(uint id, SensorHandler cb)
 			{
@@ -66,10 +61,14 @@ namespace VehicleLib
 
 			public uint Add(SensorHandler cb)
 			{
-				if (_counter == UInt32.MaxValue)
+				if (_counter == uint.MaxValue)
+				{
 					_counter = 0;
+				}
 				else
+				{
 					_counter++;
+				}
 
 				Add(_counter, cb);
 				return _counter;
@@ -85,10 +84,7 @@ namespace VehicleLib
 		private readonly Thread _thread;
 		public Socket Socket { get; private set; }
 
-		public bool Connected
-		{
-			get { return Socket != null && Socket.Connected; }
-		}
+		public bool Connected => Socket != null && Socket.Connected;
 
 		public event ErrorHandler OnError;
 		public event ConnectHandler OnConnect;
@@ -110,12 +106,16 @@ namespace VehicleLib
 				dynamic packet;
 
 				if (callbackId != null)
+				{
 					packet = new { cmd, data = o, id = callbackId };
+				}
 				else
+				{
 					packet = new { cmd, data = o };
+				}
 
 				string s = JsonConvert.SerializeObject(packet) + "\r\n";
-				Byte[] byteGet = Encoding.ASCII.GetBytes(s);
+				var byteGet = Encoding.ASCII.GetBytes(s);
 				Socket.Send(byteGet, byteGet.Length, 0);
 			}
 			catch (Exception ex)
@@ -152,9 +152,9 @@ namespace VehicleLib
 			var proto = new JsonLineProtocol();
 			Socket.Receive(recvBytes);
 
-			dynamic[] msgs = proto.Feed(Encoding.ASCII.GetString(recvBytes));
+			var msgs = proto.Feed(Encoding.ASCII.GetString(recvBytes));
 
-			foreach (dynamic packet in msgs)
+			foreach (var packet in msgs)
 			{
 				try
 				{
@@ -163,19 +163,13 @@ namespace VehicleLib
 				catch (TimeoutException)
 				{
 					Socket = null;
-
-					if (OnDisconnect != null)
-						OnDisconnect();
-
+					OnDisconnect?.Invoke();
 					throw;
 				}
 				catch (SocketException ex)
 				{
 					Socket = null;
-
-					if (OnDisconnect != null)
-						OnDisconnect();
-
+					OnDisconnect?.Invoke();
 					throw new ConnectionException("Connection is in an error state.", ex);
 				}
 			}
@@ -196,31 +190,33 @@ namespace VehicleLib
 					return;
 				}
 
-				string cat = "";
+				var cat = "";
 				if (packet.cmd.ToString().Contains("Error"))
+				{
 					cat = "Errors.";
+				}
 				else if (packet.cmd.ToString().Contains("Sensor"))
+				{
 					cat = "Sensors.";
+				}
 				else if (packet.cmd.ToString().Contains("Event"))
+				{
 					cat = "Events.";
+				}
 
 				string finder = "VehicleLib." + cat + packet.cmd + ", VehicleLib";
-				Type t = Type.GetType(finder, true);
-				MethodInfo cast = typeof(JToken).GetMethod("ToObject", new Type[] { }).MakeGenericMethod(t);
+				var t = Type.GetType(finder, true);
+				var cast = typeof(JToken).GetMethod("ToObject", new Type[] { }).MakeGenericMethod(t);
 				receivedObject = cast.Invoke(packet.data, null);
 			}
 			catch (RuntimeBinderException)
 			{
-				throw new MalformedMessageException() { Malformed = JsonConvert.SerializeObject(packet) };
+				throw new MalformedMessageException { Malformed = JsonConvert.SerializeObject(packet) };
 			}
 
 			if (packet.cmd.ToString().Contains("Error"))
 			{
-				if (OnError != null)
-				{
-					OnError((Error)receivedObject);
-				}
-
+				OnError?.Invoke((Error)receivedObject);
 				return;
 			}
 
@@ -236,13 +232,12 @@ namespace VehicleLib
 
 				var sens = (Sensor)receivedObject;
 				if (cb != null)
+				{
 					cb(sens);
+				}
 				else
 				{
-					if (OnSensorEvent != null)
-					{
-						OnSensorEvent(sens);
-					}
+					OnSensorEvent?.Invoke(sens);
 				}
 
 				return;
@@ -262,21 +257,23 @@ namespace VehicleLib
 			try
 			{
 				while (true)
+				{
 					Recv();
+				}
 			}
 			catch (SocketException ex)
 			{
 				// Thread was killed
 				if (ex.ErrorCode == 10004)
+				{
 					return;
+				}
 
-				if (OnException != null)
-					OnException(ex);
+				OnException?.Invoke(ex);
 			}
 			catch (Exception ex)
 			{
-				if (OnException != null)
-					OnException(ex);
+				OnException?.Invoke(ex);
 			}
 		}
 
@@ -322,10 +319,7 @@ namespace VehicleLib
 
 			_callbacks.Clear();
 
-			if (OnConnect != null)
-			{
-				OnConnect(bcast);
-			}
+			OnConnect?.Invoke(bcast);
 
 			_thread.Start();
 
@@ -348,9 +342,7 @@ namespace VehicleLib
 			finally
 			{
 				Socket = null;
-
-				if (OnDisconnect != null)
-					OnDisconnect();
+				OnDisconnect?.Invoke();
 			}
 		}
 
@@ -383,11 +375,12 @@ namespace VehicleLib
 		/// </summary>
 		public void Shutdown()
 		{
-			if (Socket != null)
-				Socket.Close();
+			Socket?.Close();
 
 			if (_thread.ThreadState == ThreadState.Running)
+			{
 				_thread.Join();
+			}
 		}
 	}
 }

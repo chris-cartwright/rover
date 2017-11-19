@@ -38,37 +38,34 @@ namespace VDash
 			private string _moveForward;
 			public string MoveForward
 			{
-				get { return _moveForward; }
+				get => _moveForward;
 				set { _moveForward = value; Notify("MoveForward"); }
 			}
 
 			private string _moveBackward;
 			public string MoveBackward
 			{
-				get { return _moveBackward; }
+				get => _moveBackward;
 				set { _moveBackward = value; Notify("MoveBackward"); }
 			}
 
 			private string _turnLeft;
 			public string TurnLeft
 			{
-				get { return _turnLeft; }
+				get => _turnLeft;
 				set { _turnLeft = value; Notify("TurnLeft"); }
 			}
 
 			private string _turnRight;
 			public string TurnRight
 			{
-				get { return _turnRight; }
+				get => _turnRight;
 				set { _turnRight = value; Notify("TurnRight"); }
 			}
 
 			private void Notify(string name)
 			{
-				if (PropertyChanged == null)
-					return;
-
-				PropertyChanged(this, new PropertyChangedEventArgs(name));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 			}
 		}
 

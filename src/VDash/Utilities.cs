@@ -17,8 +17,6 @@ You should have received a copy of the GNU General Public License
 along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace VDash
 {
 	public static class Utilities
@@ -35,7 +33,7 @@ namespace VDash
 		/// <param name="rhs">Second value to compare</param>
 		/// <param name="epsilon">Acceptable tolerance</param>
 		/// <returns>Difference is within tolerance</returns>
-		public static bool Within(this float lhs, float rhs, float epsilon = Single.Epsilon)
+		public static bool Within(this float lhs, float rhs, float epsilon = float.Epsilon)
 		{
 			return lhs - rhs < epsilon;
 		}
@@ -52,7 +50,7 @@ namespace VDash
 		/// <param name="rhs">Second value to compare</param>
 		/// <param name="epsilon">Acceptable tolerance</param>
 		/// <returns>Difference is within tolerance</returns>
-		public static bool Within(this double lhs, double rhs, double epsilon = Double.Epsilon)
+		public static bool Within(this double lhs, double rhs, double epsilon = double.Epsilon)
 		{
 			return lhs - rhs < epsilon;
 		}

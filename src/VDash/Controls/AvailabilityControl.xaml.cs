@@ -1,27 +1,26 @@
 ﻿/*
-    Copyright (C) 2012 Christopher Cartwright
-    Copyright (C) 2012 Richard Payne
-    Copyright (C) 2012 Andrew Hill
-    Copyright (C) 2012 David Shirley
+	Copyright (C) 2012 Christopher Cartwright
+	Copyright (C) 2012 Richard Payne
+	Copyright (C) 2012 Andrew Hill
+	Copyright (C) 2012 David Shirley
 	Copyright (C) 2012 Brent Cornwall
-    
-    This file is part of VDash.
+	
+	This file is part of VDash.
 
-    VDash is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	VDash is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    VDash is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	VDash is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with VDash.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -63,7 +62,9 @@ namespace VDash.Controls
 					SetField(ref _ipAddresses, value);
 
 					if (_listenAddress == null && value.Count > 0)
+					{
 						ListenAddress = value[0];
+					}
 				}
 			}
 
@@ -73,14 +74,16 @@ namespace VDash.Controls
 				set
 				{
 					if (Equals(_listenAddress, value))
+					{
 						return;
+					}
 
 					SetField(ref _listenAddress, value);
 
 					var ep = new IPEndPoint(value, Settings.Default.ListenPort);
 					_dm.Listener.Shutdown();
 					_dm.Listener.Start(ep);
-					LogControl.Info(String.Format("Starting listener on {0}", ep));
+					LogControl.Info($"Starting listener on {ep}");
 
 					Vehicles = new ObservableCollection<Vehicle>();
 				}
@@ -131,7 +134,7 @@ namespace VDash.Controls
 		{
 			var ips = new List<IPAddress>();
 			foreach (
-				NetworkInterface iface in
+				var iface in
 					NetworkInterface.GetAllNetworkInterfaces().Where(iface => iface.OperationalStatus != OperationalStatus.Down))
 			{
 				ips.AddRange(from uni in iface.GetIPProperties().UnicastAddresses
@@ -160,10 +163,12 @@ namespace VDash.Controls
 
 			_selVehicle = (Vehicle)ListViewVehicles.SelectedItems[0];
 
-			_login = new VehicleLogin() { Owner = MainWindow.Self };
+			_login = new VehicleLogin { Owner = MainWindow.Self };
 
 			if (!_dm.Vehicle.Connected)
+			{
 				_login.Closing += login_Closing;
+			}
 
 			_login.ShowDialog();
 		}
@@ -182,13 +187,17 @@ namespace VDash.Controls
 
 			_ds.IpAddresses = new ObservableCollection<IPAddress>();
 
-			foreach (IPAddress addr in GetIpAddresses())
+			foreach (var addr in GetIpAddresses())
+			{
 				_ds.IpAddresses.Add(addr);
+			}
 
 			_dm.Listener.OnBroadcastReceived += delegate(Broadcast bcast)
 			{
 				if (!VehiclesContains(bcast.Name))
+				{
 					DataModel.Invoke(() => _ds.Vehicles.Add(new Vehicle(bcast)));
+				}
 			};
 
 			LoginSuccessEvent.Invoked += evnt => _selVehicle.Connected = true;

@@ -26,7 +26,7 @@ namespace VehicleLib.Sensors
 {
     public class Sensor
     {
-        public string Id;
-        public DateTime Time;   
-    }
+        public string Id { get; set; }
+		public DateTime Time { get; set; }
+	}
 }

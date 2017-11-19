@@ -27,10 +27,10 @@ namespace VehicleLib.States
     [Serializable]
     public class LightState : State
     {
-        public string Id;
-        public ushort Level;
+        public string Id { get; set; }
+		public ushort Level { get; set; }
 
-        public LightState() { }
+		public LightState() { }
 
         public LightState(string id, ushort level)
         {
@@ -38,9 +38,6 @@ namespace VehicleLib.States
             Level = level;
         }
 
-		public override string Cmd
-		{
-			get { return "LightState"; }
-		}
+		public override string Cmd => "LightState";
     }
 }

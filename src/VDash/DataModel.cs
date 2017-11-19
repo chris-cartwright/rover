@@ -95,14 +95,20 @@ namespace VDash
 			{
 				SetField(ref _turn, value);
 				if (_turn < TurnDirection.Left)
+				{
 					_turn = TurnDirection.Left;
+				}
 				else if (_turn > TurnDirection.Right)
+				{
 					_turn = TurnDirection.Right;
+				}
 
 				LogControl.Debug("Turn set: " + value);
 
 				if (!Vehicle.Connected)
+				{
 					return;
+				}
 
 				switch (_turn)
 				{
@@ -129,17 +135,23 @@ namespace VDash
 			set
 			{
 				if (value < -100)
+				{
 					value = -100;
+				}
 
 				if (value > 100)
+				{
 					value = 100;
+				}
 
 				LogControl.Debug("Speed set: " + value);
 
 				SetField(ref _speed, value);
 
 				if (Vehicle.Connected)
+				{
 					Vehicle.Send(new MoveState(0, 0, _speed));
+				}
 			}
 		}
 
@@ -153,7 +165,9 @@ namespace VDash
 			set
 			{
 				if (value > 100)
+				{
 					value = 100;
+				}
 
 				SetField(ref _headlights, value);
 			}
@@ -214,11 +228,15 @@ namespace VDash
 			set
 			{
 				if (value.Length != 32)
+				{
 					throw new FormatException("Length of string must be 32 characters");
+				}
 
 				SetField(ref _text, value);
 				if (Vehicle.Connected)
+				{
 					Vehicle.Send(new ScreenState(_text));
+				}
 			}
 		}
 
@@ -251,7 +269,9 @@ namespace VDash
 			_timer.Elapsed += delegate
 			{
 				if (!Vehicle.Connected)
+				{
 					return;
+				}
 
 				Vehicle.Send(new VoltageQuery("battery", sensor => Invoke(() => BatteryUpdated(sensor))));
 			};
@@ -269,7 +289,9 @@ namespace VDash
 				case "Headlights":
 					LogControl.Debug("Headlights set: " + Headlights);
 					if (Vehicle.Connected)
+					{
 						Vehicle.Send(new HeadLightState(Headlights));
+					}
 
 					break;
 			}

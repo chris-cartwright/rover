@@ -27,11 +27,11 @@ namespace VehicleLib.States
     [Serializable]
     public class ColourLightState : LightState
     {
-        public byte Red;
-        public byte Green;
-        public byte Blue;
+        public byte Red { get; set; }
+		public byte Green { get; set; }
+		public byte Blue { get; set; }
 
-        public ColourLightState() { }
+		public ColourLightState() { }
 
         public ColourLightState(byte bytRed, byte bytGreen, byte bytBlue)
         {
@@ -40,9 +40,6 @@ namespace VehicleLib.States
             Blue = bytBlue;
         }
 
-		public override string Cmd
-		{
-			get { return "ColourLightState"; }
-		}
+		public override string Cmd => "ColourLightState";
     }
 }

@@ -37,15 +37,19 @@ namespace VDash.Converters
 		private string _name;
 		public string ClassName
 		{
-			get { return _name; }
+			get => _name;
 			set
 			{
 				if (value == _name)
+				{
 					return;
+				}
 
-				_type = System.Type.GetType("VDash." + value, true);
+				_type = Type.GetType("VDash." + value, true);
 				if (_type.GetInterface("IMultiValueConverter") == null)
-					throw new ArgumentException(String.Format("Type {0} doesn't support IMultiValueConverter.", _type.FullName), "Type");
+				{
+					throw new ArgumentException($"Type {_type.FullName} doesn't support IMultiValueConverter.", "Type");
+				}
 
 				_name = value;
 			}
@@ -56,10 +60,14 @@ namespace VDash.Converters
 		private void CreateConverter()
 		{
 			if (_converter != null)
+			{
 				return;
+			}
 
 			if (_type == null)
+			{
 				throw new InvalidOperationException("Cannot user converter without a type.");
+			}
 
 			_converter = Activator.CreateInstance(_type) as IMultiValueConverter;
 		}

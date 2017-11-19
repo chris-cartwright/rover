@@ -21,8 +21,8 @@ namespace VehicleLib.Sensors
 {
 	public class VoltageSensor : Sensor
 	{
-		public float Min;
-		public float Max;
-		public float Current;
+		public float Min { get; set; }
+		public float Max { get; set; }
+		public float Current { get; set; }
 	}
 }

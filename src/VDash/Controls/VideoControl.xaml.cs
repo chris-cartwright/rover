@@ -20,7 +20,6 @@
     along with VDash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.ComponentModel;
 using MjpegProcessor;
 
@@ -50,12 +49,16 @@ namespace VDash.Controls
 	    private void DataModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
 	    {
 		    if (e.PropertyName != "VideoFeed")
-			    return;
+			{
+				return;
+			}
 
-		    if (streaming)
-			    mjpeg.StopStream();
+			if (streaming)
+			{
+				mjpeg.StopStream();
+			}
 
-		    streaming = true;
+			streaming = true;
 			mjpeg.ParseStream(_dm.VideoFeed);
 	    }
 

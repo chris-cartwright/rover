@@ -54,9 +54,6 @@ namespace VehicleLib.States
 			Vector.SetAxis(axis, speed);
 		}
 
-		public override string Cmd
-		{
-			get { return "TurnState"; }
-		}
+		public override string Cmd => "TurnState";
 	}
 }
