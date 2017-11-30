@@ -100,7 +100,7 @@ var BroadcastSender = new function () {
 
 			default:
 				_cmd = "ifconfig";
-				_sr = /\binet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*?Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g;
+				_sr = /\binet addr[: ](\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*?mask[: ](\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/g;
 				break;
 		}
 
