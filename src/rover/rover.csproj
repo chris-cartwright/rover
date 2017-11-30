@@ -50,6 +50,7 @@
     <Content Include="bone.js" />
     <Content Include="config.js" />
     <Content Include="control_pipe.js" />
+    <None Include="launch.sh" />
     <None Include="config.js.base" />
     <Content Include="errors.js" />
     <Content Include="broadcast_sender.js" />
@@ -62,6 +63,7 @@
     <Content Include="queries.js" />
     <Content Include="sensors.js" />
     <Content Include="states.js" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="package.json" />

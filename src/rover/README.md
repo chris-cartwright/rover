@@ -8,3 +8,8 @@ Edit `/boot/uEnv.txt` and uncomment:
 * `disable_uboot_overlay_emmc`
 * `disable_uboot_overlay_video`
 * `disable_uboot_overlay_audio`
+
+Notes
+=====
+
+* Do not add bonescript to `package.json`. Use the version that comes pre-installed.
