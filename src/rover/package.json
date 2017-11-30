@@ -10,9 +10,6 @@
     "serialport": "6.0.4",
     "winston": "2.4.0"
   },
-  "optionalDependencies": {
-    "bonescript": "0.6.1"
-  },
   "devDependencies": {
     "node-inspector": "1.1.1"
   }
